@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import "./Canvas.scss";
 
-export default function Canvas(props) {
+export default function Canvas() {
   //Setting initial state and reference for canvas
   const canvasRef = useRef(null);
   const ctxRef = useRef(null);
@@ -9,24 +9,34 @@ export default function Canvas(props) {
   let [strokeStyle, setStrokeStyle] = useState("black");
   let [lineWidth, setLineWidth] = useState(3);
 
- /*  setStrokeStyle(props.strokeStyle);
-  setLineWidth(props.lineWidth); */
   //useEffect hook for brush strokes
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
-    ctx.canvas.width = window.innerWidth;
+    ctx.canvas.width = window.innerWidth - 80;
+    ctx.canvas.height = window.innerWidth / 2;
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
     ctx.strokeStyle = strokeStyle;
     ctx.lineWidth = lineWidth;
     ctxRef.current = ctx;
-
-    //Window event listener
-    window.addEventListener('resize', resizeCanvas)
-    resizeCanvas();
   }, [strokeStyle, lineWidth]);
 
+  //Window event listener
+  const resizeCanvas = () => {
+    const canvas = canvasRef.current;
+    const ctx = ctxRef.current;
+    canvas.width = window.innerWidth - 80;
+    canvas.height = window.innerWidth / 2;
+    let oldCanvas = canvas.toDataURL("image/png");
+    let img = new Image();
+    img.src = oldCanvas;
+    img.onload = () => {
+      ctx.drawImage(img, 0, 0);
+    };
+  };
+
+  window.addEventListener("resize", resizeCanvas);
 
   //Start drawing function
   const startDraw = (event) => {
