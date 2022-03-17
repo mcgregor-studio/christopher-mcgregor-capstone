@@ -8,6 +8,7 @@ export default class Main extends React.Component {
   state = {
     loadImage: false,
     saveImage: false,
+    clearCanvas: false
   };
 
   render() {
@@ -19,11 +20,16 @@ export default class Main extends React.Component {
       this.setState({ saveImage: true });
     };
 
-    let { loadImage, saveImage } = this.state;
+    const handleClearCanvas = () => {
+      this.setState({clearCanvas: true});
+    };
+
+    let { loadImage, saveImage, clearCanvas } = this.state;
     return (
       <section className="homepage">
-        <Canvas loadImage={loadImage} saveImage={saveImage} />
-        <PaintTools />
+        <Canvas loadImage={loadImage} saveImage={saveImage} clearCanvas={clearCanvas} />
+        <PaintTools 
+        clearCanvas={handleClearCanvas}/>
         <div>
           <Button
             onClick={handleLoadImage}

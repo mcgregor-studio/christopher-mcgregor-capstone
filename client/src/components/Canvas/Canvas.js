@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import "./Canvas.scss";
 
-export default function Canvas() {
+export default function Canvas(props) {
   //Setting initial state and reference for canvas
   const canvasRef = useRef(null);
   const ctxRef = useRef(null);
@@ -13,40 +13,39 @@ export default function Canvas() {
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
+
     ctx.canvas.width = window.innerWidth - 80;
     ctx.canvas.height = window.innerWidth / 2;
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
     ctx.strokeStyle = strokeStyle;
     ctx.lineWidth = lineWidth;
+    ctx.imageSmoothingEnabled = false;
     ctxRef.current = ctx;
   }, [strokeStyle, lineWidth]);
 
-  //Window event listener
-  const resizeCanvas = () => {
+  //Get mouse location
+  let mx = 0;
+  let my = 0;
+  console.log(mx)
+  console.log(my)
+  const getMouse = (event) => {
     const canvas = canvasRef.current;
-    const ctx = ctxRef.current;
-    canvas.width = window.innerWidth - 80;
-    canvas.height = window.innerWidth / 2;
-    let oldCanvas = canvas.toDataURL("image/png");
-    let img = new Image();
-    img.src = oldCanvas;
-    img.onload = () => {
-      ctx.drawImage(img, 0, 0);
-    };
+    mx = event.clientX - canvas.offsetLeft;
+    my = event.clientY - canvas.offsetTop;
   };
-
-  window.addEventListener("resize", resizeCanvas);
 
   //Start drawing function
   const startDraw = (event) => {
+    getMouse(event)
     ctxRef.current.beginPath();
-    ctxRef.current.moveTo(event.nativeEvent.offsetX, event.nativeEvent.offsetY);
+    ctxRef.current.moveTo(mx, my);
     setIsDrawing(true);
   };
 
   //End drawing function
-  const endDraw = () => {
+  const endDraw = (event) => {
+    getMouse(event)
     ctxRef.current.closePath();
     setIsDrawing(false);
   };
@@ -56,9 +55,17 @@ export default function Canvas() {
     if (!isDrawing) {
       return;
     }
-    ctxRef.current.lineTo(event.nativeEvent.offsetX, event.nativeEvent.offsetY);
+    getMouse(event);
+    ctxRef.current.lineTo(mx, my);
     ctxRef.current.stroke();
   };
+
+  //Clear canvas check
+  if (props.clearCanvas) {
+    const canvas = canvasRef.current;
+    const ctx = ctxRef.current;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
 
   //Render component with all mouse events and references
   return (
