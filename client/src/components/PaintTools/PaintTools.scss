@@ -1,0 +1,9 @@
+.homepage {
+    &__paint-tools {
+        display: flex;
+        &--color {
+            height: 2rem;
+            width: 2rem;
+        }
+    }
+}
