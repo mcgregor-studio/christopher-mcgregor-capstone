@@ -1,14 +1,12 @@
 import React from "react";
 import Canvas from "../Canvas/Canvas";
 import Button from "../Button/Button";
-import PaintTools from "../PaintTools/PaintTools";
 import "./Main.scss";
 
 export default class Main extends React.Component {
   state = {
     loadImage: false,
-    saveImage: false,
-    clearCanvas: false
+    saveImage: false
   };
 
   render() {
@@ -20,16 +18,10 @@ export default class Main extends React.Component {
       this.setState({ saveImage: true });
     };
 
-    const handleClearCanvas = () => {
-      this.setState({clearCanvas: true});
-    };
-
-    let { loadImage, saveImage, clearCanvas } = this.state;
+    let { loadImage, saveImage } = this.state;
     return (
       <section className="homepage">
-        <Canvas loadImage={loadImage} saveImage={saveImage} clearCanvas={clearCanvas} />
-        <PaintTools 
-        clearCanvas={handleClearCanvas}/>
+        <Canvas loadImage={loadImage} saveImage={saveImage} />
         <div>
           <Button
             onClick={handleLoadImage}
