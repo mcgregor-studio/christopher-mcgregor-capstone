@@ -1,6 +1,7 @@
 .homepage {
     &__paint-tools {
         display: flex;
+        flex-wrap: wrap;
         &--color {
             height: 2rem;
             width: 2rem;

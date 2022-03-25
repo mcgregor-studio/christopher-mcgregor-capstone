@@ -18,7 +18,7 @@ export default function PaintTools(props) {
       <input
         type="range"
         min="1"
-        max="10"
+        max="25"
         onChange={(event) => {
           props.setLineWidth(event.target.value);
         }}
@@ -33,7 +33,7 @@ export default function PaintTools(props) {
       <input
         type="range"
         min="1"
-        max="10"
+        max="25"
         onChange={(event) => {
           props.setEraserWidth(event.target.value);
         }}
@@ -46,8 +46,8 @@ export default function PaintTools(props) {
           props.setStrokeStyle(event.target.value);
         }}
       ></input>
-      <h4 className="homepage__paint-tools--label">Undo</h4>
-      <h4 className="homepage__paint-tools--label">Redo</h4>
+      <h4 className="homepage__paint-tools--label" onClick={() => props.setUndo(true)}>Undo</h4>
+      <h4 className="homepage__paint-tools--label" onClick={() => props.setRedo(true)}>Redo</h4>
       <h4
         className="homepage__paint-tools--label"
         onClick={() => props.setClearCanvas(true)}
