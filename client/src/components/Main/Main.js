@@ -7,6 +7,7 @@ export default function Main() {
   //Setting initial state and references for canvas
   const canvasRef = useRef(null);
   const ctxRef = useRef(null);
+  const lineartRef = useRef(null);
   let [brushActive, setBrushActive] = useState(true);
   let [eraserActive, setEraserActive] = useState(false);
   let [isDrawing, setIsDrawing] = useState(false);
@@ -14,11 +15,10 @@ export default function Main() {
   let [lineWidth, setLineWidth] = useState(3);
   let [eraserWidth, setEraserWidth] = useState(3);
   let [undo, setUndo] = useState(false);
-  let [redo, setRedo] = useState(false);
   let [undoArr, setUndoArr] = useState([]);
-  let [redoArr, setRedoArr] = useState([]);
   let [clearCanvas, setClearCanvas] = useState(false);
-  let [loadImage, setLoadImage] = useState(false);
+  let [uploadImage, setUploadImage] = useState(false);
+  let [imageSource, setImageSource] = useState("");
   let [saveImage, setSaveImage] = useState(false);
 
   //useEffect hook for canvas and tools
@@ -46,17 +46,17 @@ export default function Main() {
     my = (event.clientY - rect.top) * scaleY;
   };
 
-  //Undo & redo
+  //Undo if statement
   let points = [];
   if (undo) {
     const canvas = canvasRef.current;
     const ctx = ctxRef.current;
-    let removeLastStroke = undoArr.splice(-1, 1);
-    console.log(`removeLastStroke: ${removeLastStroke}`);
     setUndoArr(undoArr.splice(-1, 1));
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     undoArr.forEach((path) => {
-      if (path.mode === "draw") {
+      if (path[0].mode === "draw") {
+        ctx.globalCompositeOperation = "source-over";
+        ctx.strokeStyle = path.stroke;
         ctx.beginPath();
         ctx.moveTo(path[0].x, path[0].y);
         for (let i = 1; i < path.length; i++) {
@@ -64,11 +64,13 @@ export default function Main() {
         }
         ctx.stroke();
       }
-      if (path.mode === "erase") {
+      if (path[0].mode === "erase") {
         ctx.globalCompositeOperation = "destination-out";
-      ctx.strokeStyle = "rgba(255,255,255,1)";
-      ctx.lineTo(mx, my);
-      ctx.stroke();
+        ctx.strokeStyle = "rgba(255,255,255,1)";
+        for (let i = 1; i < path.length; i++) {
+          ctx.lineTo(path[i].x, path[i].y);
+        }
+        ctx.stroke();
       }
     });
     setUndo(false);
@@ -76,9 +78,6 @@ export default function Main() {
 
   //Start drawing function
   const startDraw = (event) => {
-    if (redoArr.length > 0) {
-      setRedoArr([]);
-    }
     getMouse(event);
     ctxRef.current.beginPath();
     ctxRef.current.moveTo(mx, my);
@@ -103,9 +102,9 @@ export default function Main() {
     const ctx = ctxRef.current;
     getMouse(event);
     if (brushActive) {
-      points.push({ x: mx, y: my, mode: "draw" });
       ctx.globalCompositeOperation = "source-over";
       ctx.strokeStyle = strokeStyle;
+      points.push({ x: mx, y: my, mode: "draw", stroke: ctx.strokeStyle });
       ctx.lineTo(mx, my);
       ctx.stroke();
     }
@@ -136,25 +135,49 @@ export default function Main() {
   };
 
   //Loading and saving image handlers
-  const handleLoadImage = () => {
-    setLoadImage(true);
+  const handleUploadImage = (event) => {
+    console.log("fired")
+    setImageSource(URL.createObjectURL(event.target.files[0]));
+    setUploadImage(true);
+  };
+
+  const handleDownloadImage = () => {
+    setUploadImage(true);
   };
 
   const handleSaveImage = () => {
     setSaveImage(true);
   };
 
+  //Upload image
+  if (uploadImage) {
+    const lineart = lineartRef.current;
+    const lineCtx = lineart.getContext("2d");
+    console.log("worked")
+    let img = new Image();
+    img.src = imageSource;
+    lineCtx.drawImage(img, 0, 0);
+    console.log(img.src);
+    setUploadImage(false);
+  }
+
+  //Save image
+  if (saveImage) {
+  }
+
   //Clear canvas
   if (clearCanvas) {
     const canvas = canvasRef.current;
     const ctx = ctxRef.current;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    setUndoArr([]);
     setClearCanvas(false);
   }
 
   return (
     <section className="homepage">
       <div>
+        <canvas ref={lineartRef} className="homepage__lineart"></canvas>
         <canvas
           className="homepage__canvas"
           ref={canvasRef}
@@ -171,19 +194,31 @@ export default function Main() {
           setEraserWidth={setEraserWidth}
           setClearCanvas={setClearCanvas}
           setUndo={setUndo}
-          setRedo={setRedo}
         />
       </div>
       <div>
+        <label
+          onChange={handleUploadImage}
+          for="upload-image"
+          className="homepage__button--up"
+        >
+          Upload Image
+          <input
+            id="upload-image"
+            type="file"
+            accept="image/*"
+            name="lineart"
+          ></input>
+        </label>
         <Button
-          onClick={handleLoadImage}
-          className="homepage__button--load"
-          text="Load Image"
+          onClick={handleDownloadImage}
+          className="homepage__button--down"
+          text="Download Image"
         />
         <Button
           onClick={handleSaveImage}
           className="homepage__button--save"
-          text="Save Image"
+          text="Save Image To Profile"
         />
       </div>
     </section>

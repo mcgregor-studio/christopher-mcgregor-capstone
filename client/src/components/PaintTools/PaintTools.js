@@ -47,7 +47,6 @@ export default function PaintTools(props) {
         }}
       ></input>
       <h4 className="homepage__paint-tools--label" onClick={() => props.setUndo(true)}>Undo</h4>
-      <h4 className="homepage__paint-tools--label" onClick={() => props.setRedo(true)}>Redo</h4>
       <h4
         className="homepage__paint-tools--label"
         onClick={() => props.setClearCanvas(true)}
