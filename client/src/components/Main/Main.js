@@ -1,6 +1,5 @@
 import React, { useRef, useEffect, useState } from "react";
 import PaintTools from "../PaintTools/PaintTools";
-import Button from "../Button/Button";
 import "./Main.scss";
 
 export default function Main() {
@@ -8,6 +7,8 @@ export default function Main() {
   const canvasRef = useRef(null);
   const ctxRef = useRef(null);
   const lineartRef = useRef(null);
+  const saveRef = useRef(null);
+  const linkRef = useRef();
   let [brushActive, setBrushActive] = useState(true);
   let [eraserActive, setEraserActive] = useState(false);
   let [isDrawing, setIsDrawing] = useState(false);
@@ -136,13 +137,30 @@ export default function Main() {
 
   //Loading and saving image handlers
   const handleUploadImage = (event) => {
-    console.log("fired");
     setImageSource(URL.createObjectURL(event.target.files[0]));
     setUploadImage(true);
   };
 
   const handleDownloadImage = () => {
-    setUploadImage(true);
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+    const lineart = lineartRef.current;
+    const lineCtx = lineart.getContext("2d");
+    const saveCanvas = saveRef.current;
+    const saveCanvasCtx = saveCanvas.getContext("2d");
+    const link = linkRef.current;
+
+    let ctxData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    let lineCtxData = lineCtx.getImageData(0,0, lineart.width, lineart.height);
+
+    saveCanvasCtx.drawImage(ctxData, 0, 0);
+    saveCanvasCtx.drawImage(lineCtxData, 0, 0);
+
+    let downloadSource = saveCanvas
+      .toDataURL("image/png")
+      .replace("image/png", "image/octet-stream");
+    link.href = downloadSource;
+    saveCanvasCtx.clearRect(0, 0, saveCanvas.width, saveCanvas.height);
   };
 
   const handleSaveImage = () => {
@@ -177,10 +195,6 @@ export default function Main() {
     img.src = imageSource;
   }
 
-  //Save image
-  if (saveImage) {
-  }
-
   //Clear canvas
   if (clearCanvas) {
     const canvas = canvasRef.current;
@@ -193,6 +207,12 @@ export default function Main() {
   return (
     <section className="homepage">
       <div>
+        <canvas
+          ref={saveRef}
+          className="homepage__save"
+          width={1000}
+          height={500}
+        ></canvas>
         <canvas
           ref={lineartRef}
           className="homepage__lineart"
@@ -220,7 +240,7 @@ export default function Main() {
       <div>
         <label
           onChange={handleUploadImage}
-          for="upload-image"
+          htmlFor="upload-image"
           className="homepage__button--up"
         >
           Upload Image
@@ -231,16 +251,17 @@ export default function Main() {
             name="upload-image"
           ></input>
         </label>
-        <Button
-          onClick={handleDownloadImage}
+        <a
+          ref={linkRef}
+          href=""
           className="homepage__button--down"
-          text="Download Image"
-        />
-        <Button
-          onClick={handleSaveImage}
-          className="homepage__button--save"
-          text="Save Image To Profile"
-        />
+          onClick={handleDownloadImage}
+        >
+          Download Image
+        </a>
+        <button className="homepage__button--save" onClick={handleSaveImage}>
+          Save Image To Profile
+        </button>
       </div>
     </section>
   );
