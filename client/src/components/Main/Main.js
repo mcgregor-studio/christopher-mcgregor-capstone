@@ -136,7 +136,7 @@ export default function Main() {
 
   //Loading and saving image handlers
   const handleUploadImage = (event) => {
-    console.log("fired")
+    console.log("fired");
     setImageSource(URL.createObjectURL(event.target.files[0]));
     setUploadImage(true);
   };
@@ -153,12 +153,30 @@ export default function Main() {
   if (uploadImage) {
     const lineart = lineartRef.current;
     const lineCtx = lineart.getContext("2d");
-    console.log("worked")
     let img = new Image();
-    img.src = imageSource;
-    lineCtx.drawImage(img, 0, 0);
-    console.log(img.src);
+    img.onload = () => {
+      let hRatio = lineart.width / img.width;
+    let vRatio = lineart.height / img.height;
+    let ratio = Math.min(hRatio, vRatio);
+    var centerShift_x = (lineart.width - img.width * ratio) / 2;
+    var centerShift_y = (lineart.height - img.height * ratio) / 2;
+    lineCtx.clearRect(0, 0, lineart.width, lineart.height);
+    lineCtx.drawImage(
+      img,
+      0,
+      0,
+      img.width,
+      img.height,
+      centerShift_x,
+      centerShift_y,
+      img.width * ratio,
+      img.height * ratio
+    );
     setUploadImage(false);
+    }
+    img.src = imageSource;
+
+    
   }
 
   //Save image
@@ -207,7 +225,7 @@ export default function Main() {
             id="upload-image"
             type="file"
             accept="image/*"
-            name="lineart"
+            name="upload-image"
           ></input>
         </label>
         <Button
