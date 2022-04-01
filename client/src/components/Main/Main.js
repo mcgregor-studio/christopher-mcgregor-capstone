@@ -156,27 +156,25 @@ export default function Main() {
     let img = new Image();
     img.onload = () => {
       let hRatio = lineart.width / img.width;
-    let vRatio = lineart.height / img.height;
-    let ratio = Math.min(hRatio, vRatio);
-    var centerShift_x = (lineart.width - img.width * ratio) / 2;
-    var centerShift_y = (lineart.height - img.height * ratio) / 2;
-    lineCtx.clearRect(0, 0, lineart.width, lineart.height);
-    lineCtx.drawImage(
-      img,
-      0,
-      0,
-      img.width,
-      img.height,
-      centerShift_x,
-      centerShift_y,
-      img.width * ratio,
-      img.height * ratio
-    );
-    setUploadImage(false);
-    }
+      let vRatio = lineart.height / img.height;
+      let ratio = Math.min(hRatio, vRatio);
+      var centerShift_x = (lineart.width - img.width * ratio) / 2;
+      var centerShift_y = (lineart.height - img.height * ratio) / 2;
+      lineCtx.clearRect(0, 0, lineart.width, lineart.height);
+      lineCtx.drawImage(
+        img,
+        0,
+        0,
+        img.width,
+        img.height,
+        centerShift_x,
+        centerShift_y,
+        img.width * ratio,
+        img.height * ratio
+      );
+      setUploadImage(false);
+    };
     img.src = imageSource;
-
-    
   }
 
   //Save image
@@ -195,7 +193,12 @@ export default function Main() {
   return (
     <section className="homepage">
       <div>
-        <canvas ref={lineartRef} className="homepage__lineart"></canvas>
+        <canvas
+          ref={lineartRef}
+          className="homepage__lineart"
+          width={1000}
+          height={500}
+        ></canvas>
         <canvas
           className="homepage__canvas"
           ref={canvasRef}
