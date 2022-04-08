@@ -210,13 +210,13 @@ export default function Main() {
         <canvas
           ref={saveRef}
           className="homepage__save"
-          width={1000}
+          width={500}
           height={500}
         ></canvas>
         <canvas
           ref={lineartRef}
           className="homepage__lineart"
-          width={1000}
+          width={500}
           height={500}
         ></canvas>
         <canvas
@@ -226,6 +226,8 @@ export default function Main() {
           onMouseUp={endDraw}
           onMouseMove={draw}
           onClick={dot}
+          width={500}
+          height={500}
         ></canvas>
         <PaintTools
           setBrushActive={setBrushActive}
