@@ -250,7 +250,7 @@ export default function Main() {
         </label>
         <a
           ref={linkRef}
-          download="image.png"
+          download="gallerai-image.png"
           href=""
           className="homepage__button--down"
           onClick={handleDownloadImage}
