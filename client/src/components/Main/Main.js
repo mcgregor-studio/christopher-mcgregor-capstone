@@ -1,6 +1,5 @@
 import React, { useRef, useEffect, useState } from "react";
 import PaintTools from "../PaintTools/PaintTools";
-import Button from "../Button/Button";
 import "./Main.scss";
 
 export default function Main() {
@@ -8,6 +7,8 @@ export default function Main() {
   const canvasRef = useRef(null);
   const ctxRef = useRef(null);
   const lineartRef = useRef(null);
+  const saveRef = useRef(null);
+  const linkRef = useRef();
   let [brushActive, setBrushActive] = useState(true);
   let [eraserActive, setEraserActive] = useState(false);
   let [isDrawing, setIsDrawing] = useState(false);
@@ -32,7 +33,7 @@ export default function Main() {
     ctx.eraserWidth = eraserWidth;
     ctx.imageSmoothingEnabled = false;
     ctxRef.current = ctx;
-  }, [strokeStyle, lineWidth, eraserWidth]);
+  }, [strokeStyle, lineWidth, eraserWidth, undoArr]);
 
   //Get mouse location to keep mouse position in canvas on resize
   let mx = 0;
@@ -56,7 +57,7 @@ export default function Main() {
     undoArr.forEach((path) => {
       if (path[0].mode === "draw") {
         ctx.globalCompositeOperation = "source-over";
-        ctx.strokeStyle = path.stroke;
+        ctx.strokeStyle = path[0].stroke;
         ctx.beginPath();
         ctx.moveTo(path[0].x, path[0].y);
         for (let i = 1; i < path.length; i++) {
@@ -88,8 +89,8 @@ export default function Main() {
   const endDraw = (event) => {
     getMouse(event);
     ctxRef.current.closePath();
+    console.log(points, undoArr)
     setUndoArr([...undoArr, points]);
-    console.log(undoArr);
     points = [];
     setIsDrawing(false);
   };
@@ -134,15 +135,27 @@ export default function Main() {
     ctx.stroke();
   };
 
-  //Loading and saving image handlers
+  //Uploading and downloading image handlers
   const handleUploadImage = (event) => {
-    console.log("fired");
     setImageSource(URL.createObjectURL(event.target.files[0]));
     setUploadImage(true);
   };
 
   const handleDownloadImage = () => {
-    setUploadImage(true);
+    const canvas = canvasRef.current;
+    const lineart = lineartRef.current;
+    const saveCanvas = saveRef.current;
+    const saveCanvasCtx = saveCanvas.getContext("2d");
+    const link = linkRef.current;
+
+    saveCanvasCtx.drawImage(canvas, 0, 0);
+    saveCanvasCtx.drawImage(lineart, 0, 0);
+
+    let downloadSource = saveCanvas
+      .toDataURL("image/png")
+    link.href = downloadSource;
+
+    saveCanvasCtx.clearRect(0, 0, saveCanvas.width, saveCanvas.height);
   };
 
   const handleSaveImage = () => {
@@ -177,10 +190,6 @@ export default function Main() {
     img.src = imageSource;
   }
 
-  //Save image
-  if (saveImage) {
-  }
-
   //Clear canvas
   if (clearCanvas) {
     const canvas = canvasRef.current;
@@ -194,6 +203,12 @@ export default function Main() {
     <section className="homepage">
       <div>
         <canvas
+          ref={saveRef}
+          className="homepage__save"
+          width={1000}
+          height={500}
+        ></canvas>
+        <canvas
           ref={lineartRef}
           className="homepage__lineart"
           width={1000}
@@ -206,6 +221,8 @@ export default function Main() {
           onMouseUp={endDraw}
           onMouseMove={draw}
           onClick={dot}
+          width={1000}
+          height={500}
         ></canvas>
         <PaintTools
           setBrushActive={setBrushActive}
@@ -220,7 +237,7 @@ export default function Main() {
       <div>
         <label
           onChange={handleUploadImage}
-          for="upload-image"
+          htmlFor="upload-image"
           className="homepage__button--up"
         >
           Upload Image
@@ -231,16 +248,18 @@ export default function Main() {
             name="upload-image"
           ></input>
         </label>
-        <Button
-          onClick={handleDownloadImage}
+        <a
+          ref={linkRef}
+          download="image.png"
+          href=""
           className="homepage__button--down"
-          text="Download Image"
-        />
-        <Button
-          onClick={handleSaveImage}
-          className="homepage__button--save"
-          text="Save Image To Profile"
-        />
+          onClick={handleDownloadImage}
+        >
+          Download Image
+        </a>
+        <button className="homepage__button--save" onClick={handleSaveImage}>
+          Save Image To Profile
+        </button>
       </div>
     </section>
   );

@@ -9,9 +9,15 @@
     }
     &__lineart {
         width: calc(100% - 2rem);
-        border: 1px solid red;
         position: absolute;
         z-index: 10;
+        pointer-events: none;
+    }
+    &__save {
+        width: calc(100% - 2rem);
+        border: 1px solid blue;
+        position: absolute;
+        z-index: 140;
         pointer-events: none;
     }
 }
