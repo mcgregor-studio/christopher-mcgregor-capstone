@@ -33,7 +33,7 @@ export default function Main() {
     ctx.eraserWidth = eraserWidth;
     ctx.imageSmoothingEnabled = false;
     ctxRef.current = ctx;
-  }, [strokeStyle, lineWidth, eraserWidth]);
+  }, [strokeStyle, lineWidth, eraserWidth, undoArr]);
 
   //Get mouse location to keep mouse position in canvas on resize
   let mx = 0;
@@ -57,7 +57,7 @@ export default function Main() {
     undoArr.forEach((path) => {
       if (path[0].mode === "draw") {
         ctx.globalCompositeOperation = "source-over";
-        ctx.strokeStyle = path.stroke;
+        ctx.strokeStyle = path[0].stroke;
         ctx.beginPath();
         ctx.moveTo(path[0].x, path[0].y);
         for (let i = 1; i < path.length; i++) {
@@ -89,8 +89,8 @@ export default function Main() {
   const endDraw = (event) => {
     getMouse(event);
     ctxRef.current.closePath();
+    console.log(points, undoArr)
     setUndoArr([...undoArr, points]);
-    console.log(undoArr);
     points = [];
     setIsDrawing(false);
   };
@@ -135,7 +135,7 @@ export default function Main() {
     ctx.stroke();
   };
 
-  //Loading and saving image handlers
+  //Uploading and downloading image handlers
   const handleUploadImage = (event) => {
     setImageSource(URL.createObjectURL(event.target.files[0]));
     setUploadImage(true);
@@ -143,23 +143,18 @@ export default function Main() {
 
   const handleDownloadImage = () => {
     const canvas = canvasRef.current;
-    const ctx = canvas.getContext("2d");
     const lineart = lineartRef.current;
-    const lineCtx = lineart.getContext("2d");
     const saveCanvas = saveRef.current;
     const saveCanvasCtx = saveCanvas.getContext("2d");
     const link = linkRef.current;
 
-    let ctxData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    let lineCtxData = lineCtx.getImageData(0,0, lineart.width, lineart.height);
-
-    saveCanvasCtx.drawImage(ctxData, 0, 0);
-    saveCanvasCtx.drawImage(lineCtxData, 0, 0);
+    saveCanvasCtx.drawImage(canvas, 0, 0);
+    saveCanvasCtx.drawImage(lineart, 0, 0);
 
     let downloadSource = saveCanvas
       .toDataURL("image/png")
-      .replace("image/png", "image/octet-stream");
     link.href = downloadSource;
+
     saveCanvasCtx.clearRect(0, 0, saveCanvas.width, saveCanvas.height);
   };
 
@@ -210,13 +205,13 @@ export default function Main() {
         <canvas
           ref={saveRef}
           className="homepage__save"
-          width={500}
+          width={1000}
           height={500}
         ></canvas>
         <canvas
           ref={lineartRef}
           className="homepage__lineart"
-          width={500}
+          width={1000}
           height={500}
         ></canvas>
         <canvas
@@ -226,7 +221,7 @@ export default function Main() {
           onMouseUp={endDraw}
           onMouseMove={draw}
           onClick={dot}
-          width={500}
+          width={1000}
           height={500}
         ></canvas>
         <PaintTools
@@ -255,6 +250,7 @@ export default function Main() {
         </label>
         <a
           ref={linkRef}
+          download="image.png"
           href=""
           className="homepage__button--down"
           onClick={handleDownloadImage}

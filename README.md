@@ -1,4 +1,4 @@
-# Galler.ae
+# Galler.ai
 
 This is the capstone project that I created for the BrainStation web development program.
 
