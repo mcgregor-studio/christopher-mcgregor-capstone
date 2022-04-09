@@ -20,7 +20,7 @@ export default function Main() {
   let [clearCanvas, setClearCanvas] = useState(false);
   let [uploadImage, setUploadImage] = useState(false);
   let [imageSource, setImageSource] = useState("");
-  let [saveImage, setSaveImage] = useState(false);
+// let [saveImage, setSaveImage] = useState(false);
 
   //useEffect hook for canvas and tools
   useEffect(() => {
@@ -52,9 +52,10 @@ export default function Main() {
   if (undo) {
     const canvas = canvasRef.current;
     const ctx = ctxRef.current;
-    setUndoArr(undoArr.splice(-1, 1));
+    let next = undoArr.slice(0, -1);
+    setUndoArr(next);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    undoArr.forEach((path) => {
+    next.forEach((path) => {
       if (path[0].mode === "draw") {
         ctx.globalCompositeOperation = "source-over";
         ctx.strokeStyle = path[0].stroke;
@@ -89,7 +90,6 @@ export default function Main() {
   const endDraw = (event) => {
     getMouse(event);
     ctxRef.current.closePath();
-    console.log(points, undoArr)
     setUndoArr([...undoArr, points]);
     points = [];
     setIsDrawing(false);
@@ -158,9 +158,9 @@ export default function Main() {
     saveCanvasCtx.clearRect(0, 0, saveCanvas.width, saveCanvas.height);
   };
 
-  const handleSaveImage = () => {
+/*   const handleSaveImage = () => {
     setSaveImage(true);
-  };
+  }; */
 
   //Upload image
   if (uploadImage) {
@@ -257,7 +257,7 @@ export default function Main() {
         >
           Download Image
         </a>
-        <button className="homepage__button--save" onClick={handleSaveImage}>
+        <button className="homepage__button--save">
           Save Image To Profile
         </button>
       </div>
