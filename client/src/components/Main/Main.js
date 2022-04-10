@@ -105,7 +105,7 @@ export default function Main() {
     if (brushActive) {
       ctx.globalCompositeOperation = "source-over";
       ctx.strokeStyle = strokeStyle;
-      points.push({ x: mx, y: my, mode: "draw", stroke: ctx.strokeStyle });
+      points.push({ x: mx, y: my, mode: "draw", stroke: ctx.strokeStyle,  });
       ctx.lineTo(mx, my);
       ctx.stroke();
     }

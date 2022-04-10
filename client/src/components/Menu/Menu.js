@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import classNames from "classnames";
+import "./Menu.scss";
 
 export default class Menu extends React.Component {
   state = {
@@ -8,7 +9,7 @@ export default class Menu extends React.Component {
   };
   render() {
     const classes = {
-      modal: "gallerae__modal",
+      modal: "gallerae__modal--background",
       hidden: "hidden",
       display: "display",
     };
@@ -31,7 +32,7 @@ export default class Menu extends React.Component {
     return (
       <div className="gallerae__menu" onClick={toggleModal}>
         <div className={modalClass}>
-          <div>
+          <div className="gallerae__modal">
             <Link className="gallerae__modal--item" to="/home">
               Home
             </Link>

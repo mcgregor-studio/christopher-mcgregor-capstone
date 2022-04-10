@@ -9,9 +9,9 @@ This is the capstone project that I created for the BrainStation web development
  - Clear all tool
  - Upload personal/custom images to colour in
  - Download current image on canvas to computer
+ - Menu modal
 
  ## In Progress
- - Menu modal
  - Fill tool
  - Save image to user profile
  - Create user profile
