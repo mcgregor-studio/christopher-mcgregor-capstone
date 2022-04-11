@@ -12,6 +12,7 @@ This is the capstone project that I created for the BrainStation web development
  - Menu modal
 
  ## In Progress
- - Fill tool
- - Save image to user profile
  - Create user profile
+ - Save image to user profile
+ - Fill tool
+
