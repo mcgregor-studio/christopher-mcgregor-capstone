@@ -10,7 +10,6 @@ require("dotenv").config();
 
 const port = process.env.PORT || 3100;
 const authRoutes = require('./routes/auth');
-const profileRoutes = require("./routes/profile");
 
 //Server test to see what methods are being called at which endpoints
 app.use((req, _, next) => {
@@ -35,7 +34,6 @@ app.use(
   })
 );
 app.use('/auth', authRoutes);
-app.use("/", profileRoutes);
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
