@@ -9,6 +9,7 @@ const cors = require("cors");
 require("dotenv").config();
 
 const port = process.env.PORT || 3100;
+const authRoutes = require('./routes/auth');
 const profileRoutes = require("./routes/profile");
 
 //Server test to see what methods are being called at which endpoints
@@ -33,6 +34,7 @@ app.use(
     credentials: true,
   })
 );
+app.use('/auth', authRoutes);
 app.use("/", profileRoutes);
 
 app.listen(port, () => {
@@ -52,29 +54,44 @@ passport.use(
       passReqToCallback: true,
     },
     function (request, accessToken, refreshToken, profile, done) {
-      User.findOrCreate({ googleId: profile.id }, function (err, user) {
+      /* User.findOrCreate({ googleId: profile.id }, function (err, user) {
         return done(err, user);
-      });
+      }); */
+
+      knex("users")
+        .select("id")
+        .where({ google_id: profile.id })
+        .then((user) => {
+          if (user.length) {
+            done(null, user[0]);
+          } else {
+            knex("users")
+              .insert({
+                google_id: profile.id,
+                username: profile.username,
+              })
+              .then((userId) => {
+                done(null, { id: userId[0] });
+              })
+              .catch((e) => console.error("Error creating a user:", e));
+          }
+        })
+        .catch((e) => console.error("Error fetching a user:", e));
     }
   )
 );
 
 passport.serializeUser((user, done) => {
   console.log("serializeUser (user object):", user);
-  // Store only the user id in session
   done(null, user.id);
 });
 
 passport.deserializeUser((userId, done) => {
   console.log("deserializeUser (user id):", userId);
-  // Query user information from the database for currently authenticated user
   knex("users")
     .where({ id: userId })
     .then((user) => {
-      // Remember that knex will return an array of records, so we need to get a single record from it
       console.log("req.user:", user[0]);
-
-      // The full user object will be attached to request object as `req.user`
       done(null, user[0]);
     })
     .catch((err) => {
