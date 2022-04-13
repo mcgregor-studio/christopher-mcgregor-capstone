@@ -6,12 +6,15 @@ const passport = require("passport");
 require("dotenv").config();
 
 //Authentication GET requests
-router.get("/google", passport.authenticate("google"));
+router.get(
+  "/google",
+  passport.authenticate("google", { scope: ["email", "profile"] })
+);
 
 router.get(
   "/google/callback",
   passport.authenticate("google", {
-    failureRedirect: `${process.env.CLIENT_URL}/auth-fail`,
+    failureRedirect: `${process.env.CLIENT_URL}/google/failure`,
   }),
   (_req, res) => {
     res.redirect(process.env.CLIENT_URL);
@@ -19,7 +22,7 @@ router.get(
 );
 
 //Success callback
-router.get("/success-callback", (req, res) => {
+router.get("/google/success", (req, res) => {
   if (req.user) {
     res.status(200).json(req.user);
   } else {
