@@ -1,37 +1,36 @@
 import React from "react";
-import Link from "../../components/Link/Link";
+import { Link } from "react-router-dom";
 import Signup from "../Signup/Signup";
+import "./Login.scss";
 
 export default function Login() {
+  const SERVER_URL = process.env.GALLERAE_URL;
   return (
     <div className="login">
       <p>This is the login page.</p>
-      <Link
-        link="auth/google"
-        className="button__login google"
-        text="Sign in with Google"
-      />
 
+      <a className="button__login google" href={`${SERVER_URL}/auth/google`}>
+        Sign in with Google
+      </a>
       <h3>Login</h3>
       <form className="login__form">
         <input
+          name="username"
           className="login__form--input"
           type="text"
           placeholder="Username"
         ></input>
         <input
-          className="login__form--input"
-          type="email"
-          placeholder="Email"
-        ></input>
-        <input
+          name="password"
           className="login__form--input"
           type="password"
           placeholder="Password"
         ></input>
         <input type="submit" value="Login"></input>
       </form>
-      <Link link={Signup} className="button__signup" text="Sign up" />
+      <Link to="/signup" className="button__signup">
+        Sign Up
+      </Link>
     </div>
   );
 }

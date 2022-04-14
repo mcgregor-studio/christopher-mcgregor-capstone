@@ -1,4 +1,10 @@
 import React from "react";
+import pencil from "../../data/pencil.svg";
+import fill from "../../data/fill.svg";
+import bomb from "../../data/bomb.svg";
+import eraser from "../../data/eraser.svg";
+import stamp from "../../data/stamp.svg";
+import undo from "../../data/undo.svg";
 import "./PaintTools.scss";
 
 export default function PaintTools(props) {
@@ -6,53 +12,60 @@ export default function PaintTools(props) {
   return (
     <div className="homepage__paint-tools">
       <h2>Tools:</h2>
-      <h4
-        className="homepage__paint-tools--label"
-        onClick={() => {
-          props.setBrushActive(true);
-          props.setEraserActive(false);
-        }}
-      >
-        Brush Size
-      </h4>
-      <input
-        type="range"
-        min="1"
-        max="25"
-        onChange={(event) => {
-          props.setLineWidth(event.target.value);
-        }}
-      ></input>
-      <h4 className="homepage__paint-tools--label">Fill</h4>
-      <h4 className="homepage__paint-tools--label">Stamp</h4>
-      <h4 className="homepage__paint-tools--label"
-      onClick={() => {
-        props.setEraserActive(true);
-        props.setBrushActive(false);
-      }}>Eraser</h4>
-      <input
-        type="range"
-        min="1"
-        max="25"
-        onChange={(event) => {
-          props.setEraserWidth(event.target.value);
-        }}
-      ></input>
-      <h4 className="homepage__paint-tools--label">Colours</h4>
-      <input
-        className="homepage__paint-tools--color"
-        type="color"
-        onChange={(event) => {
-          props.setStrokeStyle(event.target.value);
-        }}
-      ></input>
-      <h4 className="homepage__paint-tools--label" onClick={() => props.setUndo(true)}>Undo</h4>
-      <h4
-        className="homepage__paint-tools--label"
-        onClick={() => props.setClearCanvas(true)}
-      >
-        Clear All
-      </h4>
+      <div>
+        <img
+          className="homepage__paint-tools--icon"
+          onClick={() => {
+            props.setBrushActive(true);
+            props.setEraserActive(false);
+          }}
+          src={pencil}
+        />
+        <input
+          type="range"
+          min="1"
+          max="25"
+          onChange={(event) => {
+            props.setLineWidth(event.target.value);
+          }}
+        ></input>
+        <input
+          className="homepage__paint-tools--color"
+          type="color"
+          onChange={(event) => {
+            props.setStrokeStyle(event.target.value);
+          }}
+        ></input>
+        <img className="homepage__paint-tools--icon" src={fill} />
+        <img className="homepage__paint-tools--icon" src={stamp} />
+        <img
+          className="homepage__paint-tools--icon"
+          onClick={() => {
+            props.setEraserActive(true);
+            props.setBrushActive(false);
+          }}
+          src={eraser}
+        />
+        <input
+          type="range"
+          min="1"
+          max="25"
+          onChange={(event) => {
+            props.setEraserWidth(event.target.value);
+          }}
+        ></input>
+        
+        <img
+          className="homepage__paint-tools--icon"
+          src={undo}
+          onClick={() => props.setUndo(true)}
+        />
+        <img
+          className="homepage__paint-tools--icon"
+          onClick={() => props.setClearCanvas(true)}
+          src={bomb}
+        />
+      </div>
     </div>
   );
 }

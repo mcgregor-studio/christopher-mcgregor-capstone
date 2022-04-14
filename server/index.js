@@ -1,6 +1,7 @@
 const express = require("express");
 const expressSession = require("express-session");
 const helmet = require("helmet");
+const jwt = require("jsonwebtoken");
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth2").Strategy;
 const knex = require("knex")(require("./knexfile.js").development);
@@ -9,7 +10,7 @@ const cors = require("cors");
 require("dotenv").config();
 
 const port = process.env.PORT || 3100;
-const authRoutes = require('./routes/auth');
+const authRoutes = require("./routes/auth");
 
 //Server test to see what methods are being called at which endpoints
 app.use((req, _, next) => {
@@ -33,10 +34,15 @@ app.use(
     credentials: true,
   })
 );
-app.use('/auth', authRoutes);
+app.use("/auth", authRoutes);
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
+});
+
+//Login configuration
+app.post("/login", (req, res) => {
+  let username = req.body.username;
 });
 
 //Passport configuration
@@ -48,7 +54,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "http://yourdomain:3000/auth/google/callback",
+      callbackURL: process.env.GOOGLE_CALLBACK_URL,
       passReqToCallback: true,
     },
     function (request, accessToken, refreshToken, profile, done) {
@@ -66,7 +72,8 @@ passport.use(
             knex("users")
               .insert({
                 google_id: profile.id,
-                username: profile.username,
+                username: profile.displayName,
+                email: profile.email
               })
               .then((userId) => {
                 done(null, { id: userId[0] });

@@ -6,8 +6,9 @@ exports.up = function (knex) {
   return knex.schema
     .createTable("users", (table) => {
       table.increments("id").primary();
-      table.integer("google_id").notNullable();
+      table.bigInteger("google_id").notNullable();
       table.string("username").notNullable();
+      table.string("email").notNullable();
       table.timestamp("updated_at").defaultTo(knex.fn.now());
     })
     .createTable("drawings", (table) => {
