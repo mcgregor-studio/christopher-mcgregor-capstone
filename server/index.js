@@ -1,7 +1,6 @@
 const express = require("express");
 const expressSession = require("express-session");
 const helmet = require("helmet");
-const jwt = require("jsonwebtoken");
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth2").Strategy;
 const knex = require("knex")(require("./knexfile.js").development);
@@ -38,11 +37,6 @@ app.use("/auth", authRoutes);
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
-});
-
-//Login configuration
-app.post("/login", (req, res) => {
-  let username = req.body.username;
 });
 
 //Passport configuration

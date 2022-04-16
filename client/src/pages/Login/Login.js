@@ -5,6 +5,10 @@ import "./Login.scss";
 
 export default function Login() {
   const SERVER_URL = process.env.GALLERAE_URL;
+
+  const handleLogin = (e) => {
+    
+  }
   return (
     <div className="login">
       <p>This is the login page.</p>
@@ -13,7 +17,7 @@ export default function Login() {
         Sign in with Google
       </a>
       <h3>Login</h3>
-      <form className="login__form">
+      <form className="login__form" onSubmit={handleLogin}>
         <input
           name="username"
           className="login__form--input"
