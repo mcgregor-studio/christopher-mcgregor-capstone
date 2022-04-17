@@ -13,6 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "@vscode/sqlite3": "^5.0.8",
+    "bcrypt": "^5.0.1",
     "casual": "^1.6.2",
     "cors": "^2.8.5",
     "dotenv": "^16.0.0",

@@ -1,5 +1,7 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
+const saltRounds = 10;
 const knex = require("knex")(require("../knexfile.js").development);
 const router = express.Router();
 const passport = require("passport");
@@ -37,7 +39,7 @@ router.get(
   passport.authenticate("google", {
     failureRedirect: `${process.env.CLIENT_URL}/google/failure`,
   }),
-  (_req, res) => {
+  (_, res) => {
     res.redirect(process.env.CLIENT_URL);
   }
 );
@@ -54,19 +56,18 @@ router.get("/google/success", (req, res) => {
 
 //Login POST request
 router.post("/login", (req, res) => {
-  const { usernameEmail, password } = req.body;
+  const { email, password } = req.body;
   knex("users")
-  .where({ username: usernameEmail } || {email: usernameEmail})
+    .where({ email: email })
     .select()
     .then((user) => {
       if (user && user.password === password) {
         const token = jwt.sign(
           {
-            name: user.name,
+            email: user.email,
           },
           secretKey
         );
-
         return res.json({ token });
       }
     })
@@ -74,18 +75,18 @@ router.post("/login", (req, res) => {
 });
 
 //Signup POST request
-router.post('/signup', (req, res) => {
-  const { username, name, password } = req.body;
+router.post("/signup", (req, res) => {
+  const { username, email, password } = req.body;
   users[username] = {
-    name,
+    email,
     password, // NOTE: Passwords should NEVER be stored in the clear like this. Use a
     // library like bcrypt to Hash the password. For demo purposes only.
   };
-  res.json({ success: 'true' });
+  res.json({ success: "true" });
 });
 
 //User profile GET request
-router.get("/profile", (req, res) => {
+router.get("/profile", authorize, (req, res) => {
   if (req.user === undefined)
     return res.status(401).json({ message: "Unauthorized" });
   res.status(200).json(req.user);
