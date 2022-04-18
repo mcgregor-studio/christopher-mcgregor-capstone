@@ -9,7 +9,7 @@ require("dotenv").config();
 
 const secretKey = process.env.SESSION_SECRET;
 
-//Authorization middleware for login
+//Authorization middleware for viewing profile
 const authorize = (req, res, next) => {
   let auth = req.headers.authorization;
   if (!auth) {
@@ -58,10 +58,10 @@ router.get("/google/success", (req, res) => {
 router.post("/login", (req, res) => {
   const { email, password } = req.body;
   knex("users")
-    .where({ email: email })
-    .select()
+    .where("email", email)
+    .first()
     .then((user) => {
-      if (user && user.password === password) {
+      if (user && bcrypt.compareSync(password, user.password)) {
         const token = jwt.sign(
           {
             email: user.email,
@@ -89,7 +89,6 @@ router.post("/signup", (req, res) => {
       res.json({ success: "true" });
     })
     .catch((e) => console.error("Error creating a user:", e));
-
 });
 
 //User profile GET request
