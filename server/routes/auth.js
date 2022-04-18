@@ -77,12 +77,19 @@ router.post("/login", (req, res) => {
 //Signup POST request
 router.post("/signup", (req, res) => {
   const { username, email, password } = req.body;
-  users[username] = {
-    email,
-    password, // NOTE: Passwords should NEVER be stored in the clear like this. Use a
-    // library like bcrypt to Hash the password. For demo purposes only.
-  };
-  res.json({ success: "true" });
+  const hashPass = bcrypt.hashSync(password, saltRounds);
+  knex("users")
+    .insert({
+      username: username,
+      google_id: "null",
+      email: email,
+      password: hashPass,
+    })
+    .then(() => {
+      res.json({ success: "true" });
+    })
+    .catch((e) => console.error("Error creating a user:", e));
+
 });
 
 //User profile GET request
