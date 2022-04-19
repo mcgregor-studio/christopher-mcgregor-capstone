@@ -1,14 +1,11 @@
 import React from "react";
 import "./Signup.scss";
 
-export default function Signup() {
-  const handleSignup = (e) => {
-
-  }
+export default function Signup(props) {
 
   return (
-    <div className="signup">
-      <form className="signup__form" onSubmit={handleSignup}>
+    <div className={props.className}>
+      <form className="signup__form" onSubmit={props.handleSignup}>
         <input
           name="username"
           className="signup__form--input"

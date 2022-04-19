@@ -12,18 +12,21 @@ const secretKey = process.env.SESSION_SECRET;
 //Authorization middleware for viewing profile
 const authorize = (req, res, next) => {
   let auth = req.headers.authorization;
+  console.log(req.headers)
   if (!auth) {
     return res.status(401).json({ message: "No user" });
   }
 
   let tokenArr = auth.split(" ");
   let token = tokenArr[1];
+  console.log(token)
 
   jwt.verify(token, secretKey, (err, decoded) => {
     if (err) {
       return res.status(401).json({ message: "No user" });
     }
     req.decoded = decoded;
+    console.log(decoded)
     next();
   });
 };
@@ -93,9 +96,10 @@ router.post("/signup", (req, res) => {
 
 //User profile GET request
 router.get("/profile", authorize, (req, res) => {
-  if (req.user === undefined)
+  console.log(req)
+  /* if (req.user === undefined)
     return res.status(401).json({ message: "Unauthorized" });
-  res.status(200).json(req.user);
+  res.status(200).json(req.user); */
 });
 
 //Logout GET request
