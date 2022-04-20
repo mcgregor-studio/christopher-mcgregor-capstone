@@ -84,6 +84,14 @@ router.post("/signup", (req, res) => {
         return;
       }
     })
+    .where("username", username)
+    .first()
+    .then((res) => {
+      if (res) {
+        res.json({ success: "false" });
+        return;
+      }
+    })
     .insert({
       username: username,
       google_id: "null",
@@ -112,7 +120,6 @@ router.get("/profile", authorize, (req, res) => {
     res.status(200).json(profileInfo);
   })
   .catch((e) => console.error("Error finding a profile:", e));
-  
 });
 
 //Logout GET request
