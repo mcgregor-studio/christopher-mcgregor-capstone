@@ -3,6 +3,7 @@
 This is the capstone project that I created for the BrainStation web development program.
 
  ## Features
+ - Create user profile
  - Brush tool with colour picker and resize functionality
  - Eraser tool with resize functionality
  - Undo tool 
@@ -12,7 +13,7 @@ This is the capstone project that I created for the BrainStation web development
  - Menu modal
 
  ## In Progress
- - Create user profile
  - Save image to user profile
- - Fill tool
+ - Stamp tool
+ - Cycle through images to colour
 

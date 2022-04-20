@@ -11,18 +11,25 @@ export default class Profile extends React.Component {
   componentDidMount() {
     const SERVER_URL = process.env.GALLERAE_URL;
     axios
-      .get(`http://localhost:3100/auth/profile`)
+      .get(`http://localhost:3100/auth/profile`, {
+        headers: {
+          authorization: sessionStorage.getItem("token")
+        }
+      })
       .then((res) => {
-          console.log(res)
-       /*  this.setState({ username: res.username }); */
+       this.setState({ username: res.data.username, email: res.data.email }); 
       })
       .catch((e) => console.error(e));
   }
 
   render() {
+
+    let { username, email} = this.state;
+
     return (
       <div className="profile">
-        <h1>Welcome, {this.username}!</h1>
+        <h1>Welcome, {username}!</h1>
+        <p>{email}</p>
       </div>
     );
   }

@@ -33,8 +33,8 @@ export default class Menu extends React.Component {
       <div className="gallerae__menu" onClick={toggleModal}>
         <div className={modalClass}>
           <div className="gallerae__modal">
-            <Link className="gallerae__modal--item" to="/home">
-              Home
+            <Link className="gallerae__modal--item" to="/paint">
+              Paint
             </Link>
             <Link className="gallerae__modal--item" to="/profile">
               Profile

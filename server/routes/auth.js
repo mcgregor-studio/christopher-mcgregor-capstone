@@ -11,22 +11,16 @@ const secretKey = process.env.SESSION_SECRET;
 
 //Authorization middleware for viewing profile
 const authorize = (req, res, next) => {
-  let auth = req.headers.authorization;
-  console.log(req.headers)
-  if (!auth) {
+  let token = req.headers.authorization;
+  if (!token) {
     return res.status(401).json({ message: "No user" });
   }
-
-  let tokenArr = auth.split(" ");
-  let token = tokenArr[1];
-  console.log(token)
 
   jwt.verify(token, secretKey, (err, decoded) => {
     if (err) {
       return res.status(401).json({ message: "No user" });
     }
     req.decoded = decoded;
-    console.log(decoded)
     next();
   });
 };
@@ -82,6 +76,14 @@ router.post("/signup", (req, res) => {
   const { username, email, password } = req.body;
   const hashPass = bcrypt.hashSync(password, saltRounds);
   knex("users")
+    .where("email", email)
+    .first()
+    .then((res) => {
+      if (res) {
+        res.json({ success: "false" });
+        return;
+      }
+    })
     .insert({
       username: username,
       google_id: "null",
@@ -96,10 +98,21 @@ router.post("/signup", (req, res) => {
 
 //User profile GET request
 router.get("/profile", authorize, (req, res) => {
-  console.log(req)
-  /* if (req.user === undefined)
+  if (req.decoded === undefined) {
     return res.status(401).json({ message: "Unauthorized" });
-  res.status(200).json(req.user); */
+  }
+  knex("users")
+  .where("email", req.decoded.email)
+  .first()
+  .then((data) => {
+    const profileInfo = {
+      username: data.username,
+      email: data.email,
+    }
+    res.status(200).json(profileInfo);
+  })
+  .catch((e) => console.error("Error finding a profile:", e));
+  
 });
 
 //Logout GET request
