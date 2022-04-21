@@ -139,12 +139,12 @@ router.get("/profile", authorize, (req, res) => {
         username: data.username,
         email: data.email,
       };
-    })
-    .then(
+      console.log(data.user_id);
       knex("drawings")
         .where("user_id", userId)
         .select()
         .then((data) => {
+          console.log(userId)
           profileInfo.drawings = data.map((drawing) => {
             return {
               thumbnail: drawing.thumbnail,
@@ -154,7 +154,7 @@ router.get("/profile", authorize, (req, res) => {
           });
           res.json(profileInfo);
         })
-    )
+    })
     .catch((e) => console.error("Error finding a profile:", e));
 });
 

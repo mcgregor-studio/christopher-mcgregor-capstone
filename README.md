@@ -10,10 +10,11 @@ This is the capstone project that I created for the BrainStation web development
  - Clear all tool
  - Upload personal/custom images to colour in
  - Download current image on canvas to computer
+ - Save image to user profile
  - Menu modal
 
  ## In Progress
- - Save image to user profile
+ - Load saved image from profile to canvas
  - Stamp tool
  - Cycle through images to colour
 
