@@ -1,5 +1,5 @@
 import React from "react";
-import { Redirect } from 'react-router-dom';
+import { Redirect } from "react-router-dom";
 import axios from "axios";
 import classNames from "classnames";
 import Login from "../../components/Login/Login";
@@ -65,16 +65,18 @@ export default class LoginSignup extends React.Component {
     const handleSignup = (e) => {
       e.preventDefault();
       axios
-        .post(`${SERVER_URL}/auth/signup`, {
+        .post(`http://localhost:3100/auth/signup`, {
           username: e.target.username.value,
           email: e.target.email.value,
           password: e.target.password.value,
         })
         .then((res) => {
-          sessionStorage.setItem("token", res.data.token);
-          this.setState({
-            isLoggedIn: true,
-          });
+          if (res.data.success === "true") {
+            sessionStorage.setItem("token", res.data.token);
+            this.setState({
+              isLoggedIn: true,
+            });
+          }
         })
         .catch((e) => console.error(e));
     };

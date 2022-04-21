@@ -14,7 +14,7 @@
         position: relative;
         top: 25%;
         margin: auto;
-        z-index: 10;
+        z-index: 1600;
         &--background {
             position: absolute;
             background-color: rgba(50,50,50, 0.5);
@@ -22,7 +22,7 @@
             height: 100%;
             top: 0;
             left: 0;
-            z-index: 5;
+            z-index: 1500;
         }
         &--item {
             margin-top: 1rem;

@@ -1,4 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
+import { Redirect } from "react-router-dom";
+import axios from "axios";
+import { v4 as uuidv4 } from "uuid";
 import PaintTools from "../PaintTools/PaintTools";
 import "./Main.scss";
 
@@ -13,14 +16,14 @@ export default function Main() {
   let [eraserActive, setEraserActive] = useState(false);
   let [isDrawing, setIsDrawing] = useState(false);
   let [strokeStyle, setStrokeStyle] = useState("black");
-  let [lineWidth, setLineWidth] = useState(3);
-  let [eraserWidth, setEraserWidth] = useState(3);
+  let [lineWidth, setLineWidth] = useState(10);
+  let [eraserWidth, setEraserWidth] = useState(10);
   let [undo, setUndo] = useState(false);
   let [undoArr, setUndoArr] = useState([]);
   let [clearCanvas, setClearCanvas] = useState(false);
   let [uploadImage, setUploadImage] = useState(false);
   let [imageSource, setImageSource] = useState("");
-// let [saveImage, setSaveImage] = useState(false);
+  let [drawingId, setDrawingId] = useState(uuidv4);
 
   //useEffect hook for canvas and tools
   useEffect(() => {
@@ -59,8 +62,10 @@ export default function Main() {
       if (path[0].mode === "draw") {
         ctx.globalCompositeOperation = "source-over";
         ctx.strokeStyle = path[0].stroke;
+        ctx.lineWidth = path[0].width;
         ctx.beginPath();
         ctx.moveTo(path[0].x, path[0].y);
+        ctx.lineTo(path[0].x, path[0].y);
         for (let i = 1; i < path.length; i++) {
           ctx.lineTo(path[i].x, path[i].y);
         }
@@ -69,6 +74,7 @@ export default function Main() {
       if (path[0].mode === "erase") {
         ctx.globalCompositeOperation = "destination-out";
         ctx.strokeStyle = "rgba(255,255,255,1)";
+        ctx.eraserWidth = path[0].width;
         for (let i = 1; i < path.length; i++) {
           ctx.lineTo(path[i].x, path[i].y);
         }
@@ -82,7 +88,16 @@ export default function Main() {
   const startDraw = (event) => {
     getMouse(event);
     ctxRef.current.beginPath();
+    points.push({
+      x: mx,
+      y: my,
+      mode: "draw",
+      stroke: ctxRef.current.strokeStyle,
+      width: ctxRef.current.lineWidth,
+    });
     ctxRef.current.moveTo(mx, my);
+    ctxRef.current.lineTo(mx, my);
+    ctxRef.current.stroke();
     setIsDrawing(true);
   };
 
@@ -92,6 +107,7 @@ export default function Main() {
     ctxRef.current.closePath();
     setUndoArr([...undoArr, points]);
     points = [];
+    console.log(undoArr)
     setIsDrawing(false);
   };
 
@@ -105,12 +121,18 @@ export default function Main() {
     if (brushActive) {
       ctx.globalCompositeOperation = "source-over";
       ctx.strokeStyle = strokeStyle;
-      points.push({ x: mx, y: my, mode: "draw", stroke: ctx.strokeStyle,  });
+      points.push({
+        x: mx,
+        y: my,
+        mode: "draw",
+        stroke: ctx.strokeStyle,
+        width: ctx.lineWidth,
+      });
       ctx.lineTo(mx, my);
       ctx.stroke();
     }
     if (eraserActive) {
-      points.push({ x: mx, y: my, mode: "erase" });
+      points.push({ x: mx, y: my, mode: "erase", width: ctx.eraserWidth });
       ctx.globalCompositeOperation = "destination-out";
       ctx.strokeStyle = "rgba(255,255,255,1)";
       ctx.lineTo(mx, my);
@@ -118,7 +140,7 @@ export default function Main() {
     }
   };
 
-  const dot = (event) => {
+/*   const dot = (event) => {
     getMouse(event);
     const ctx = ctxRef.current;
     if (brushActive) {
@@ -133,7 +155,7 @@ export default function Main() {
     ctx.moveTo(mx, my);
     ctx.lineTo(mx, my);
     ctx.stroke();
-  };
+  }; */
 
   //Uploading and downloading image handlers
   const handleUploadImage = (event) => {
@@ -151,16 +173,53 @@ export default function Main() {
     saveCanvasCtx.drawImage(canvas, 0, 0);
     saveCanvasCtx.drawImage(lineart, 0, 0);
 
-    let downloadSource = saveCanvas
-      .toDataURL("image/png")
+    let downloadSource = saveCanvas.toDataURL("image/png");
     link.href = downloadSource;
 
     saveCanvasCtx.clearRect(0, 0, saveCanvas.width, saveCanvas.height);
   };
 
-/*   const handleSaveImage = () => {
-    setSaveImage(true);
-  }; */
+  const handleSaveImage = () => {
+    if (!sessionStorage.getItem("token")) {
+      <Redirect to="/" />;
+    }
+    let formData = new FormData();
+    const canvas = canvasRef.current;
+    const lineart = lineartRef.current;
+    const saveCanvas = saveRef.current;
+    const saveCanvasCtx = saveCanvas.getContext("2d");
+
+    saveCanvasCtx.drawImage(canvas, 0, 0);
+    saveCanvasCtx.drawImage(lineart, 0, 0);
+    let canvasBlob = new Blob([canvas.toDataURL("image/png")], {
+      type: "image/png",
+      lastModified: new Date(),
+    });
+    let lineBlob = new Blob([lineart.toDataURL("image/png")], {
+      type: "image/png",
+      lastModified: new Date(),
+    });
+    let saveBlob = new Blob([saveCanvas.toDataURL("image/png")], {
+      type: "image/png",
+      lastModified: new Date(),
+    });
+
+    formData.append("thumbnail", saveBlob);
+    formData.append("colours", canvasBlob);
+    formData.append("lineart", lineBlob);
+
+    axios
+      .put("http://localhost:3100/auth/profile", formData, {
+        headers: {
+          authorization: sessionStorage.getItem("token"),
+          drawingId: drawingId
+        },
+      })
+      .then(() => {
+        saveCanvasCtx.clearRect(0, 0, saveCanvas.width, saveCanvas.height);
+      })
+      .catch((e) => console.error(e));
+  };
 
   //Upload image
   if (uploadImage) {
@@ -220,11 +279,12 @@ export default function Main() {
           onMouseDown={startDraw}
           onMouseUp={endDraw}
           onMouseMove={draw}
-          onClick={dot}
           width={1000}
           height={500}
         ></canvas>
         <PaintTools
+          lineWidth={lineWidth}
+          eraserWidth={eraserWidth}
           setBrushActive={setBrushActive}
           setEraserActive={setEraserActive}
           setLineWidth={setLineWidth}
@@ -257,7 +317,7 @@ export default function Main() {
         >
           Download Image
         </a>
-        <button className="homepage__button--save">
+        <button className="homepage__button--save" onClick={handleSaveImage}>
           Save Image To Profile
         </button>
       </div>

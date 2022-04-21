@@ -25,6 +25,7 @@ export default function PaintTools(props) {
           type="range"
           min="1"
           max="25"
+          value={props.lineWidth}
           onChange={(event) => {
             props.setLineWidth(event.target.value);
           }}
@@ -50,6 +51,7 @@ export default function PaintTools(props) {
           type="range"
           min="1"
           max="25"
+          value={props.eraserWidth}
           onChange={(event) => {
             props.setEraserWidth(event.target.value);
           }}

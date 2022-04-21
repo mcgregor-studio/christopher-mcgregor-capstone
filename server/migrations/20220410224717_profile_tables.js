@@ -13,7 +13,7 @@ exports.up = function (knex) {
       table.timestamp("updated_at").defaultTo(knex.fn.now());
     })
     .createTable("drawings", (table) => {
-      table.increments("id").primary();
+      table.string("id").primary();
       table.integer("user_id").unsigned().notNullable();
       table.string("thumbnail").notNullable();
       table.string("lineart").notNullable();

@@ -1,5 +1,5 @@
-import './App.scss';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import "./App.scss";
+import { BrowserRouter, Route, Switch } from "react-router-dom";
 import Header from "./components/Header/Header";
 import Paint from "../src/pages/Paint/Paint";
 import LoginSignup from "./pages/LoginSignup/LoginSignup";
@@ -9,13 +9,12 @@ import AboutContact from "../src/pages/AboutContact/AboutContact";
 export default function App() {
   return (
     <main className="App">
-      
       <BrowserRouter>
-      <Header />
+        <Header />
         <Switch>
           <Route path="/" exact component={LoginSignup} />
           <Route path="/profile" exact component={Profile} />
-          <Route path="/paint" component={Paint}/>
+          <Route path="/paint" component={Paint} />
           <Route path="/about" component={AboutContact} />
           <Route path="/contact" component={AboutContact} />
         </Switch>
