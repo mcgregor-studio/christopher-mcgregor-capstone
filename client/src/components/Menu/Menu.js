@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import classNames from "classnames";
+import { v4 as uuidv4 } from "uuid";
 import "./Menu.scss";
 
 export default class Menu extends React.Component {
@@ -13,6 +14,8 @@ export default class Menu extends React.Component {
       hidden: "hidden",
       display: "display",
     };
+
+    let drawingId = uuidv4();
 
     let modalClass = classNames(classes.modal, classes.hidden);
 
@@ -33,7 +36,10 @@ export default class Menu extends React.Component {
       <div className="gallerae__menu" onClick={toggleModal}>
         <div className={modalClass}>
           <div className="gallerae__modal">
-            <Link className="gallerae__modal--item" to="/paint">
+            <Link
+              className="gallerae__modal--item"
+              to={{ pathname: "/paint", state: { drawingId: drawingId} }}
+            >
               Paint
             </Link>
             <Link className="gallerae__modal--item" to="/profile">

@@ -227,6 +227,13 @@ export default function Main(props) {
         },
       })
       .then((res) => {
+        if (res.status === 205) {
+          setClearCanvas(true);
+          const lineart = lineartRef.current;
+          const lineCtx = lineart.getContext("2d");
+          lineCtx.clearRect(0, 0, lineart.width, lineart.height);
+          return;
+        }
         setSavedImage(res.data.colours);
         redrawImage(lineartRef, res.data.lineart);
         redrawImage(canvasRef, res.data.colours);
@@ -256,7 +263,7 @@ export default function Main(props) {
     const canvas = canvasRef.current;
     const ctx = ctxRef.current;
     if (savedImage) {
-      redrawImage(canvasRef, savedImage)
+      redrawImage(canvasRef, savedImage);
     }
     let next = undoArr.slice(0, -1);
     setUndoArr(next);

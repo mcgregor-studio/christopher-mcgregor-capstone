@@ -150,7 +150,7 @@ router.get("/profile", authorize, (req, res) => {
               thumbnail: drawing.thumbnail,
             };
           });
-          res.json(profileInfo);
+          res.status(200).json(profileInfo);
         });
     })
     .catch((e) => console.error("Error finding a profile:", e));
@@ -166,10 +166,13 @@ router.get("/profile/:drawingId", authorize, (req, res) => {
     .where("id", req.decoded.drawingId)
     .select()
     .then((data) => {
+      if (!data[0]) {
+        return res.status(205).json({message: "Reset canvas"})
+      }
       drawingInfo.id = data[0].id;
       drawingInfo.lineart = data[0].lineart;
       drawingInfo.colours = data[0].colours;
-      res.json(drawingInfo);
+      res.status(200).json(drawingInfo);
     })
     .catch((e) => console.error("Error finding a profile:", e));
 });
