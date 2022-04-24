@@ -11,8 +11,10 @@ const port = process.env.PORT || 3100;
 const authRoutes = require("./routes/auth");
 
 //Server test to see what methods are being called at which endpoints
-app.use((req, _, next) => {
+//Header added to allow images to be written to the canvas without tainting it
+app.use((req, res, next) => {
   console.log(`${req.method}: ${req.url}`);
+  res.header("Access-Control-Allow-Origin", "http://localhost:3000")
   next();
 });
 
@@ -30,7 +32,7 @@ app.use(
   cors({
     origin: true,
     credentials: true,
-    exposedHeaders: "access-control-allow-origin"
+    exposedHeaders: "Access-Control-Allow-Origin"
     })
 );
 app.use("/auth", authRoutes);

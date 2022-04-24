@@ -22,6 +22,7 @@ export default function Main(props) {
   let [undoArr, setUndoArr] = useState([]);
   let [clearCanvas, setClearCanvas] = useState(false);
   let [uploadImage, setUploadImage] = useState(false);
+  let [savedImage, setSavedImage] = useState("");
   let [imageSource, setImageSource] = useState("");
   let [drawingId, setDrawingId] = useState(uuidv4);
 
@@ -56,7 +57,7 @@ export default function Main(props) {
     const redraw = ref.current;
     const rdCtx = redraw.getContext("2d");
     let img = new Image();
-    img.crossOrigin = "use-credentials";
+    img.crossOrigin = "anonymous";
     img.onload = () => {
       let hRatio = redraw.width / img.width;
       let vRatio = redraw.height / img.height;
@@ -226,10 +227,11 @@ export default function Main(props) {
         },
       })
       .then((res) => {
-        console.log(res)
+        setSavedImage(res.data.colours);
         redrawImage(lineartRef, res.data.lineart);
         redrawImage(canvasRef, res.data.colours);
-      });
+      })
+      .catch((e) => console.error(e));
   }
 
   //Upload image
@@ -244,6 +246,7 @@ export default function Main(props) {
     const ctx = ctxRef.current;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     setUndoArr([]);
+    setSavedImage("");
     setClearCanvas(false);
   }
 
@@ -252,6 +255,9 @@ export default function Main(props) {
   if (undo) {
     const canvas = canvasRef.current;
     const ctx = ctxRef.current;
+    if (savedImage) {
+      redrawImage(canvasRef, savedImage)
+    }
     let next = undoArr.slice(0, -1);
     setUndoArr(next);
     ctx.clearRect(0, 0, canvas.width, canvas.height);

@@ -20,7 +20,6 @@ export default class Profile extends React.Component {
         },
       })
       .then((res) => {
-        console.log(res)
         this.setState({
           username: res.data.username,
           email: res.data.email,

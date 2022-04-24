@@ -15,7 +15,7 @@ export default function App() {
         <Switch>
           <Route path="/" exact component={LoginSignup} />
           <Route path="/profile" exact component={Profile} />
-          <Route path="/paint" component={Paint} />
+          <Route exact path="/paint" component={Paint} />
           <Route path="/paint/:drawingId" component={Paint} />
           <Route path="/about" component={AboutContact} />
           <Route path="/contact" component={AboutContact} />
