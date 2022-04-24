@@ -18,6 +18,7 @@ export default function PaintTools(props) {
           onClick={() => {
             props.setBrushActive(true);
             props.setEraserActive(false);
+            props.setFillActive(false);
           }}
           src={pencil}
           alt="pencil"
@@ -38,13 +39,18 @@ export default function PaintTools(props) {
             props.setStrokeStyle(event.target.value);
           }}
         ></input>
-        <img className="homepage__paint-tools--icon" src={fill} alt="paint bucket"/>
+        <img className="homepage__paint-tools--icon" onClick={() => {
+            props.setEraserActive(false);
+            props.setBrushActive(false);
+            props.setFillActive(true);
+          }}src={fill} alt="paint bucket"/>
         <img className="homepage__paint-tools--icon" src={stamp} alt="stamp" />
         <img
           className="homepage__paint-tools--icon"
           onClick={() => {
             props.setEraserActive(true);
             props.setBrushActive(false);
+            props.setFillActive(false);
           }}
           src={eraser}
           alt="eraser"
