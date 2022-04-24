@@ -1,3 +1,4 @@
+const cors = require("cors");
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
@@ -134,26 +135,41 @@ router.get("/profile", authorize, (req, res) => {
     .where("email", req.decoded.email)
     .first()
     .then((data) => {
-      userId = data.user_id;
+      userId = data.id;
       profileInfo = {
         username: data.username,
         email: data.email,
       };
-      console.log(data.user_id);
       knex("drawings")
         .where("user_id", userId)
         .select()
         .then((data) => {
-          console.log(userId)
           profileInfo.drawings = data.map((drawing) => {
             return {
+              id: drawing.id,
               thumbnail: drawing.thumbnail,
-              colours: drawing.colours,
-              lineart: drawing.lineart,
             };
           });
           res.json(profileInfo);
-        })
+        });
+    })
+    .catch((e) => console.error("Error finding a profile:", e));
+});
+
+//User profile drawing GET request
+router.get("/profile/:drawingId", authorize, (req, res) => {
+  if (req.decoded === undefined) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+  let drawingInfo = {};
+  knex("drawings")
+    .where("id", req.decoded.drawingId)
+    .select()
+    .then((data) => {
+      drawingInfo.id = data[0].id;
+      drawingInfo.lineart = data[0].lineart;
+      drawingInfo.colours = data[0].colours;
+      res.json(drawingInfo);
     })
     .catch((e) => console.error("Error finding a profile:", e));
 });
@@ -171,6 +187,7 @@ router.put(
     if (req.decoded === undefined) {
       return res.status(401).json({ message: "Unauthorized" });
     }
+
     let userId = "";
     knex("users")
       .where("email", req.decoded.email)
@@ -180,15 +197,14 @@ router.put(
         knex("drawings")
           .where("id", req.decoded.drawingId)
           .then((result) => {
-            if (result) {
+            if (!result[0]) {
               knex("drawings")
-                .where("id", req.decoded.drawingId)
-                .update({
+                .insert({
                   user_id: userId,
                   id: req.decoded.drawingId,
-                  thumbnail: `${process.env.GALLERAI_URL}/public/images/${req.files.thumbnail[0].filename}`,
-                  colours: `${process.env.GALLERAI_URL}/public/images/${req.files.colours[0].filename}`,
-                  lineart: `${process.env.GALLERAI_URL}/public/images/${req.files.lineart[0].filename}`,
+                  thumbnail: `${process.env.GALLERAI_URL}/images/${req.files.thumbnail[0].filename}`,
+                  colours: `${process.env.GALLERAI_URL}/images/${req.files.colours[0].filename}`,
+                  lineart: `${process.env.GALLERAI_URL}/images/${req.files.lineart[0].filename}`,
                 })
                 .then(() => {
                   res.status(200).json({ saveSuccess: "true" });
@@ -196,13 +212,15 @@ router.put(
                 .catch((e) => console.error("Error saving a drawing:", e));
               return;
             }
+
             knex("drawings")
-              .insert({
+              .where("id", req.decoded.drawingId)
+              .update({
                 user_id: userId,
                 id: req.decoded.drawingId,
-                thumbnail: `${process.env.GALLERAI_URL}/public/images/${req.files.thumbnail[0].filename}`,
-                colours: `${process.env.GALLERAI_URL}/public/images/${req.files.colours[0].filename}`,
-                lineart: `${process.env.GALLERAI_URL}/public/images/${req.files.lineart[0].filename}`,
+                thumbnail: `${process.env.GALLERAI_URL}/images/${req.files.thumbnail[0].filename}`,
+                colours: `${process.env.GALLERAI_URL}/images/${req.files.colours[0].filename}`,
+                lineart: `${process.env.GALLERAI_URL}/images/${req.files.lineart[0].filename}`,
               })
               .then(() => {
                 res.status(200).json({ saveSuccess: "true" });

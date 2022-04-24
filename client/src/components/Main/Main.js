@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import PaintTools from "../PaintTools/PaintTools";
 import "./Main.scss";
 
-export default function Main() {
+export default function Main(props) {
   //Setting initial state and references for canvas
   const canvasRef = useRef(null);
   const ctxRef = useRef(null);
@@ -38,6 +38,8 @@ export default function Main() {
     ctxRef.current = ctx;
   }, [strokeStyle, lineWidth, eraserWidth, undoArr]);
 
+  // ============= Functions ================= //
+
   //Get mouse location to keep mouse position in canvas on resize
   let mx = 0;
   let my = 0;
@@ -49,55 +51,59 @@ export default function Main() {
     mx = (event.clientX - rect.left) * scaleX;
     my = (event.clientY - rect.top) * scaleY;
   };
-
-  //Undo if statement
-  let points = [];
-  if (undo) {
-    const canvas = canvasRef.current;
-    const ctx = ctxRef.current;
-    let next = undoArr.slice(0, -1);
-    setUndoArr(next);
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    next.forEach((path) => {
-      if (path[0].mode === "draw") {
-        ctx.globalCompositeOperation = "source-over";
-        ctx.strokeStyle = path[0].stroke;
-        ctx.lineWidth = path[0].width;
-        ctx.beginPath();
-        ctx.moveTo(path[0].x, path[0].y);
-        ctx.lineTo(path[0].x, path[0].y);
-        for (let i = 1; i < path.length; i++) {
-          ctx.lineTo(path[i].x, path[i].y);
-        }
-        ctx.stroke();
-      }
-      if (path[0].mode === "erase") {
-        ctx.globalCompositeOperation = "destination-out";
-        ctx.strokeStyle = "rgba(255,255,255,1)";
-        ctx.eraserWidth = path[0].width;
-        for (let i = 1; i < path.length; i++) {
-          ctx.lineTo(path[i].x, path[i].y);
-        }
-        ctx.stroke();
-      }
-    });
-    setUndo(false);
-  }
+  //Redraw image
+  const redrawImage = (ref, source) => {
+    const redraw = ref.current;
+    const rdCtx = redraw.getContext("2d");
+    let img = new Image();
+    img.crossOrigin = "use-credentials";
+    img.onload = () => {
+      let hRatio = redraw.width / img.width;
+      let vRatio = redraw.height / img.height;
+      let ratio = Math.min(hRatio, vRatio);
+      var centerShift_x = (redraw.width - img.width * ratio) / 2;
+      var centerShift_y = (redraw.height - img.height * ratio) / 2;
+      rdCtx.clearRect(0, 0, redraw.width, redraw.height);
+      rdCtx.drawImage(
+        img,
+        0,
+        0,
+        img.width,
+        img.height,
+        centerShift_x,
+        centerShift_y,
+        img.width * ratio,
+        img.height * ratio
+      );
+    };
+    img.src = source;
+  };
 
   //Start drawing function
   const startDraw = (event) => {
+    const ctx = ctxRef.current;
     getMouse(event);
-    ctxRef.current.beginPath();
-    points.push({
-      x: mx,
-      y: my,
-      mode: "draw",
-      stroke: ctxRef.current.strokeStyle,
-      width: ctxRef.current.lineWidth,
-    });
-    ctxRef.current.moveTo(mx, my);
-    ctxRef.current.lineTo(mx, my);
-    ctxRef.current.stroke();
+    ctx.beginPath();
+    if (brushActive) {
+      points.push({
+        x: mx,
+        y: my,
+        mode: "draw",
+        stroke: ctx.strokeStyle,
+        width: ctx.lineWidth,
+      });
+      ctx.globalCompositeOperation = "source-over";
+      ctx.strokeStyle = strokeStyle;
+    }
+    if (eraserActive) {
+      points.push({ x: mx, y: my, mode: "erase", width: ctx.eraserWidth });
+      ctx.globalCompositeOperation = "destination-out";
+      ctx.strokeStyle = "rgba(255,255,255,1)";
+    }
+
+    ctx.moveTo(mx, my);
+    ctx.lineTo(mx, my);
+    ctx.stroke();
     setIsDrawing(true);
   };
 
@@ -107,7 +113,7 @@ export default function Main() {
     ctxRef.current.closePath();
     setUndoArr([...undoArr, points]);
     points = [];
-    console.log(undoArr)
+    console.log(undoArr);
     setIsDrawing(false);
   };
 
@@ -140,24 +146,7 @@ export default function Main() {
     }
   };
 
-/*   const dot = (event) => {
-    getMouse(event);
-    const ctx = ctxRef.current;
-    if (brushActive) {
-      ctx.globalCompositeOperation = "source-over";
-      ctx.strokeStyle = strokeStyle;
-    }
-    if (eraserActive) {
-      ctx.globalCompositeOperation = "destination-out";
-      ctx.strokeStyle = "rgba(255,255,255,1)";
-    }
-    ctx.beginPath();
-    ctx.moveTo(mx, my);
-    ctx.lineTo(mx, my);
-    ctx.stroke();
-  }; */
-
-  //Uploading and downloading image handlers
+  //Upload, download, and save image to profile handlers
   const handleUploadImage = (event) => {
     setImageSource(URL.createObjectURL(event.target.files[0]));
     setUploadImage(true);
@@ -183,7 +172,7 @@ export default function Main() {
     if (!sessionStorage.getItem("token")) {
       <Redirect to="/" />;
     }
-    let formData = new FormData();
+
     const canvas = canvasRef.current;
     const lineart = lineartRef.current;
     const saveCanvas = saveRef.current;
@@ -191,62 +180,62 @@ export default function Main() {
 
     saveCanvasCtx.drawImage(canvas, 0, 0);
     saveCanvasCtx.drawImage(lineart, 0, 0);
-    let canvasBlob = new Blob([canvas.toDataURL("image/png")], {
-      type: "image/png",
-      lastModified: new Date(),
-    });
-    let lineBlob = new Blob([lineart.toDataURL("image/png")], {
-      type: "image/png",
-      lastModified: new Date(),
-    });
-    let saveBlob = new Blob([saveCanvas.toDataURL("image/png")], {
-      type: "image/png",
-      lastModified: new Date(),
-    });
+    let canvasFile, lineFile, saveFile;
+    canvas.toBlob(function (blob) {
+      canvasFile = new File([blob], "colours.png", { type: "image/png" });
+    }, "image/png");
+    lineart.toBlob(function (blob) {
+      lineFile = new File([blob], "lineart.png", { type: "image/png" });
+      console.log("in function", lineFile);
+    }, "image/png");
+    saveCanvas.toBlob(function (blob) {
+      saveFile = new File([blob], "thumbnail.png", { type: "image/png" });
+    }, "image/png");
 
-    formData.append("thumbnail", saveBlob);
-    formData.append("colours", canvasBlob);
-    formData.append("lineart", lineBlob);
+    let formData = new FormData();
 
+    setTimeout(function () {
+      formData.append("colours", canvasFile);
+      formData.append("lineart", lineFile);
+      formData.append("thumbnail", saveFile);
+
+      axios
+        .put("http://localhost:3100/auth/profile", formData, {
+          headers: {
+            authorization: sessionStorage.getItem("token"),
+            drawingId: drawingId,
+          },
+        })
+        .then(() => {
+          saveCanvasCtx.clearRect(0, 0, saveCanvas.width, saveCanvas.height);
+        })
+        .catch((e) => console.error(e));
+    }, 3000);
+  };
+
+  // ============= If statements ================= //
+
+  //Drawing loaded from profile
+  if (props.drawingId && drawingId !== props.drawingId) {
+    setDrawingId(props.drawingId);
     axios
-      .put("http://localhost:3100/auth/profile", formData, {
+      .get(`http://localhost:3100/auth/profile/${props.drawingId}`, {
         headers: {
           authorization: sessionStorage.getItem("token"),
-          drawingId: drawingId
+          drawingId: props.drawingId,
         },
       })
-      .then(() => {
-        saveCanvasCtx.clearRect(0, 0, saveCanvas.width, saveCanvas.height);
-      })
-      .catch((e) => console.error(e));
-  };
+      .then((res) => {
+        console.log(res)
+        redrawImage(lineartRef, res.data.lineart);
+        redrawImage(canvasRef, res.data.colours);
+      });
+  }
 
   //Upload image
   if (uploadImage) {
-    const lineart = lineartRef.current;
-    const lineCtx = lineart.getContext("2d");
-    let img = new Image();
-    img.onload = () => {
-      let hRatio = lineart.width / img.width;
-      let vRatio = lineart.height / img.height;
-      let ratio = Math.min(hRatio, vRatio);
-      var centerShift_x = (lineart.width - img.width * ratio) / 2;
-      var centerShift_y = (lineart.height - img.height * ratio) / 2;
-      lineCtx.clearRect(0, 0, lineart.width, lineart.height);
-      lineCtx.drawImage(
-        img,
-        0,
-        0,
-        img.width,
-        img.height,
-        centerShift_x,
-        centerShift_y,
-        img.width * ratio,
-        img.height * ratio
-      );
-      setUploadImage(false);
-    };
-    img.src = imageSource;
+    redrawImage(lineartRef, imageSource);
+    setUploadImage(false);
   }
 
   //Clear canvas
@@ -256,6 +245,40 @@ export default function Main() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     setUndoArr([]);
     setClearCanvas(false);
+  }
+
+  //Undo
+  let points = [];
+  if (undo) {
+    const canvas = canvasRef.current;
+    const ctx = ctxRef.current;
+    let next = undoArr.slice(0, -1);
+    setUndoArr(next);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    next.forEach((path) => {
+      if (path[0].mode === "draw") {
+        ctx.globalCompositeOperation = "source-over";
+        ctx.strokeStyle = path[0].stroke;
+        ctx.lineWidth = path[0].width;
+        ctx.beginPath();
+        ctx.moveTo(path[0].x, path[0].y);
+        ctx.lineTo(path[0].x, path[0].y);
+        for (let i = 1; i < path.length; i++) {
+          ctx.lineTo(path[i].x, path[i].y);
+        }
+        ctx.stroke();
+      }
+      if (path[0].mode === "erase") {
+        ctx.globalCompositeOperation = "destination-out";
+        ctx.strokeStyle = "rgba(255,255,255,1)";
+        ctx.eraserWidth = path[0].width;
+        for (let i = 1; i < path.length; i++) {
+          ctx.lineTo(path[i].x, path[i].y);
+        }
+        ctx.stroke();
+      }
+    });
+    setUndo(false);
   }
 
   return (

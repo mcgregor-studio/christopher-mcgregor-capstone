@@ -10,7 +10,6 @@ export default class LoginSignup extends React.Component {
   state = {
     isLoggedIn: false,
     displayLogin: true,
-    displaySignup: false,
   };
 
   render() {
@@ -28,7 +27,7 @@ export default class LoginSignup extends React.Component {
     let signupClass = classNames(classes.signup, classes.hidden);
     let buttonLoginClass = classNames(classes.buttonLogin, classes.hidden);
     let buttonSignupClass = classNames(classes.buttonSignup, classes.display);
-    let { displayLogin, displaySignup, isLoggedIn } = this.state;
+    let { displayLogin, isLoggedIn } = this.state;
 
     //Toggle modal on click function
     const toggleView = () => {

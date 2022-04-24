@@ -1,6 +1,5 @@
 const express = require("express");
 const expressSession = require("express-session");
-const helmet = require("helmet");
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth2").Strategy;
 const knex = require("knex")(require("./knexfile.js").development);
@@ -18,7 +17,7 @@ app.use((req, _, next) => {
 });
 
 //Node libraries to ensure pages load properly
-app.use(express.json({limit: "50mb"}));
+app.use(express.json({ limit: "250mb" }));
 app.use(express.static("public"));
 app.use(
   expressSession({
@@ -31,7 +30,8 @@ app.use(
   cors({
     origin: true,
     credentials: true,
-  })
+    exposedHeaders: "access-control-allow-origin"
+    })
 );
 app.use("/auth", authRoutes);
 
@@ -67,7 +67,7 @@ passport.use(
               .insert({
                 google_id: profile.id,
                 username: profile.displayName,
-                email: profile.email
+                email: profile.email,
               })
               .then((userId) => {
                 done(null, { id: userId[0] });

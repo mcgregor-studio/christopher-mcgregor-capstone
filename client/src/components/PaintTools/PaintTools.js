@@ -20,6 +20,7 @@ export default function PaintTools(props) {
             props.setEraserActive(false);
           }}
           src={pencil}
+          alt="pencil"
         />
         <input
           type="range"
@@ -37,8 +38,8 @@ export default function PaintTools(props) {
             props.setStrokeStyle(event.target.value);
           }}
         ></input>
-        <img className="homepage__paint-tools--icon" src={fill} />
-        <img className="homepage__paint-tools--icon" src={stamp} />
+        <img className="homepage__paint-tools--icon" src={fill} alt="paint bucket"/>
+        <img className="homepage__paint-tools--icon" src={stamp} alt="stamp" />
         <img
           className="homepage__paint-tools--icon"
           onClick={() => {
@@ -46,6 +47,7 @@ export default function PaintTools(props) {
             props.setBrushActive(false);
           }}
           src={eraser}
+          alt="eraser"
         />
         <input
           type="range"
@@ -61,11 +63,13 @@ export default function PaintTools(props) {
           className="homepage__paint-tools--icon"
           src={undo}
           onClick={() => props.setUndo(true)}
+          alt="arrow pointing to left"
         />
         <img
           className="homepage__paint-tools--icon"
           onClick={() => props.setClearCanvas(true)}
           src={bomb}
+          alt="bomb"
         />
       </div>
     </div>
