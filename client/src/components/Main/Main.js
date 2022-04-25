@@ -14,9 +14,9 @@ export default function Main(props) {
   const linkRef = useRef();
   let [brushActive, setBrushActive] = useState(true);
   let [eraserActive, setEraserActive] = useState(false);
-  let [fillActive, setFillActive] = useState(false)
+  let [fillActive, setFillActive] = useState(false);
   let [isDrawing, setIsDrawing] = useState(false);
-  let [strokeStyle, setStrokeStyle] = useState("black");
+  let [strokeStyle, setStrokeStyle] = useState("#000000");
   let [lineWidth, setLineWidth] = useState(10);
   let [eraserWidth, setEraserWidth] = useState(10);
   let [undo, setUndo] = useState(false);
@@ -45,6 +45,7 @@ export default function Main(props) {
   //Get mouse location to keep mouse position in canvas on resize
   let mx = 0;
   let my = 0;
+
   const getMouse = (event) => {
     const canvas = canvasRef.current;
     const rect = canvas.getBoundingClientRect();
@@ -82,42 +83,32 @@ export default function Main(props) {
     img.src = source;
   };
 
-  const findColour = (r, g, b, a) => {
-    return (r + g + b < 100 && a === 255);
-  }
+  //Colour helper
+  const testColour = (r, g, b, a) => {
+    return r + g + b < 100 && a === 255;
+  };
 
-  const matchColour = (pixelPos, startR, startG, startB) => {
-
-    let r = outlineLayerData.data[pixelPos],
-      g = outlineLayerData.data[pixelPos + 1],
-      b = outlineLayerData.data[pixelPos + 2],
-      a = outlineLayerData.data[pixelPos + 3];
-
-    if (findColour(r, g, b, a)) {
-      return false;
-    }
-
-    r = colorLayerData.data[pixelPos];
-    g = colorLayerData.data[pixelPos + 1];
-    b = colorLayerData.data[pixelPos + 2];
-
-    // If the current pixel matches the clicked color
-    if (r === startR && g === startG && b === startB) {
-      return true;
-    }
-
-    // If current pixel matches the new color
-    if (r === curColor.r && g === curColor.g && b === curColor.b) {
-      return false;
-    }
-
-    // Return the difference in current color and start color within a tolerance
-    return (Math.abs(r - startR) + Math.abs(g - startG) + Math.abs(b - startB) < 255);
-  }
+  const hexToRGB = (hex) => {
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result
+      ? {
+          r: parseInt(result[1], 16),
+          g: parseInt(result[2], 16),
+          b: parseInt(result[3], 16),
+        }
+      : null;
+  };
 
   //Start drawing
   const startDraw = (event) => {
+    if (fillActive) {
+      return;
+    }
+    const canvas = canvasRef.current;
     const ctx = ctxRef.current;
+    let ctxData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    let mPos = (Math.round(my) * canvas.width + Math.round(mx)) * 4;
+
     getMouse(event);
     ctx.beginPath();
     if (brushActive) {
@@ -149,7 +140,6 @@ export default function Main(props) {
     ctxRef.current.closePath();
     setUndoArr([...undoArr, points]);
     points = [];
-    console.log(undoArr);
     setIsDrawing(false);
   };
 
@@ -159,7 +149,11 @@ export default function Main(props) {
       return;
     }
     const ctx = ctxRef.current;
+    const canvas = canvasRef.current;
+    let ctxData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    let mPos = (Math.round(my) * canvas.width + Math.round(mx)) * 4;
     getMouse(event);
+
     if (brushActive) {
       ctx.globalCompositeOperation = "source-over";
       ctx.strokeStyle = strokeStyle;
@@ -183,34 +177,60 @@ export default function Main(props) {
   };
 
   //Fill
-  const fill = (event) => {
+  const floodFill = (event) => {
     if (!fillActive) {
       return;
     }
     getMouse(event);
     const canvas = canvasRef.current;
-    const ctx = canvas.getContext("2d")
-    let pixelStack = [[mx, my]];
+    const ctx = canvas.getContext("2d");
+    let colourData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    points.push({mode: "fill", x: mx, y: my, stroke: strokeStyle})
+
+   let hexR = hexToRGB(strokeStyle).r;
+   let hexG = hexToRGB(strokeStyle).g;
+   let hexB = hexToRGB(strokeStyle).b;
+
+    const findColour = (pixelPos) => {
+      let r = colourData.data[pixelPos],
+        g = colourData.data[pixelPos + 1],
+        b = colourData.data[pixelPos + 2],
+        a = colourData.data[pixelPos + 3];
+  
+      if (testColour(r, g, b, a)) {
+        return false;
+      }
+      return r !== hexR || g !== hexG || b !== hexB;
+    };
+
+    const colourPixel = (pixelPos, r, g, b) => {
+      colourData.data[pixelPos] = r;
+      colourData.data[pixelPos + 1] = g;
+      colourData.data[pixelPos + 2] = b;
+      colourData.data[pixelPos + 3] = 255; 
+    };
+
+    let pixelStack = [[Math.round(mx), Math.round(my)]];
 
     while (pixelStack.length) {
-      let newPos, x, y, pixelPos, reachLeft, reachRight;
+      var newPos, x, y, pixelPos, reachLeft, reachRight;
       newPos = pixelStack.pop();
       x = newPos[0];
       y = newPos[1];
 
       pixelPos = (y * canvas.width + x) * 4;
-      while (y-- >= drawingBoundTop && matchStartColor(pixelPos)) {
+      while (y-- >= 0 && findColour(pixelPos)) {
         pixelPos -= canvas.width * 4;
       }
       pixelPos += canvas.width * 4;
       ++y;
       reachLeft = false;
       reachRight = false;
-      while (y++ < canvas.height - 1 && matchStartColor(pixelPos)) {
-        colorPixel(pixelPos);
+      while (y++ < canvas.height - 1 && findColour(pixelPos)) {
+        colourPixel(pixelPos, hexR, hexG, hexB);
 
         if (x > 0) {
-          if (matchStartColor(pixelPos - 4)) {
+          if (findColour(pixelPos - 4)) {
             if (!reachLeft) {
               pixelStack.push([x - 1, y]);
               reachLeft = true;
@@ -221,7 +241,7 @@ export default function Main(props) {
         }
 
         if (x < canvas.width - 1) {
-          if (matchStartColor(pixelPos + 4)) {
+          if (findColour(pixelPos + 4)) {
             if (!reachRight) {
               pixelStack.push([x + 1, y]);
               reachRight = true;
@@ -234,23 +254,8 @@ export default function Main(props) {
         pixelPos += canvas.width * 4;
       }
     }
-    ctx.putImageData(colorLayer, 0, 0);
-
-    const matchStartColor = (pixelPos) => {
-      let r = colorLayer.data[pixelPos];
-      let g = colorLayer.data[pixelPos + 1];
-      let b = colorLayer.data[pixelPos + 2];
-
-      return r == startR && g == startG && b == startB;
-    }
-     const colorPixel = (pixelPos) => {
-      colorLayer.data[pixelPos] = fillColorR;
-      colorLayer.data[pixelPos + 1] = fillColorG;
-      colorLayer.data[pixelPos + 2] = fillColorB;
-      colorLayer.data[pixelPos + 3] = 255;
-    }
+    ctx.putImageData(colourData, 0, 0);
   };
-
   //Upload, download, and save image to profile handlers
   const handleUploadImage = (event) => {
     setImageSource(URL.createObjectURL(event.target.files[0]));
@@ -291,7 +296,6 @@ export default function Main(props) {
     }, "image/png");
     lineart.toBlob(function (blob) {
       lineFile = new File([blob], "lineart.png", { type: "image/png" });
-      console.log("in function", lineFile);
     }, "image/png");
     saveCanvas.toBlob(function (blob) {
       saveFile = new File([blob], "thumbnail.png", { type: "image/png" });
@@ -370,6 +374,7 @@ export default function Main(props) {
       redrawImage(canvasRef, savedImage);
     }
     let next = undoArr.slice(0, -1);
+    next = next.filter((elem) => elem.length > 0);
     setUndoArr(next);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     next.forEach((path) => {
@@ -418,8 +423,9 @@ export default function Main(props) {
           ref={canvasRef}
           onMouseDown={startDraw}
           onMouseUp={endDraw}
+          onMouseLeave={endDraw}
           onMouseMove={draw}
-          onClick={fill}
+          onClick={floodFill}
           width={1000}
           height={500}
         ></canvas>
