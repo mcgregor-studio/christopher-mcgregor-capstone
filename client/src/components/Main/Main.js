@@ -83,7 +83,7 @@ export default function Main(props) {
     img.src = source;
   };
 
-  //Colour helper
+  //Colour helpers
   const testColour = (r, g, b, a) => {
     return r + g + b < 100 && a === 255;
   };
@@ -104,12 +104,9 @@ export default function Main(props) {
     if (fillActive) {
       return;
     }
-    const canvas = canvasRef.current;
-    const ctx = ctxRef.current;
-    let ctxData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    let mPos = (Math.round(my) * canvas.width + Math.round(mx)) * 4;
-
     getMouse(event);
+    const ctx = ctxRef.current;
+
     ctx.beginPath();
     if (brushActive) {
       points.push({
@@ -149,11 +146,7 @@ export default function Main(props) {
       return;
     }
     const ctx = ctxRef.current;
-    const canvas = canvasRef.current;
-    let ctxData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    let mPos = (Math.round(my) * canvas.width + Math.round(mx)) * 4;
     getMouse(event);
-
     if (brushActive) {
       ctx.globalCompositeOperation = "source-over";
       ctx.strokeStyle = strokeStyle;
@@ -177,60 +170,84 @@ export default function Main(props) {
   };
 
   //Fill
-  const floodFill = (event) => {
-    if (!fillActive) {
-      return;
-    }
+  const fillStart = (event) => {
     getMouse(event);
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
     let colourData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    points.push({mode: "fill", x: mx, y: my, stroke: strokeStyle})
 
-   let hexR = hexToRGB(strokeStyle).r;
-   let hexG = hexToRGB(strokeStyle).g;
-   let hexB = hexToRGB(strokeStyle).b;
+    let startPos = (Math.round(my) * canvas.width + mx) * 4;
+    let startR = colourData.data[startPos],
+    startG = colourData.data[startPos + 1],
+    startB = colourData.data[startPos + 2]
 
-    const findColour = (pixelPos) => {
-      let r = colourData.data[pixelPos],
-        g = colourData.data[pixelPos + 1],
-        b = colourData.data[pixelPos + 2],
-        a = colourData.data[pixelPos + 3];
-  
-      if (testColour(r, g, b, a)) {
+  const floodFill = (startX, startY, r, g, b) => {
+    if (!fillActive) {
+      return;
+    }
+    
+    const lineart = lineartRef.current;
+    const lineCtx = lineart.getContext("2d");
+    let lineData = lineCtx.getImageData(0, 0, lineart.width, lineart.height);
+    points.push({ mode: "fill", x: mx, y: my, stroke: strokeStyle });
+
+    let hexR = hexToRGB(strokeStyle).r;
+    let hexG = hexToRGB(strokeStyle).g;
+    let hexB = hexToRGB(strokeStyle).b;
+
+    const matchColour = (pixelPos, sR, sG, sB) => {
+      let lR = lineData.data[pixelPos],
+        lG = lineData.data[pixelPos + 1],
+        lB = lineData.data[pixelPos + 2],
+        lA = lineData.data[pixelPos + 3];
+
+      if (testColour(lR, lG, lB, lA)) {
         return false;
       }
-      return r !== hexR || g !== hexG || b !== hexB;
+      lR = colourData.data[pixelPos];
+      lG = colourData.data[pixelPos + 1];
+      lB = colourData.data[pixelPos + 2];
+
+      if (lR === sR && lG === sG && lB === sB) {
+        return true;
+      }
+
+      if (lR === hexR && lG === hexG && lB === hexB) {
+        return false;
+      }
+      return true;
     };
 
-    const colourPixel = (pixelPos, r, g, b) => {
-      colourData.data[pixelPos] = r;
-      colourData.data[pixelPos + 1] = g;
-      colourData.data[pixelPos + 2] = b;
-      colourData.data[pixelPos + 3] = 255; 
+    const colourPixel = (pixelPos, newR, newG, newB) => {
+      colourData.data[pixelPos] = newR;
+      colourData.data[pixelPos + 1] = newG;
+      colourData.data[pixelPos + 2] = newB;
+      colourData.data[pixelPos + 3] = 255;
     };
 
-    let pixelStack = [[Math.round(mx), Math.round(my)]];
+    let pixelStack = [[Math.round(startX), Math.round(startY)]];
 
     while (pixelStack.length) {
-      var newPos, x, y, pixelPos, reachLeft, reachRight;
+      let newPos, x, y, pixelPos, reachLeft, reachRight;
       newPos = pixelStack.pop();
       x = newPos[0];
       y = newPos[1];
-
       pixelPos = (y * canvas.width + x) * 4;
-      while (y-- >= 0 && findColour(pixelPos)) {
+      while (y-- >= 0 && matchColour(pixelPos, r, g, b)) {
         pixelPos -= canvas.width * 4;
       }
       pixelPos += canvas.width * 4;
       ++y;
       reachLeft = false;
       reachRight = false;
-      while (y++ < canvas.height - 1 && findColour(pixelPos)) {
+      while (
+        y++ < canvas.height - 1 &&
+        matchColour(pixelPos, r, g, b)
+      ) {
         colourPixel(pixelPos, hexR, hexG, hexB);
 
         if (x > 0) {
-          if (findColour(pixelPos - 4)) {
+          if (matchColour(pixelPos - 4, r, g, b)) {
             if (!reachLeft) {
               pixelStack.push([x - 1, y]);
               reachLeft = true;
@@ -241,7 +258,7 @@ export default function Main(props) {
         }
 
         if (x < canvas.width - 1) {
-          if (findColour(pixelPos + 4)) {
+          if (matchColour(pixelPos + 4, r, g, b)) {
             if (!reachRight) {
               pixelStack.push([x + 1, y]);
               reachRight = true;
@@ -256,6 +273,10 @@ export default function Main(props) {
     }
     ctx.putImageData(colourData, 0, 0);
   };
+
+  floodFill(mx, my, startR, startG, startB)
+  };
+
   //Upload, download, and save image to profile handlers
   const handleUploadImage = (event) => {
     setImageSource(URL.createObjectURL(event.target.files[0]));
@@ -405,18 +426,18 @@ export default function Main(props) {
 
   return (
     <section className="homepage">
-      <div>
+      <div className="homepage__container">
         <canvas
           ref={saveRef}
           className="homepage__save"
-          width={1000}
-          height={500}
+          width={600}
+          height={600}
         ></canvas>
         <canvas
           ref={lineartRef}
           className="homepage__lineart"
-          width={1000}
-          height={500}
+          width={600}
+          height={600}
         ></canvas>
         <canvas
           className="homepage__canvas"
@@ -425,10 +446,12 @@ export default function Main(props) {
           onMouseUp={endDraw}
           onMouseLeave={endDraw}
           onMouseMove={draw}
-          onClick={floodFill}
-          width={1000}
-          height={500}
+          onClick={fillStart}
+          width={600}
+          height={600}
         ></canvas>
+      </div>
+      <div className="homepage__tools">
         <PaintTools
           lineWidth={lineWidth}
           eraserWidth={eraserWidth}
@@ -441,8 +464,6 @@ export default function Main(props) {
           setClearCanvas={setClearCanvas}
           setUndo={setUndo}
         />
-      </div>
-      <div>
         <label
           onChange={handleUploadImage}
           htmlFor="upload-image"
