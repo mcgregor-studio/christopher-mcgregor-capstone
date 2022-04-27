@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState } from "react";
 import { Redirect } from "react-router-dom";
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
+import className from "classnames";
 import PaintTools from "../PaintTools/PaintTools";
 import "./Main.scss";
 
@@ -15,6 +16,7 @@ export default function Main(props) {
   let [brushActive, setBrushActive] = useState(true);
   let [eraserActive, setEraserActive] = useState(false);
   let [fillActive, setFillActive] = useState(false);
+  let [stampActive, setStampActive] = useState(false);
   let [isDrawing, setIsDrawing] = useState(false);
   let [strokeStyle, setStrokeStyle] = useState("#000000");
   let [lineWidth, setLineWidth] = useState(10);
@@ -40,11 +42,24 @@ export default function Main(props) {
     ctxRef.current = ctx;
   }, [strokeStyle, lineWidth, eraserWidth, undoArr]);
 
+  // Variables
+  const classes = {
+    icon: "homepage__paint-tools--icon",
+    active: "active",
+  };
+  let mx = 0;
+  let my = 0;
+
+  let clearClass = className(classes.icon);
+  let pencilClass = className(classes.icon);
+  let eraserClass = className(classes.icon);
+  let fillClass = className(classes.icon);
+  let stampClass = className(classes.icon);
+  let undoClass = className(classes.icon);
+
   // ============= Functions ================= //
 
   //Get mouse location to keep mouse position in canvas on resize
-  let mx = 0;
-  let my = 0;
 
   const getMouse = (event) => {
     const canvas = canvasRef.current;
@@ -85,7 +100,7 @@ export default function Main(props) {
 
   //Colour helpers
   const testColour = (r, g, b, a) => {
-    return r + g + b < 100 && a === 255;
+    return r + g + b < 100 && a > 155;
   };
 
   const hexToRGB = (hex) => {
@@ -170,111 +185,120 @@ export default function Main(props) {
   };
 
   //Fill
-  const fillStart = (event) => {
+  const fillStart = (event, stroke) => {
+    points.push({
+      mode: "fill",
+      clientX: event.clientX,
+      clientY: event.clientY,
+      stroke: stroke,
+    });
     getMouse(event);
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
     let colourData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
-    let startPos = (Math.round(my) * canvas.width + mx) * 4;
+    let startPos = (Math.round(my) * canvas.width + Math.round(mx)) * 4;
     let startR = colourData.data[startPos],
-    startG = colourData.data[startPos + 1],
-    startB = colourData.data[startPos + 2]
+      startG = colourData.data[startPos + 1],
+      startB = colourData.data[startPos + 2];
 
-  const floodFill = (startX, startY, r, g, b) => {
-    if (!fillActive) {
-      return;
-    }
-    
-    const lineart = lineartRef.current;
-    const lineCtx = lineart.getContext("2d");
-    let lineData = lineCtx.getImageData(0, 0, lineart.width, lineart.height);
-    points.push({ mode: "fill", x: mx, y: my, stroke: strokeStyle });
+      let hexR = hexToRGB(stroke).r;
+      let hexG = hexToRGB(stroke).g;
+      let hexB = hexToRGB(stroke).b;
 
-    let hexR = hexToRGB(strokeStyle).r;
-    let hexG = hexToRGB(strokeStyle).g;
-    let hexB = hexToRGB(strokeStyle).b;
+      if (startR === hexR && startG === hexG && startB === hexB) {
+				return;
+			}
 
-    const matchColour = (pixelPos, sR, sG, sB) => {
-      let lR = lineData.data[pixelPos],
-        lG = lineData.data[pixelPos + 1],
-        lB = lineData.data[pixelPos + 2],
-        lA = lineData.data[pixelPos + 3];
-
-      if (testColour(lR, lG, lB, lA)) {
-        return false;
-      }
-      lR = colourData.data[pixelPos];
-      lG = colourData.data[pixelPos + 1];
-      lB = colourData.data[pixelPos + 2];
-
-      if (lR === sR && lG === sG && lB === sB) {
-        return true;
+    const floodFill = (startX, startY, r, g, b) => {
+      if (!fillActive) {
+        return;
       }
 
-      if (lR === hexR && lG === hexG && lB === hexB) {
-        return false;
-      }
-      return true;
-    };
+      const lineart = lineartRef.current;
+      const lineCtx = lineart.getContext("2d");
+      let lineData = lineCtx.getImageData(0, 0, lineart.width, lineart.height);
 
-    const colourPixel = (pixelPos, newR, newG, newB) => {
-      colourData.data[pixelPos] = newR;
-      colourData.data[pixelPos + 1] = newG;
-      colourData.data[pixelPos + 2] = newB;
-      colourData.data[pixelPos + 3] = 255;
-    };
 
-    let pixelStack = [[Math.round(startX), Math.round(startY)]];
+      
 
-    while (pixelStack.length) {
-      let newPos, x, y, pixelPos, reachLeft, reachRight;
-      newPos = pixelStack.pop();
-      x = newPos[0];
-      y = newPos[1];
-      pixelPos = (y * canvas.width + x) * 4;
-      while (y-- >= 0 && matchColour(pixelPos, r, g, b)) {
-        pixelPos -= canvas.width * 4;
-      }
-      pixelPos += canvas.width * 4;
-      ++y;
-      reachLeft = false;
-      reachRight = false;
-      while (
-        y++ < canvas.height - 1 &&
-        matchColour(pixelPos, r, g, b)
-      ) {
-        colourPixel(pixelPos, hexR, hexG, hexB);
-
-        if (x > 0) {
-          if (matchColour(pixelPos - 4, r, g, b)) {
-            if (!reachLeft) {
-              pixelStack.push([x - 1, y]);
-              reachLeft = true;
-            }
-          } else if (reachLeft) {
-            reachLeft = false;
-          }
+      const matchColour = (pixelPos, sR, sG, sB) => {
+        let lR = lineData.data[pixelPos],
+          lG = lineData.data[pixelPos + 1],
+          lB = lineData.data[pixelPos + 2],
+          lA = lineData.data[pixelPos + 3];
+        if (testColour(lR, lG, lB, lA)) {
+          return false;
         }
 
-        if (x < canvas.width - 1) {
-          if (matchColour(pixelPos + 4, r, g, b)) {
-            if (!reachRight) {
-              pixelStack.push([x + 1, y]);
-              reachRight = true;
-            }
-          } else if (reachRight) {
-            reachRight = false;
-          }
+        lR = colourData.data[pixelPos];
+        lG = colourData.data[pixelPos + 1];
+        lB = colourData.data[pixelPos + 2];
+
+        if (lR === sR && lG === sG && lB === sB) {
+          return true;
         }
 
+        if (lR === hexR && lG === hexG && lB === hexB) {
+          return false;
+        }
+/*         return (Math.abs(r - startR) + Math.abs(g - startG) + Math.abs(b - startB) < 255);
+ */      };
+
+      const colourPixel = (pixelPos, newR, newG, newB) => {
+        colourData.data[pixelPos] = newR;
+        colourData.data[pixelPos + 1] = newG;
+        colourData.data[pixelPos + 2] = newB;
+        colourData.data[pixelPos + 3] = 255;
+      };
+
+      let pixelStack = [[Math.round(startX), Math.round(startY)]];
+
+      while (pixelStack.length) {
+        let newPos, x, y, pixelPos, reachLeft, reachRight;
+        newPos = pixelStack.pop();
+        x = newPos[0];
+        y = newPos[1];
+        pixelPos = (y * canvas.width + x) * 4;
+        while (y-- >= 0 && matchColour(pixelPos, r, g, b)) {
+          pixelPos -= canvas.width * 4;
+        }
         pixelPos += canvas.width * 4;
-      }
-    }
-    ctx.putImageData(colourData, 0, 0);
-  };
+        ++y;
+        reachLeft = false;
+        reachRight = false;
+        while (y++ < canvas.height - 1 && matchColour(pixelPos, r, g, b)) {
+          colourPixel(pixelPos, hexR, hexG, hexB);
 
-  floodFill(mx, my, startR, startG, startB)
+          if (x > 0) {
+            if (matchColour(pixelPos - 4, r, g, b)) {
+              if (!reachLeft) {
+                pixelStack.push([x - 1, y]);
+                reachLeft = true;
+              }
+            } else if (reachLeft) {
+              reachLeft = false;
+            }
+          }
+
+          if (x < canvas.width - 1) {
+            if (matchColour(pixelPos + 4, r, g, b)) {
+              if (!reachRight) {
+                pixelStack.push([x + 1, y]);
+                reachRight = true;
+              }
+            } else if (reachRight) {
+              reachRight = false;
+            }
+          }
+
+          pixelPos += canvas.width * 4;
+        }
+      }
+      ctx.putImageData(colourData, 0, 0);
+    };
+
+    floodFill(mx, my, startR, startG, startB);
   };
 
   //Upload, download, and save image to profile handlers
@@ -290,6 +314,8 @@ export default function Main(props) {
     const saveCanvasCtx = saveCanvas.getContext("2d");
     const link = linkRef.current;
 
+    saveCanvasCtx.fillStyle = "white";
+    saveCanvasCtx.fillRect(0, 0, saveCanvas.width, saveCanvas.height);
     saveCanvasCtx.drawImage(canvas, 0, 0);
     saveCanvasCtx.drawImage(lineart, 0, 0);
 
@@ -373,11 +399,27 @@ export default function Main(props) {
   //Upload image
   if (uploadImage) {
     redrawImage(lineartRef, imageSource);
+    const lineart = lineartRef.current;
+    const lineCtx = lineart.getContext("2d");
+    let imgPixels = lineCtx.getImageData(0, 0, lineart.width, lineart.height);
+    for (let y = 0; y < imgPixels.height; y++) {
+      for (let x = 0; x < imgPixels.width; x++) {
+        let i = y * 4 * imgPixels.width + x * 4;
+        let avg =
+          (imgPixels.data[i] + imgPixels.data[i + 1] + imgPixels.data[i + 2]) /
+          3;
+        imgPixels.data[i] = avg;
+        imgPixels.data[i + 1] = avg;
+        imgPixels.data[i + 2] = avg;
+      }
+    }
+    lineCtx.putImageData(imgPixels, 0, 0);
     setUploadImage(false);
   }
 
   //Clear canvas
   if (clearCanvas) {
+    clearClass = className(classes.icon, classes.active);
     const canvas = canvasRef.current;
     const ctx = ctxRef.current;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -389,6 +431,7 @@ export default function Main(props) {
   //Undo
   let points = [];
   if (undo) {
+    undoClass = className(classes.icon, classes.active);
     const canvas = canvasRef.current;
     const ctx = ctxRef.current;
     if (savedImage) {
@@ -396,7 +439,6 @@ export default function Main(props) {
     }
     let next = undoArr.slice(0, -1);
     next = next.filter((elem) => elem.length > 0);
-    setUndoArr(next);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     next.forEach((path) => {
       if (path[0].mode === "draw") {
@@ -415,13 +457,37 @@ export default function Main(props) {
         ctx.globalCompositeOperation = "destination-out";
         ctx.strokeStyle = "rgba(255,255,255,1)";
         ctx.eraserWidth = path[0].width;
-        for (let i = 1; i < path.length; i++) {
-          ctx.lineTo(path[i].x, path[i].y);
+        ctx.lineTo(path[0].x, path[0].y);
+        if (path.length > 1) {
+          for (let i = 1; i < path.length; i++) {
+            ctx.lineTo(path[i].x, path[i].y);
+          }
         }
         ctx.stroke();
       }
+      if (path[0].mode === "fill") {
+        fillStart({ clientX: path[0].clientX, clientY: path[0].clientY }, path[0].stroke);
+      }
     });
+    setUndoArr(next);
     setUndo(false);
+  }
+
+  //Checking for other active tools
+  if (brushActive) {
+    pencilClass = className(classes.icon, classes.active);
+  }
+
+  if (eraserActive) {
+    eraserClass = className(classes.icon, classes.active);
+  }
+
+  if (fillActive) {
+    fillClass = className(classes.icon, classes.active);
+  }
+
+  if (stampActive) {
+    stampClass = className(classes.icon, classes.active);
   }
 
   return (
@@ -430,14 +496,14 @@ export default function Main(props) {
         <canvas
           ref={saveRef}
           className="homepage__save"
-          width={600}
-          height={600}
+          width={500}
+          height={500}
         ></canvas>
         <canvas
           ref={lineartRef}
           className="homepage__lineart"
-          width={600}
-          height={600}
+          width={500}
+          height={500}
         ></canvas>
         <canvas
           className="homepage__canvas"
@@ -446,18 +512,25 @@ export default function Main(props) {
           onMouseUp={endDraw}
           onMouseLeave={endDraw}
           onMouseMove={draw}
-          onClick={fillStart}
-          width={600}
-          height={600}
+          onClick={(event) => {fillStart(event, strokeStyle)}}
+          width={500}
+          height={500}
         ></canvas>
       </div>
       <div className="homepage__tools">
         <PaintTools
+          clearClass={clearClass}
+          pencilClass={pencilClass}
+          eraserClass={eraserClass}
+          fillClass={fillClass}
+          stampClass={stampClass}
+          undoClass={undoClass}
           lineWidth={lineWidth}
           eraserWidth={eraserWidth}
           setBrushActive={setBrushActive}
           setEraserActive={setEraserActive}
           setFillActive={setFillActive}
+          setStampActive={setStampActive}
           setLineWidth={setLineWidth}
           setStrokeStyle={setStrokeStyle}
           setEraserWidth={setEraserWidth}

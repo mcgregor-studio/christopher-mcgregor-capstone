@@ -14,11 +14,12 @@ export default function PaintTools(props) {
       <h2>Tools:</h2>
       <div>
         <img
-          className="homepage__paint-tools--icon"
+          className={props.pencilClass}
           onClick={() => {
             props.setBrushActive(true);
             props.setEraserActive(false);
             props.setFillActive(false);
+            props.setStampActive(false);
           }}
           src={pencil}
           alt="pencil"
@@ -39,18 +40,35 @@ export default function PaintTools(props) {
             props.setStrokeStyle(event.target.value);
           }}
         ></input>
-        <img className="homepage__paint-tools--icon" onClick={() => {
+        <img
+          className={props.fillClass}
+          onClick={() => {
             props.setEraserActive(false);
             props.setBrushActive(false);
             props.setFillActive(true);
-          }}src={fill} alt="paint bucket"/>
-        <img className="homepage__paint-tools--icon" src={stamp} alt="stamp" />
+            props.setStampActive(false);
+          }}
+          src={fill}
+          alt="paint bucket"
+        />
         <img
-          className="homepage__paint-tools--icon"
+          className={props.stampClass}
+          onClick={() => {
+            props.setEraserActive(false);
+            props.setBrushActive(false);
+            props.setFillActive(false);
+            props.setStampActive(true);
+          }}
+          src={stamp}
+          alt="stamp"
+        />
+        <img
+          className={props.eraserClass}
           onClick={() => {
             props.setEraserActive(true);
             props.setBrushActive(false);
             props.setFillActive(false);
+            props.setStampActive(false);
           }}
           src={eraser}
           alt="eraser"
@@ -64,15 +82,15 @@ export default function PaintTools(props) {
             props.setEraserWidth(event.target.value);
           }}
         ></input>
-        
+
         <img
-          className="homepage__paint-tools--icon"
+          className={props.undoClass}
           src={undo}
           onClick={() => props.setUndo(true)}
           alt="arrow pointing to left"
         />
         <img
-          className="homepage__paint-tools--icon"
+          className={props.clearClass}
           onClick={() => props.setClearCanvas(true)}
           src={bomb}
           alt="bomb"
