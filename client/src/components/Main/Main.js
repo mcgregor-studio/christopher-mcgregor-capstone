@@ -21,7 +21,6 @@ export default function Main(props) {
   let [strokeStyle, setStrokeStyle] = useState("#000000");
   let [lineWidth, setLineWidth] = useState(10);
   let [eraserWidth, setEraserWidth] = useState(10);
-  let [undo, setUndo] = useState(false);
   let [undoArr, setUndoArr] = useState([]);
   let [clearCanvas, setClearCanvas] = useState(false);
   let [uploadImage, setUploadImage] = useState(false);
@@ -56,6 +55,7 @@ export default function Main(props) {
   let fillClass = className(classes.icon);
   let stampClass = className(classes.icon);
   let undoClass = className(classes.icon);
+  let points = [];
 
   // ============= Functions ================= //
 
@@ -202,13 +202,13 @@ export default function Main(props) {
       startG = colourData.data[startPos + 1],
       startB = colourData.data[startPos + 2];
 
-      let hexR = hexToRGB(stroke).r;
-      let hexG = hexToRGB(stroke).g;
-      let hexB = hexToRGB(stroke).b;
+    let hexR = hexToRGB(stroke).r;
+    let hexG = hexToRGB(stroke).g;
+    let hexB = hexToRGB(stroke).b;
 
-      if (startR === hexR && startG === hexG && startB === hexB) {
-				return;
-			}
+    if (startR === hexR && startG === hexG && startB === hexB) {
+      return;
+    }
 
     const floodFill = (startX, startY, r, g, b) => {
       if (!fillActive) {
@@ -218,9 +218,6 @@ export default function Main(props) {
       const lineart = lineartRef.current;
       const lineCtx = lineart.getContext("2d");
       let lineData = lineCtx.getImageData(0, 0, lineart.width, lineart.height);
-
-
-      
 
       const matchColour = (pixelPos, sR, sG, sB) => {
         let lR = lineData.data[pixelPos],
@@ -242,8 +239,9 @@ export default function Main(props) {
         if (lR === hexR && lG === hexG && lB === hexB) {
           return false;
         }
-/*         return (Math.abs(r - startR) + Math.abs(g - startG) + Math.abs(b - startB) < 255);
- */      };
+        /*         return (Math.abs(r - startR) + Math.abs(g - startG) + Math.abs(b - startB) < 255);
+         */
+      };
 
       const colourPixel = (pixelPos, newR, newG, newB) => {
         colourData.data[pixelPos] = newR;
@@ -299,6 +297,53 @@ export default function Main(props) {
     };
 
     floodFill(mx, my, startR, startG, startB);
+  };
+
+  //Undo
+  const undo = () => {
+    undoClass = className(classes.icon, classes.active);
+    const canvas = canvasRef.current;
+    const ctx = ctxRef.current;
+    if (savedImage) {
+      redrawImage(canvasRef, savedImage);
+    }
+    let next = undoArr.slice(0, -1);
+    next = next.filter((elem) => elem.length > 0);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    next.forEach((path) => {
+      if (path[0].mode === "draw") {
+        ctx.globalCompositeOperation = "source-over";
+        ctx.strokeStyle = path[0].stroke;
+        ctx.lineWidth = path[0].width;
+        ctx.beginPath();
+        ctx.moveTo(path[0].x, path[0].y);
+        ctx.lineTo(path[0].x, path[0].y);
+        for (let i = 1; i < path.length; i++) {
+          ctx.lineTo(path[i].x, path[i].y);
+        }
+        ctx.stroke();
+      }
+      if (path[0].mode === "erase") {
+        ctx.globalCompositeOperation = "destination-out";
+        ctx.strokeStyle = "rgba(255,255,255,1)";
+        ctx.eraserWidth = path[0].width;
+        ctx.lineTo(path[0].x, path[0].y);
+        if (path.length > 1) {
+          for (let i = 1; i < path.length; i++) {
+            ctx.lineTo(path[i].x, path[i].y);
+          }
+        }
+        ctx.stroke();
+      }
+      if (path[0].mode === "fill") {
+        fillStart(
+          { clientX: path[0].clientX, clientY: path[0].clientY },
+          path[0].stroke
+        );
+      }
+    });
+    setUndoArr(next);
   };
 
   //Upload, download, and save image to profile handlers
@@ -428,51 +473,6 @@ export default function Main(props) {
     setClearCanvas(false);
   }
 
-  //Undo
-  let points = [];
-  if (undo) {
-    undoClass = className(classes.icon, classes.active);
-    const canvas = canvasRef.current;
-    const ctx = ctxRef.current;
-    if (savedImage) {
-      redrawImage(canvasRef, savedImage);
-    }
-    let next = undoArr.slice(0, -1);
-    next = next.filter((elem) => elem.length > 0);
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    next.forEach((path) => {
-      if (path[0].mode === "draw") {
-        ctx.globalCompositeOperation = "source-over";
-        ctx.strokeStyle = path[0].stroke;
-        ctx.lineWidth = path[0].width;
-        ctx.beginPath();
-        ctx.moveTo(path[0].x, path[0].y);
-        ctx.lineTo(path[0].x, path[0].y);
-        for (let i = 1; i < path.length; i++) {
-          ctx.lineTo(path[i].x, path[i].y);
-        }
-        ctx.stroke();
-      }
-      if (path[0].mode === "erase") {
-        ctx.globalCompositeOperation = "destination-out";
-        ctx.strokeStyle = "rgba(255,255,255,1)";
-        ctx.eraserWidth = path[0].width;
-        ctx.lineTo(path[0].x, path[0].y);
-        if (path.length > 1) {
-          for (let i = 1; i < path.length; i++) {
-            ctx.lineTo(path[i].x, path[i].y);
-          }
-        }
-        ctx.stroke();
-      }
-      if (path[0].mode === "fill") {
-        fillStart({ clientX: path[0].clientX, clientY: path[0].clientY }, path[0].stroke);
-      }
-    });
-    setUndoArr(next);
-    setUndo(false);
-  }
-
   //Checking for other active tools
   if (brushActive) {
     pencilClass = className(classes.icon, classes.active);
@@ -512,7 +512,9 @@ export default function Main(props) {
           onMouseUp={endDraw}
           onMouseLeave={endDraw}
           onMouseMove={draw}
-          onClick={(event) => {fillStart(event, strokeStyle)}}
+          onClick={(event) => {
+            fillStart(event, strokeStyle);
+          }}
           width={500}
           height={500}
         ></canvas>
@@ -535,7 +537,7 @@ export default function Main(props) {
           setStrokeStyle={setStrokeStyle}
           setEraserWidth={setEraserWidth}
           setClearCanvas={setClearCanvas}
-          setUndo={setUndo}
+          undo={undo}
         />
         <label
           onChange={handleUploadImage}

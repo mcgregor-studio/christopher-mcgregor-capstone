@@ -86,7 +86,7 @@ export default function PaintTools(props) {
         <img
           className={props.undoClass}
           src={undo}
-          onClick={() => props.setUndo(true)}
+          onClick={() => props.undo()}
           alt="arrow pointing to left"
         />
         <img
