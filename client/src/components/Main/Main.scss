@@ -1,3 +1,10 @@
+@keyframes save {
+    0% {opacity: 0}
+    20% {opacity: 1}
+    80% {opacity: 1}
+    100% {opacity: 0}
+}
+
 .homepage {
     margin: 0 1rem;
     display: flex;
@@ -16,21 +23,39 @@
     }
     &__lineart {
         width: 100%;
-        border: 1px solid blue;
         position: absolute;
         z-index: 10;
         pointer-events: none;
+    }
+    &__tools {
+
+        width: 100%;
     }
     &__save {
         width: calc(100% - 2rem);
         position: absolute;
         display: none;
         pointer-events: none;
+        &--success {
+            animation-name: save;
+            animation-duration: 5s;
+        }
+        &--fail {
+            animation-name: save;
+            animation-duration: 5s;
+        }
+        &--try {
+            animation-name: save;
+            animation-duration: 3s;
+        }
     }
 }
 
 @media(min-width: 768px) {
     .homepage {
         flex-direction: row;
+        &__tools {
+            margin-left: 1rem;
+        }
     }
 }

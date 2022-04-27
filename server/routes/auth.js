@@ -1,5 +1,5 @@
-const cors = require("cors");
 const express = require("express");
+const fs = require("fs");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
@@ -138,7 +138,6 @@ router.get("/profile", authorize, (req, res) => {
       userId = data.id;
       profileInfo = {
         username: data.username,
-        email: data.email,
       };
       knex("drawings")
         .where("user_id", userId)
@@ -156,7 +155,7 @@ router.get("/profile", authorize, (req, res) => {
     .catch((e) => console.error("Error finding a profile:", e));
 });
 
-//User profile drawing GET request
+//User drawing GET request
 router.get("/profile/:drawingId", authorize, (req, res) => {
   if (req.decoded === undefined) {
     return res.status(401).json({ message: "Unauthorized" });
@@ -167,7 +166,7 @@ router.get("/profile/:drawingId", authorize, (req, res) => {
     .select()
     .then((data) => {
       if (!data[0]) {
-        return res.status(205).json({message: "Reset canvas"})
+        return res.status(205).json({ message: "Reset canvas" });
       }
       drawingInfo.id = data[0].id;
       drawingInfo.lineart = data[0].lineart;
@@ -177,7 +176,7 @@ router.get("/profile/:drawingId", authorize, (req, res) => {
     .catch((e) => console.error("Error finding a profile:", e));
 });
 
-//User drawings PUT request
+//User drawing PUT request
 router.put(
   "/profile",
   authorize,
@@ -198,42 +197,85 @@ router.put(
       .then((data) => {
         userId = data.id;
         knex("drawings")
-          .where("id", req.decoded.drawingId)
+          .where("user_id", userId)
           .then((result) => {
-            if (!result[0]) {
+            if (result.length <= 11) {
               knex("drawings")
-                .insert({
-                  user_id: userId,
-                  id: req.decoded.drawingId,
-                  thumbnail: `${process.env.GALLERAI_URL}/images/${req.files.thumbnail[0].filename}`,
-                  colours: `${process.env.GALLERAI_URL}/images/${req.files.colours[0].filename}`,
-                  lineart: `${process.env.GALLERAI_URL}/images/${req.files.lineart[0].filename}`,
+                .where("id", req.decoded.drawingId)
+                .then((result) => {
+                  if (!result[0]) {
+                    knex("drawings")
+                      .insert({
+                        user_id: userId,
+                        id: req.decoded.drawingId,
+                        thumbnail: `${process.env.GALLERAI_URL}/images/${req.files.thumbnail[0].filename}`,
+                        colours: `${process.env.GALLERAI_URL}/images/${req.files.colours[0].filename}`,
+                        lineart: `${process.env.GALLERAI_URL}/images/${req.files.lineart[0].filename}`,
+                      })
+                      .then(() => {
+                        res.status(200).json({ saveSuccess: "true" });
+                      })
+                      .catch((e) =>
+                        console.error("Error saving a drawing:", e)
+                      );
+                    return;
+                  }
+
+                  knex("drawings")
+                    .where("id", req.decoded.drawingId)
+                    .update({
+                      user_id: userId,
+                      id: req.decoded.drawingId,
+                      thumbnail: `${process.env.GALLERAI_URL}/images/${req.files.thumbnail[0].filename}`,
+                      colours: `${process.env.GALLERAI_URL}/images/${req.files.colours[0].filename}`,
+                      lineart: `${process.env.GALLERAI_URL}/images/${req.files.lineart[0].filename}`,
+                    })
+                    .then(() => {
+                      res.status(200).json({ saveSuccess: "true" });
+                    })
+                    .catch((e) => console.error("Error saving a drawing:", e));
                 })
-                .then(() => {
-                  res.status(200).json({ saveSuccess: "true" });
-                })
-                .catch((e) => console.error("Error saving a drawing:", e));
+                .catch((e) => console.error("Error saving the drawing: ", e));
               return;
             }
-
-            knex("drawings")
-              .where("id", req.decoded.drawingId)
-              .update({
-                user_id: userId,
-                id: req.decoded.drawingId,
-                thumbnail: `${process.env.GALLERAI_URL}/images/${req.files.thumbnail[0].filename}`,
-                colours: `${process.env.GALLERAI_URL}/images/${req.files.colours[0].filename}`,
-                lineart: `${process.env.GALLERAI_URL}/images/${req.files.lineart[0].filename}`,
-              })
-              .then(() => {
-                res.status(200).json({ saveSuccess: "true" });
-              })
-              .catch((e) => console.error("Error saving a drawing:", e));
+            res.status(507).json({ message: "Max amount of saves made" });
           });
       })
+
       .catch((e) => console.error("Error finding a user:", e));
   }
 );
+
+//User drawing DELETE request
+router.delete("/profile/:drawingId", authorize, (req, res) => {
+  if (req.decoded === undefined) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+  let drawingInfo = {};
+  knex("drawings")
+    .where("id", req.decoded.drawingId)
+    .select()
+    .then((data) => {
+      if (!data[0]) {
+        return res.status(404).json({ message: "No drawing with that id" });
+      }
+      drawingInfo.id = data[0].id;
+      drawingInfo.lineart = data[0].lineart;
+      drawingInfo.colours = data[0].colours;
+      res.status(200).json(drawingInfo);
+      fs.unlinkSync(`./public/images/colours-${data[0].id}.png`, (e) =>
+        console.error(e)
+      );
+      fs.unlinkSync(`./public/images/thumbnail-${data[0].id}.png`, (e) =>
+        console.error(e)
+      );
+      fs.unlinkSync(`./public/images/lineart-${data[0].id}.png`, (e) =>
+        console.error(e)
+      );
+      return knex("drawings").del().where("id", data[0].id);
+    })
+    .catch((e) => console.error("Error deleting a drawing:", e));
+});
 
 //Logout GET request
 router.get("/logout", (req, res) => {

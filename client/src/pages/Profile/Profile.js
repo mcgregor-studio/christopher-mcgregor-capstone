@@ -1,19 +1,20 @@
 import axios from "axios";
 import React from "react";
+import { v4 as uuidv4 } from "uuid";
 import { Link } from "react-router-dom";
+import Image from "../../components/Image/Image";
+import plus from "../../data/plus.svg";
 import "./Profile.scss";
 
 export default class Profile extends React.Component {
   state = {
     username: "",
-    email: "",
     drawings: [],
     drawingId: "",
   };
 
   componentDidMount() {
-    /*     const SERVER_URL = process.env.GALLERAI_URL;
-     */ axios
+    axios
       .get(`http://localhost:3100/auth/profile`, {
         headers: {
           authorization: sessionStorage.getItem("token"),
@@ -22,7 +23,6 @@ export default class Profile extends React.Component {
       .then((res) => {
         this.setState({
           username: res.data.username,
-          email: res.data.email,
           drawings: res.data.drawings,
         });
       })
@@ -30,33 +30,76 @@ export default class Profile extends React.Component {
   }
 
   render() {
-    let { username, email, drawings } = this.state;
+    //Reference variables
+    let { username, drawings } = this.state;
+    let newId = uuidv4();
 
+    //DELETE request for saved images
+    const delImage = (id) => {
+      axios
+        .delete(`http://localhost:3100/auth/profile/${id}`, {
+          headers: {
+            authorization: sessionStorage.getItem("token"),
+            drawingId: id,
+          },
+        })
+        .then(() => {
+          axios
+            .get(`http://localhost:3100/auth/profile`, {
+              headers: {
+                authorization: sessionStorage.getItem("token"),
+              },
+            })
+            .then((res) => {
+              this.setState({
+                username: res.data.username,
+                drawings: res.data.drawings,
+              });
+            })
+            .catch((e) => console.error(e));
+        })
+        .catch((e) => console.error(e));
+    };
+
+    if (drawings.length < 12) {
+      return (
+        <section className="profile">
+          <h1>Welcome, {username}!</h1>
+          <div className="profile__container">
+            {drawings.map((image) => {
+              return (
+                <Image
+                  thumbnail={image.thumbnail}
+                  id={image.id}
+                  delImage={delImage}
+                />
+              );
+            })}
+            <Link
+              className="profile__new"
+              to={{ pathname: "/paint", state: { drawingId: newId } }}
+            >
+              <img className="profile__new--icon" alt="plus" src={plus}/>
+            </Link>
+          </div>
+        </section>
+      );
+    }
     return (
-      <div className="profile">
+      <section className="profile">
         <h1>Welcome, {username}!</h1>
-        <p>{email}</p>
-        <div>
+        <div className="profile__container">
           {drawings.map((image) => {
             return (
-              <Link
-                to={{
-                  pathname: `/paint/${image.id}`,
-                  state: { drawingId: image.id },
-                }}
-              >
-                <img
-                  key={image.id}
-                  id={image.id}
-                  className="profile__thumbnail"
-                  src={image.thumbnail}
-                  alt="thumbnail"
-                />
-              </Link>
+              <Image
+                thumbnail={image.thumbnail}
+                id={image.id}
+                delImage={delImage}
+              />
             );
           })}
         </div>
-      </div>
+      </section>
     );
   }
 }

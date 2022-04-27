@@ -1,8 +1,53 @@
 .profile {
-    &__thumbnail {
-        width: 100px;
-        height: 100px;
-        border: 1px solid black;
-        cursor: pointer;
+  &__container {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  &__image {
+    position: relative;
+    &--close {
+      padding: 0.25rem;
+      border-radius: 50%;
+      width: 0.75rem;
+      margin-top: 0.25rem;
+      left: 0.25rem;
+      position: absolute;
+      z-index: 50;
+      &:hover {
+        filter: invert(1);
+        background-color: white;
+      }
     }
+    &--modal {
+      position: absolute;
+      width: 8rem;
+      height: 8rem;
+      background-color: rgba(255, 255, 255, 0.5);
+    }
+    &--thumbnail {
+      transition: transform 0.2s;
+      border-radius: 0.25rem;
+      width: 8rem;
+      height: 8rem;
+      border: 1px solid black;
+      cursor: pointer;
+      &:hover {
+        transform: scale(1.1)
+      }
+    }
+  }
+  &__new {
+    transition: transform 0.2s;
+    &:hover {
+      transform: scale(1.1)
+    }
+    &--icon {
+      border-radius: 0.25rem;
+      border: 1px solid black;
+      width: 4rem;
+      height: 4rem;
+      padding: 2rem;
+    }
+  }
+
 }

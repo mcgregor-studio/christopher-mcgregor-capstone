@@ -27,6 +27,9 @@ export default function Main(props) {
   let [savedImage, setSavedImage] = useState("");
   let [imageSource, setImageSource] = useState("");
   let [drawingId, setDrawingId] = useState(uuidv4);
+  let [saveWin, setSaveWin] = useState("homepage__save--success hidden");
+  let [saveLose, setSaveLose] = useState("homepage__save--fail hidden");
+  let [saveTry, setSaveTry] = useState("homepage__save--try hidden");
 
   //useEffect hook for canvas and tools
   useEffect(() => {
@@ -44,11 +47,15 @@ export default function Main(props) {
   // Variables
   const classes = {
     icon: "homepage__paint-tools--icon",
+    attempt: "homepage__save--try",
+    success: "homepage__save--success",
+    failure: "homepage__save--fail",
     active: "active",
+    display: "display",
+    hidden: "hidden",
   };
   let mx = 0;
   let my = 0;
-
   let clearClass = className(classes.icon);
   let pencilClass = className(classes.icon);
   let eraserClass = className(classes.icon);
@@ -379,6 +386,10 @@ export default function Main(props) {
     const lineart = lineartRef.current;
     const saveCanvas = saveRef.current;
     const saveCanvasCtx = saveCanvas.getContext("2d");
+    setSaveTry(className(classes.attempt, classes.display))
+    setTimeout(function () {
+      setSaveTry(className(classes.attempt, classes.hidden));
+    }, 3000);
 
     saveCanvasCtx.drawImage(canvas, 0, 0);
     saveCanvasCtx.drawImage(lineart, 0, 0);
@@ -408,9 +419,19 @@ export default function Main(props) {
           },
         })
         .then(() => {
+          setSaveWin(className(classes.success, classes.display));
+          setTimeout(function () {
+            setSaveWin(className(classes.success, classes.hidden));
+          }, 5000);
           saveCanvasCtx.clearRect(0, 0, saveCanvas.width, saveCanvas.height);
         })
-        .catch((e) => console.error(e));
+        .catch((e) => {
+          console.error(e);
+          setSaveLose(className(classes.failure, classes.display));
+          setTimeout(function () {
+            setSaveLose(className(classes.failure, classes.hidden));
+          }, 5000);
+        });
     }, 3000);
   };
 
@@ -563,7 +584,13 @@ export default function Main(props) {
         </a>
         <button className="homepage__button--save" onClick={handleSaveImage}>
           Save Image To Profile
-        </button>
+        </button><p className={saveTry}>
+          Saving...
+        </p>
+        <p className={saveWin}>Saved!</p>
+        <p className={saveLose}>
+          No save slots available - please delete a picture
+        </p>
       </div>
     </section>
   );
