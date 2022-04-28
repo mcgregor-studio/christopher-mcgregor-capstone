@@ -14,7 +14,6 @@
 }
 
 .paint {
-  margin: 1rem 1rem 0 1rem;
   display: flex;
   flex-direction: column;
   &__container {
@@ -23,9 +22,7 @@
   }
   &__canvas {
     width: 100%;
-    border: 0.0625rem solid black;
-    border-radius: 0.25rem;
-    box-shadow: 0 0.25rem 0.25rem darkgoldenrod;
+    border-bottom: 1px solid black;
     image-rendering: pixelated;
   }
   &__lineart {
@@ -36,17 +33,44 @@
   }
   &__tools {
     &--container {
+      position: relative;
       display: flex;
-      flex-direction: row;
+      flex-flow: row wrap;
+      justify-content: center;
       width: 100%;
     }
   }
   &__button {
+    position: absolute;
     display: flex;
     flex-direction: column;
+    align-items: center;
+    top: 8rem;
+    &--up {
+      cursor: pointer;
+      background-color: black;
+      color: white;
+      padding: 0.5rem;
+      border-radius: 0.5rem;
+    }
+    &--down {
+      margin-top: 0.5rem;
+      background-color: black;
+      color: white;
+      padding: 0.5rem;
+      border-radius: 0.5rem;
+    }
+    &--save {
+      border: 0;
+      margin: 0.5rem 0;
+      background-color: black;
+      color: white;
+      padding: 0.5rem;
+      border-radius: 0.5rem;
+    }
   }
   &__save {
-    width: calc(100% - 2rem);
+    width: 100%;
     position: absolute;
     display: none;
     pointer-events: none;
@@ -65,13 +89,30 @@
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 668px) {
   .paint {
+    margin: 1rem 1rem 0 1rem;
     flex-direction: row;
+    justify-content: center;
+    &__canvas {
+      border: 0.0625rem solid black;
+      border-radius: 0.25rem;
+      box-shadow: 0 0.25rem 0.25rem darkgoldenrod;
+    }
     &__tools {
       &--container {
+        height: 80vh;
         margin-left: 1rem;
+        width: 13rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
       }
+    }
+    &__button {
+      position: relative;
+      top: 0;
+
     }
   }
 }

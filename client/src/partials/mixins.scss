@@ -1,0 +1,18 @@
+@mixin scrub-bar {
+    -webkit-appearance: none;
+    background: black;
+    background-image: linear-gradient(goldenrod, goldenrod);
+    background-repeat: no-repeat;
+    height: 0.25rem;
+    border-radius: 0.625rem;
+}
+
+@mixin scrub-button {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 2rem;
+    height: 2rem;
+    border: 0;
+    background: url('../../src/data/scrub.svg');
+    cursor: pointer;
+}

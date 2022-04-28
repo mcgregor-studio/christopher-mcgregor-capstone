@@ -84,20 +84,18 @@ export default class LoginSignup extends React.Component {
       return <Redirect to="/profile" />;
     }
 
+    
     return (
       <div className="login-signup">
-        <a className="button__login google" href={`${SERVER_URL}/auth/google`}>
-          Sign in with Google
-        </a>
+        <Login className={loginClass} handleLogin={handleLogin} />
+        <Signup className={signupClass} handleSignup={handleSignup} />
+
         <button onClick={toggleView} className={buttonLoginClass}>
           Login
         </button>
         <button onClick={toggleView} className={buttonSignupClass}>
           Signup
         </button>
-
-        <Login className={loginClass} handleLogin={handleLogin} />
-        <Signup className={signupClass} handleSignup={handleSignup} />
       </div>
     );
   }

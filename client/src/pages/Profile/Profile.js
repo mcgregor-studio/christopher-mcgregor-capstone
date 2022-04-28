@@ -68,6 +68,9 @@ export default class Profile extends React.Component {
         return (
           <section className="profile">
             <h1 className="profile__title">Welcome, {username}!</h1>
+            <p className="profile__text">
+              {12 - drawings.length}/12 slots open
+            </p>
             <div className="profile__container">
               {drawings.map((image) => {
                 return (
@@ -91,7 +94,9 @@ export default class Profile extends React.Component {
       return (
         <section className="profile">
           <h1 className="profile__title">Welcome, {username}!</h1>
+
           <div className="profile__container">
+            <p>{drawings.length}/12 slots used</p>
             {drawings.map((image) => {
               return (
                 <Image
@@ -105,6 +110,6 @@ export default class Profile extends React.Component {
         </section>
       );
     }
-    return (<h1>Loading...</h1>)
+    return <h1>Loading...</h1>;
   }
 }

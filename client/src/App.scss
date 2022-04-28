@@ -15,3 +15,12 @@ a {
 .display {
   display: inline-block;
 }
+
+.active {
+  background-color: rgb(29, 143, 52);
+  filter: invert(1);
+}
+
+input[type="file"] {
+  display: none;
+}

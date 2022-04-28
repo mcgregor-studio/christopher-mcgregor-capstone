@@ -1,4 +1,4 @@
-import React from "react";
+import React, { createRef } from "react";
 import classNames from "classnames";
 import pencil from "../../data/pencil.svg";
 import fill from "../../data/fill.svg";
@@ -26,6 +26,8 @@ export default class PaintTools extends React.Component {
 
   render() {
     //Reference variables
+    const widthRef = createRef();
+    const opacityRef = createRef();
     const classes = {
       icon: "paint__tools--modal--icon",
       modal: "paint__tools--modal",
@@ -57,6 +59,15 @@ export default class PaintTools extends React.Component {
         return;
       }
     };
+
+    //changing scrub colour
+    const changeScrubColour = (target) => {
+      const min = target.min;
+      const max = target.max;
+      const value = target.value;
+      target.style.backgroundSize =
+        ((value - min) * 100) / (max - min) + "% 100%";
+    };
     //if statement to check for modal on re-render
     if (displayModal) {
       modalClass = classNames(classes.modal, classes.display);
@@ -82,45 +93,57 @@ export default class PaintTools extends React.Component {
     //Render component with all mouse events and references
     return (
       <section className="paint__tools">
-        <div>
-          <div>
+        <div className="paint__tools--controller">
+          <div className="paint__tools--size">
             <img
-              className="paint__tools--modal--icon"
+              className="paint__tools--slider--icon"
               src={small}
               alt="small brush"
             />
             <input
+              ref={widthRef}
+              className="paint__tools--slider"
               type="range"
               min="1"
               max="50"
               value={this.props.lineWidth}
+              onInput={() => {
+                  const widthSlider = widthRef.current;
+                  changeScrubColour(widthSlider);
+              }}
               onChange={(event) => {
                 this.props.setLineWidth(event.target.value);
               }}
             ></input>
             <img
-              className="paint__tools--modal--icon"
+              className="paint__tools--slider--icon"
               src={inputEnd}
               alt="big brush"
             />
           </div>
-          <div>
+          <div className="paint__tools--opacity">
             <img
-              className="paint__tools--modal--icon"
+              className="paint__tools--slider--icon"
               src={opacity}
               alt="transparent brush"
             />
             <input
+            ref={opacityRef}
+              className="paint__tools--slider"
               type="range"
               min="1"
               max="100"
-              value={this.props.lineOpacity}
+              value={this.props.lineOpacity * 100}
+              onInput={() => {
+                const opacitySlider = opacityRef.current;
+                changeScrubColour(opacitySlider);
+            }}
               onChange={(event) => {
                 this.props.setLineOpacity(event.target.value / 100);
               }}
             ></input>
             <img
-              className="paint__tools--modal--icon"
+              className="paint__tools--slider--icon"
               src={inputEnd}
               alt="opaque brush"
             />
@@ -128,146 +151,151 @@ export default class PaintTools extends React.Component {
           <input
             className="paint__tools--color"
             type="color"
+            value={this.props.strokeStyle}
             onChange={(event) => {
               this.props.setStrokeStyle(event.target.value);
             }}
           ></input>
         </div>
         <div>
-          <img
-            className={this.props.pencilClass}
-            onClick={() => {
-              this.props.setBrushActive(true);
-              this.props.setEraserActive(false);
-              this.props.setFillActive(false);
-              this.props.setStampActive(false);
-              this.props.setSprayActive(false);
-              hideModal();
-            }}
-            src={pencil}
-            alt="pencil"
-          />
-          <img
-            className={this.props.eraserClass}
-            onClick={() => {
-              this.props.setEraserActive(true);
-              this.props.setBrushActive(false);
-              this.props.setFillActive(false);
-              this.props.setStampActive(false);
-              this.props.setSprayActive(false);
-              hideModal();
-            }}
-            src={eraser}
-            alt="eraser"
-          />
-          <img
-            className={this.props.sprayClass}
-            onClick={() => {
-              this.props.setEraserActive(false);
-              this.props.setBrushActive(false);
-              this.props.setFillActive(false);
-              this.props.setStampActive(false);
-              this.props.setSprayActive(true);
-              hideModal();
-            }}
-            src={spray}
-            alt="spray"
-          />
-          <img
-            className={this.props.fillClass}
-            onClick={() => {
-              this.props.setEraserActive(false);
-              this.props.setBrushActive(false);
-              this.props.setFillActive(true);
-              this.props.setStampActive(false);
-              this.props.setSprayActive(false);
-              hideModal();
-            }}
-            src={fill}
-            alt="paint bucket"
-          />
-          <div>
+          <div className="paint__tools--size">
             <img
-              className={this.props.stampClass}
+              className={this.props.pencilClass}
+              onClick={() => {
+                this.props.setBrushActive(true);
+                this.props.setEraserActive(false);
+                this.props.setFillActive(false);
+                this.props.setStampActive(false);
+                this.props.setSprayActive(false);
+                hideModal();
+              }}
+              src={pencil}
+              alt="pencil"
+            />
+            <img
+              className={this.props.sprayClass}
               onClick={() => {
                 this.props.setEraserActive(false);
                 this.props.setBrushActive(false);
                 this.props.setFillActive(false);
-                this.props.setStampActive(true);
-                this.props.setSprayActive(false);
-                toggleModal();
+                this.props.setStampActive(false);
+                this.props.setSprayActive(true);
+                hideModal();
               }}
-              src={stamp}
-              alt="stamp"
+              src={spray}
+              alt="spray"
             />
-            <div className={modalClass}>
-              <img
-                className={swirlClass}
-                onClick={() => {
-                  this.props.setStampSource(swirl);
-                  toggleModal();
-                  this.setState({
-                    swirlActive: true,
-                    starActive: false,
-                    crossActive: false,
-                    dustActive: false,
-                  });
-                }}
-                src={swirl}
-              />
-              <img
-                className={starClass}
-                onClick={() => {
-                  this.props.setStampSource(star);
-                  toggleModal();
-                  this.setState({
-                    swirlActive: false,
-                    starActive: true,
-                    crossActive: false,
-                    dustActive: false,
-                  });
-                }}
-                src={star}
-              />
-              <img
-                className={crossClass}
-                onClick={() => {
-                  this.props.setStampSource(cross);
-                  toggleModal();
-                  this.setState({
-                    swirlActive: false,
-                    starActive: false,
-                    crossActive: true,
-                    dustActive: false,
-                  });
-                }}
-                src={cross}
-              />
-              <img
-                className={dustClass}
-                onClick={() => {
-                  this.props.setStampSource(dust);
-                  toggleModal();
-                  this.setState({
-                    swirlActive: false,
-                    starActive: false,
-                    crossActive: false,
-                    dustActive: true,
-                  });
-                }}
-                src={dust}
-              />
-            </div>
+            <img
+              className={this.props.eraserClass}
+              onClick={() => {
+                this.props.setEraserActive(true);
+                this.props.setBrushActive(false);
+                this.props.setFillActive(false);
+                this.props.setStampActive(false);
+                this.props.setSprayActive(false);
+                hideModal();
+              }}
+              src={eraser}
+              alt="eraser"
+            />
           </div>
-          <img
-            className={this.props.clearClass}
-            onClick={() => {
-              this.props.setClearCanvas(true);
-              hideModal();
-            }}
-            src={bomb}
-            alt="bomb"
-          />
+          <div className="paint__tools--click">
+            <img
+              className={this.props.fillClass}
+              onClick={() => {
+                this.props.setEraserActive(false);
+                this.props.setBrushActive(false);
+                this.props.setFillActive(true);
+                this.props.setStampActive(false);
+                this.props.setSprayActive(false);
+                hideModal();
+              }}
+              src={fill}
+              alt="paint bucket"
+            />
+            <div className="paint__tools--stamp">
+              <img
+                className={this.props.stampClass}
+                onClick={() => {
+                  this.props.setEraserActive(false);
+                  this.props.setBrushActive(false);
+                  this.props.setFillActive(false);
+                  this.props.setStampActive(true);
+                  this.props.setSprayActive(false);
+                  toggleModal();
+                }}
+                src={stamp}
+                alt="stamp"
+              />
+              <div className={modalClass}>
+                <img
+                  className={swirlClass}
+                  onClick={() => {
+                    this.props.setStampSource(swirl);
+                    toggleModal();
+                    this.setState({
+                      swirlActive: true,
+                      starActive: false,
+                      crossActive: false,
+                      dustActive: false,
+                    });
+                  }}
+                  src={swirl}
+                />
+                <img
+                  className={starClass}
+                  onClick={() => {
+                    this.props.setStampSource(star);
+                    toggleModal();
+                    this.setState({
+                      swirlActive: false,
+                      starActive: true,
+                      crossActive: false,
+                      dustActive: false,
+                    });
+                  }}
+                  src={star}
+                />
+                <img
+                  className={crossClass}
+                  onClick={() => {
+                    this.props.setStampSource(cross);
+                    toggleModal();
+                    this.setState({
+                      swirlActive: false,
+                      starActive: false,
+                      crossActive: true,
+                      dustActive: false,
+                    });
+                  }}
+                  src={cross}
+                />
+                <img
+                  className={dustClass}
+                  onClick={() => {
+                    this.props.setStampSource(dust);
+                    toggleModal();
+                    this.setState({
+                      swirlActive: false,
+                      starActive: false,
+                      crossActive: false,
+                      dustActive: true,
+                    });
+                  }}
+                  src={dust}
+                />
+              </div>
+            </div>
+            <img
+              className={this.props.clearClass}
+              onClick={() => {
+                this.props.setClearCanvas(true);
+                hideModal();
+              }}
+              src={bomb}
+              alt="bomb"
+            />
+          </div>
         </div>
       </section>
     );

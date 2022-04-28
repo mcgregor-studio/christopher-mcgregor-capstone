@@ -1,7 +1,30 @@
 .signup {
     &__form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        &--title {
+            text-align: center;
+        }
         &--input {
-            outline: none;
+            margin-top: 1rem;
+            border: none;
+            border-bottom: 0.0625rem solid black;
+        }
+        &--submit {
+            margin-top: 1rem;
+            width: 10rem;
+            font-size: 1.5rem;
+            color: white;
+            background-color: rgb(0, 133, 88);
+            border: 0;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            &:hover {
+                background-color: aquamarine;
+                color: black;
+                transition: background-color 0.2s, color 0.2s;
+            }
         }
     }
 }

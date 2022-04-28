@@ -159,7 +159,6 @@ export default function Main(props) {
     setIsDrawing(false);
   };
 
-  console.log(interval);
   //Drawing
   const draw = (event) => {
     if (!isDrawing) {
@@ -350,6 +349,7 @@ export default function Main(props) {
   //Upload, download, and save image to profile handlers
   const handleUploadImage = (event) => {
     setImageSource(URL.createObjectURL(event.target.files[0]));
+
     setUploadImage(true);
   };
 
@@ -544,6 +544,8 @@ export default function Main(props) {
           stampClass={stampClass}
           sprayClass={sprayClass}
           lineWidth={lineWidth}
+          lineOpacity={lineOpacity}
+          strokeStyle={strokeStyle}
           setBrushActive={setBrushActive}
           setEraserActive={setEraserActive}
           setFillActive={setFillActive}

@@ -4,7 +4,8 @@ import "./Signup.scss";
 export default function Signup(props) {
 
   return (
-    <div className={props.className}>
+    <div className={props.className}>      
+    <h1 className="signup__form--title">Signup</h1>
       <form className="signup__form" onSubmit={props.handleSignup}>
         <input
           name="username"
@@ -24,7 +25,7 @@ export default function Signup(props) {
           type="password"
           placeholder="Password"
         ></input>
-        <input type="submit" value="Sign up"></input>
+        <input className="signup__form--submit"type="submit" value="Sign up"></input>
       </form>
     </div>
   );

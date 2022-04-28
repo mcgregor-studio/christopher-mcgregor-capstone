@@ -4,7 +4,7 @@ import "./Login.scss";
 export default function Login(props) {
   return (
     <div className={props.className}>
-      <h3>Login</h3>
+      <h1 className="login__form--title">Login</h1>
       <form className="login__form" onSubmit={props.handleLogin}>
         <input
           name="email"
@@ -18,7 +18,7 @@ export default function Login(props) {
           type="password"
           placeholder="Password"
         ></input>
-        <input type="submit" value="Login"></input>
+        <input className="login__form--submit" type="submit" value="Login"></input>
       </form>
     </div>
   );

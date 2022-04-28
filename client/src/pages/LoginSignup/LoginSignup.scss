@@ -1,0 +1,19 @@
+.login-signup {
+    display: flex;
+    flex-direction:column;
+    align-items: center;
+}
+
+.button {
+    &__login {
+        margin-top: 5rem;
+        max-width: 5rem;
+        border: none;
+        padding: 1rem;
+        background-color: none;
+        border-radius: 0.5rem;
+    }
+    &__signup {
+        @extend .button__login
+    }
+}
