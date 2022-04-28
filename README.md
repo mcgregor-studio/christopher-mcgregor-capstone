@@ -11,13 +11,15 @@ This is the capstone project that I created for the BrainStation web development
  - Download current image on canvas to computer
  - Delete saved images
  - Max image saves per account
- - Brush tool with colour picker and resize functionality
- - Eraser tool with resize functionality
+ - Brush tool with colour picker
+ - Eraser tool
+ - Opacity and brush/eraser size sliders
  - Fill tool that recognizes lineart
+ - Stamp tool with 4 different options
+ - Spray paint tool
  - Clear all tool
 
  ## In Progress
- - Stamp tool
  - Cycle through images to colour
  - Formatting
  - Logout

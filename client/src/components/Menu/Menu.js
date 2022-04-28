@@ -1,7 +1,8 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import classNames from "classnames";
+import { Link } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
+import hamburger from "../../data/hamburger.svg";
 import "./Menu.scss";
 
 export default class Menu extends React.Component {
@@ -11,7 +12,7 @@ export default class Menu extends React.Component {
   render() {
     //Reference variables
     const classes = {
-      modal: "gallerai__modal--background",
+      modal: "menu__modal--background",
       hidden: "hidden",
       display: "display",
     };
@@ -32,22 +33,23 @@ export default class Menu extends React.Component {
     }
 
     return (
-      <div className="gallerai__menu" onClick={toggleModal}>
+      <div className="menu__container" onClick={toggleModal}>
+        <img className="menu__ham" src={hamburger} alt="hamburger menu" onClick={toggleModal}/>
         <div className={modalClass}>
-          <div className="gallerai__modal">
+          <div className="menu__modal">
             <Link
-              className="gallerai__modal--item"
+              className="menu__modal--item"
               to={{ pathname: "/paint", state: { drawingId: drawingId} }}
             >
               Paint
             </Link>
-            <Link className="gallerai__modal--item" to="/profile">
+            <Link className="menu__modal--item" to="/profile">
               Profile
             </Link>
-            <Link className="gallerai__modal--item" to="/about">
+            <Link className="menu__modal--item" to="/about">
               About
             </Link>
-            <Link className="gallerai__modal--item" to="/contact">
+            <Link className="menu__modal--item" to="/contact">
               Contact
             </Link>
           </div>

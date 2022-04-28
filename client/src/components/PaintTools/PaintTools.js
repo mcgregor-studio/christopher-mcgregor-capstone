@@ -4,6 +4,10 @@ import pencil from "../../data/pencil.svg";
 import fill from "../../data/fill.svg";
 import bomb from "../../data/bomb.svg";
 import eraser from "../../data/eraser.svg";
+import spray from "../../data/spray.svg";
+import small from "../../data/small.svg";
+import opacity from "../../data/opacity.svg";
+import inputEnd from "../../data/input-end.svg";
 import stamp from "../../data/stamp.svg";
 import swirl from "../../data/swirl.png";
 import star from "../../data/star.png";
@@ -45,6 +49,14 @@ export default class PaintTools extends React.Component {
       }
       this.setState({ displayModal: true });
     };
+
+    //Hide modal for other icon clicks
+    const hideModal = () => {
+      if (displayModal) {
+        this.setState({ displayModal: false });
+        return;
+      }
+    };
     //if statement to check for modal on re-render
     if (displayModal) {
       modalClass = classNames(classes.modal, classes.display);
@@ -72,7 +84,12 @@ export default class PaintTools extends React.Component {
       <section className="paint__tools">
         <div>
           <div>
-          <input
+            <img
+              className="paint__tools--modal--icon"
+              src={small}
+              alt="small brush"
+            />
+            <input
               type="range"
               min="1"
               max="50"
@@ -82,30 +99,32 @@ export default class PaintTools extends React.Component {
               }}
             ></input>
             <img
-              className={this.props.pencilClass}
-              onClick={() => {
-                this.props.setBrushActive(true);
-                this.props.setEraserActive(false);
-                this.props.setFillActive(false);
-                this.props.setStampActive(false);
-              }}
-              src={pencil}
-              alt="pencil"
-            />
-            <img
-              className={this.props.eraserClass}
-              onClick={() => {
-                this.props.setEraserActive(true);
-                this.props.setBrushActive(false);
-                this.props.setFillActive(false);
-                this.props.setStampActive(false);
-              }}
-              src={eraser}
-              alt="eraser"
+              className="paint__tools--modal--icon"
+              src={inputEnd}
+              alt="big brush"
             />
           </div>
-        </div>
-        <div>
+          <div>
+            <img
+              className="paint__tools--modal--icon"
+              src={opacity}
+              alt="transparent brush"
+            />
+            <input
+              type="range"
+              min="1"
+              max="100"
+              value={this.props.lineOpacity}
+              onChange={(event) => {
+                this.props.setLineOpacity(event.target.value / 100);
+              }}
+            ></input>
+            <img
+              className="paint__tools--modal--icon"
+              src={inputEnd}
+              alt="opaque brush"
+            />
+          </div>
           <input
             className="paint__tools--color"
             type="color"
@@ -113,6 +132,47 @@ export default class PaintTools extends React.Component {
               this.props.setStrokeStyle(event.target.value);
             }}
           ></input>
+        </div>
+        <div>
+          <img
+            className={this.props.pencilClass}
+            onClick={() => {
+              this.props.setBrushActive(true);
+              this.props.setEraserActive(false);
+              this.props.setFillActive(false);
+              this.props.setStampActive(false);
+              this.props.setSprayActive(false);
+              hideModal();
+            }}
+            src={pencil}
+            alt="pencil"
+          />
+          <img
+            className={this.props.eraserClass}
+            onClick={() => {
+              this.props.setEraserActive(true);
+              this.props.setBrushActive(false);
+              this.props.setFillActive(false);
+              this.props.setStampActive(false);
+              this.props.setSprayActive(false);
+              hideModal();
+            }}
+            src={eraser}
+            alt="eraser"
+          />
+          <img
+            className={this.props.sprayClass}
+            onClick={() => {
+              this.props.setEraserActive(false);
+              this.props.setBrushActive(false);
+              this.props.setFillActive(false);
+              this.props.setStampActive(false);
+              this.props.setSprayActive(true);
+              hideModal();
+            }}
+            src={spray}
+            alt="spray"
+          />
           <img
             className={this.props.fillClass}
             onClick={() => {
@@ -120,6 +180,8 @@ export default class PaintTools extends React.Component {
               this.props.setBrushActive(false);
               this.props.setFillActive(true);
               this.props.setStampActive(false);
+              this.props.setSprayActive(false);
+              hideModal();
             }}
             src={fill}
             alt="paint bucket"
@@ -132,6 +194,7 @@ export default class PaintTools extends React.Component {
                 this.props.setBrushActive(false);
                 this.props.setFillActive(false);
                 this.props.setStampActive(true);
+                this.props.setSprayActive(false);
                 toggleModal();
               }}
               src={stamp}
@@ -198,7 +261,10 @@ export default class PaintTools extends React.Component {
           </div>
           <img
             className={this.props.clearClass}
-            onClick={() => this.props.setClearCanvas(true)}
+            onClick={() => {
+              this.props.setClearCanvas(true);
+              hideModal();
+            }}
             src={bomb}
             alt="bomb"
           />

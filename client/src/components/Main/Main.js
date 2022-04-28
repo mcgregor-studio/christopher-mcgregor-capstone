@@ -18,9 +18,11 @@ export default function Main(props) {
   let [eraserActive, setEraserActive] = useState(false);
   let [fillActive, setFillActive] = useState(false);
   let [stampActive, setStampActive] = useState(false);
+  let [sprayActive, setSprayActive] = useState(false);
   let [isDrawing, setIsDrawing] = useState(false);
   let [strokeStyle, setStrokeStyle] = useState("#000000");
   let [lineWidth, setLineWidth] = useState(10);
+  let [lineOpacity, setLineOpacity] = useState(1);
   let [stampSource, setStampSource] = useState(swirl);
   let [clearCanvas, setClearCanvas] = useState(false);
   let [uploadImage, setUploadImage] = useState(false);
@@ -36,11 +38,12 @@ export default function Main(props) {
     const ctx = canvas.getContext("2d");
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
+    ctx.globalAlpha = lineOpacity;
     ctx.strokeStyle = strokeStyle;
     ctx.lineWidth = lineWidth;
     ctx.imageSmoothingEnabled = false;
     ctxRef.current = ctx;
-  }, [strokeStyle, lineWidth]);
+  }, [strokeStyle, lineWidth, lineOpacity]);
 
   // Variables
   const classes = {
@@ -59,6 +62,8 @@ export default function Main(props) {
   let eraserClass = className(classes.icon);
   let fillClass = className(classes.icon);
   let stampClass = className(classes.icon);
+  let sprayClass = className(classes.icon);
+  let interval;
 
   // ============= Functions ================= //
 
@@ -133,19 +138,28 @@ export default function Main(props) {
       ctx.globalCompositeOperation = "destination-out";
       ctx.strokeStyle = "rgba(255,255,255,1)";
     }
-    ctx.moveTo(mx, my);
-    ctx.lineTo(mx, my);
-    ctx.stroke();
+    if (brushActive || eraserActive) {
+      ctx.moveTo(mx, my);
+      ctx.lineTo(mx, my);
+      ctx.stroke();
+    }
+    if (sprayActive) {
+      interval = setInterval(spray(event), 50);
+    }
     setIsDrawing(true);
   };
 
   //End drawing
   const endDraw = (event) => {
+    if (sprayActive) {
+      clearInterval(interval, false);
+    }
     getMouse(event);
     ctxRef.current.closePath();
     setIsDrawing(false);
   };
 
+  console.log(interval);
   //Drawing
   const draw = (event) => {
     if (!isDrawing) {
@@ -164,6 +178,9 @@ export default function Main(props) {
       ctx.strokeStyle = "rgba(255,255,255,1)";
       ctx.lineTo(mx, my);
       ctx.stroke();
+    }
+    if (sprayActive) {
+      interval = setInterval(spray(event), 50);
     }
   };
 
@@ -295,6 +312,39 @@ export default function Main(props) {
       ctx.drawImage(img, mx - img.width / 2, my - img.height / 2);
     };
     img.src = source;
+  };
+
+  //Spray
+  const spray = (event) => {
+    console.log("spray");
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+    ctx.fillStyle = strokeStyle;
+    getMouse(event);
+    const randomize = (radius) => {
+      let random_angle = Math.random() * (2 * Math.PI);
+      let random_radius = Math.random() * radius;
+
+      return {
+        x: Math.cos(random_angle) * random_radius,
+        y: Math.sin(random_angle) * random_radius,
+      };
+    };
+
+    const sprayParticles = () => {
+      let density = 50;
+
+      for (let i = 0; i < density; i++) {
+        let offset = randomize(lineWidth);
+
+        let x = mx + offset.x;
+        let y = my + offset.y;
+
+        ctx.fillRect(x, y, 1, 1);
+      }
+    };
+
+    sprayParticles();
   };
 
   //Upload, download, and save image to profile handlers
@@ -452,6 +502,10 @@ export default function Main(props) {
     stampClass = className(classes.icon, classes.active);
   }
 
+  if (sprayActive) {
+    sprayClass = className(classes.icon, classes.active);
+  }
+
   return (
     <section className="paint">
       <div className="paint__container">
@@ -481,53 +535,58 @@ export default function Main(props) {
           height={500}
         ></canvas>
       </div>
-      <div className="paint__tools">
+      <div className="paint__tools--container">
         <PaintTools
           clearClass={clearClass}
           pencilClass={pencilClass}
           eraserClass={eraserClass}
           fillClass={fillClass}
           stampClass={stampClass}
+          sprayClass={sprayClass}
           lineWidth={lineWidth}
           setBrushActive={setBrushActive}
           setEraserActive={setEraserActive}
           setFillActive={setFillActive}
           setStampActive={setStampActive}
+          setSprayActive={setSprayActive}
           setLineWidth={setLineWidth}
+          setLineOpacity={setLineOpacity}
           setStrokeStyle={setStrokeStyle}
           setStampSource={setStampSource}
           setClearCanvas={setClearCanvas}
         />
-        <label
-          onChange={handleUploadImage}
-          htmlFor="upload-image"
-          className="paint__button--up"
-        >
-          Upload Image
-          <input
-            id="upload-image"
-            type="file"
-            accept="image/*"
-            name="upload-image"
-          ></input>
-        </label>
-        <a
-          ref={linkRef}
-          download="gallerai-image.png"
-          href=""
-          className="paint__button--down"
-          onClick={handleDownloadImage}
-        >
-          Download Image
-        </a>
-        <button className="paint__button--save" onClick={handleSaveImage}>
-          Save Image To Profile
-        </button>
-        <p className={saveTry}>Saving...</p>
-        <p className={saveWin}>Saved!</p>
-        <p className={saveLose}>
-          No save slots available - please delete a picture
-        </p>
+        <div className="paint__button">
+          <label
+            onChange={handleUploadImage}
+            htmlFor="upload-image"
+            className="paint__button--up"
+          >
+            Upload Image
+            <input
+              id="upload-image"
+              type="file"
+              accept="image/*"
+              name="upload-image"
+            ></input>
+          </label>
+          <a
+            ref={linkRef}
+            download="gallerai-image.png"
+            href=""
+            className="paint__button--down"
+            onClick={handleDownloadImage}
+          >
+            Download Image
+          </a>
+          <button className="paint__button--save" onClick={handleSaveImage}>
+            Save Image To Profile
+          </button>
+          <p className={saveTry}>Saving...</p>
+          <p className={saveWin}>Saved!</p>
+          <p className={saveLose}>
+            No save slots available - please delete a picture
+          </p>
+        </div>
       </div>
     </section>
   );

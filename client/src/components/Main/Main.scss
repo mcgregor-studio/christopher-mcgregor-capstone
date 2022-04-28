@@ -1,61 +1,77 @@
 @keyframes save {
-    0% {opacity: 0}
-    20% {opacity: 1}
-    80% {opacity: 1}
-    100% {opacity: 0}
+  0% {
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 
 .paint {
-    margin: 0 1rem;
+  margin: 1rem 1rem 0 1rem;
+  display: flex;
+  flex-direction: column;
+  &__container {
+    height: 100%;
+    position: relative;
+  }
+  &__canvas {
+    width: 100%;
+    border: 0.0625rem solid black;
+    border-radius: 0.25rem;
+    box-shadow: 0 0.25rem 0.25rem darkgoldenrod;
+    image-rendering: pixelated;
+  }
+  &__lineart {
+    width: 100%;
+    position: absolute;
+    z-index: 10;
+    pointer-events: none;
+  }
+  &__tools {
+    &--container {
+      display: flex;
+      flex-direction: row;
+      width: 100%;
+    }
+  }
+  &__button {
     display: flex;
     flex-direction: column;
-    &__container {
-        width: 100%;
-        height: 100%;
-        position: relative;
+  }
+  &__save {
+    width: calc(100% - 2rem);
+    position: absolute;
+    display: none;
+    pointer-events: none;
+    &--success {
+      animation-name: save;
+      animation-duration: 5s;
     }
-    &__canvas {
-        width: 100%;
-        border: 0.0625rem solid black;
-        border-radius: 0.25rem;
-        box-shadow: 0 0.25rem 0.25rem darkgoldenrod;
-        image-rendering: pixelated;
+    &--fail {
+      animation-name: save;
+      animation-duration: 5s;
     }
-    &__lineart {
-        width: 100%;
-        position: absolute;
-        z-index: 10;
-        pointer-events: none;
+    &--try {
+      animation-name: save;
+      animation-duration: 3s;
     }
-    &__tools {
-
-        width: 100%;
-    }
-    &__save {
-        width: calc(100% - 2rem);
-        position: absolute;
-        display: none;
-        pointer-events: none;
-        &--success {
-            animation-name: save;
-            animation-duration: 5s;
-        }
-        &--fail {
-            animation-name: save;
-            animation-duration: 5s;
-        }
-        &--try {
-            animation-name: save;
-            animation-duration: 3s;
-        }
-    }
+  }
 }
 
-@media(min-width: 768px) {
-    .paint {
-        flex-direction: row;
-        &__tools {
-            margin-left: 1rem;
-        }
+@media (min-width: 768px) {
+  .paint {
+    flex-direction: row;
+    &__tools {
+      &--container {
+        margin-left: 1rem;
+      }
     }
+  }
 }

@@ -2,6 +2,7 @@ import React from "react";
 import classNames from "classnames";
 import { Link } from "react-router-dom";
 import close from "../../data/close.svg";
+import "./Image.scss";
 
 export default class Image extends React.Component {
   state = {

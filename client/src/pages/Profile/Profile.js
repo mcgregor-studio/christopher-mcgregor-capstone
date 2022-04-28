@@ -11,6 +11,7 @@ export default class Profile extends React.Component {
     username: "",
     drawings: [],
     drawingId: "",
+    isLoaded: false,
   };
 
   componentDidMount() {
@@ -24,6 +25,7 @@ export default class Profile extends React.Component {
         this.setState({
           username: res.data.username,
           drawings: res.data.drawings,
+          isLoaded: true,
         });
       })
       .catch((e) => console.error(e));
@@ -31,7 +33,7 @@ export default class Profile extends React.Component {
 
   render() {
     //Reference variables
-    let { username, drawings } = this.state;
+    let { username, drawings, isLoaded } = this.state;
     let newId = uuidv4();
 
     //DELETE request for saved images
@@ -61,10 +63,34 @@ export default class Profile extends React.Component {
         .catch((e) => console.error(e));
     };
 
-    if (drawings.length < 12) {
+    if (isLoaded) {
+      if (drawings.length < 12) {
+        return (
+          <section className="profile">
+            <h1 className="profile__title">Welcome, {username}!</h1>
+            <div className="profile__container">
+              {drawings.map((image) => {
+                return (
+                  <Image
+                    thumbnail={image.thumbnail}
+                    id={image.id}
+                    delImage={delImage}
+                  />
+                );
+              })}
+              <Link
+                className="profile__new"
+                to={{ pathname: "/paint", state: { drawingId: newId } }}
+              >
+                <img className="profile__new--icon" alt="plus" src={plus} />
+              </Link>
+            </div>
+          </section>
+        );
+      }
       return (
         <section className="profile">
-          <h1>Welcome, {username}!</h1>
+          <h1 className="profile__title">Welcome, {username}!</h1>
           <div className="profile__container">
             {drawings.map((image) => {
               return (
@@ -75,31 +101,10 @@ export default class Profile extends React.Component {
                 />
               );
             })}
-            <Link
-              className="profile__new"
-              to={{ pathname: "/paint", state: { drawingId: newId } }}
-            >
-              <img className="profile__new--icon" alt="plus" src={plus}/>
-            </Link>
           </div>
         </section>
       );
     }
-    return (
-      <section className="profile">
-        <h1>Welcome, {username}!</h1>
-        <div className="profile__container">
-          {drawings.map((image) => {
-            return (
-              <Image
-                thumbnail={image.thumbnail}
-                id={image.id}
-                delImage={delImage}
-              />
-            );
-          })}
-        </div>
-      </section>
-    );
+    return (<h1>Loading...</h1>)
   }
 }
