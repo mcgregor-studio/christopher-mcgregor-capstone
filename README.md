@@ -14,13 +14,13 @@ This is the capstone project that I created for the BrainStation web development
  - Brush tool with colour picker and resize functionality
  - Eraser tool with resize functionality
  - Fill tool that recognizes lineart
- - Undo tool 
  - Clear all tool
 
  ## In Progress
  - Stamp tool
  - Cycle through images to colour
  - Formatting
+ - Logout
 
  ## Upcoming Items
   - Different cursors depending on active tool

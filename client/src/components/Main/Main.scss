@@ -5,7 +5,7 @@
     100% {opacity: 0}
 }
 
-.homepage {
+.paint {
     margin: 0 1rem;
     display: flex;
     flex-direction: column;
@@ -52,7 +52,7 @@
 }
 
 @media(min-width: 768px) {
-    .homepage {
+    .paint {
         flex-direction: row;
         &__tools {
             margin-left: 1rem;
