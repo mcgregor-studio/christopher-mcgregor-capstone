@@ -4,6 +4,7 @@ import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import className from "classnames";
 import PaintTools from "../PaintTools/PaintTools";
+import swirl from "../../data/swirl.png";
 import "./Main.scss";
 
 export default function Main(props) {
@@ -17,19 +18,19 @@ export default function Main(props) {
   let [eraserActive, setEraserActive] = useState(false);
   let [fillActive, setFillActive] = useState(false);
   let [stampActive, setStampActive] = useState(false);
+  let [sprayActive, setSprayActive] = useState(false);
   let [isDrawing, setIsDrawing] = useState(false);
   let [strokeStyle, setStrokeStyle] = useState("#000000");
   let [lineWidth, setLineWidth] = useState(10);
-  let [eraserWidth, setEraserWidth] = useState(10);
-  let [undoArr, setUndoArr] = useState([]);
+  let [lineOpacity, setLineOpacity] = useState(1);
+  let [stampSource, setStampSource] = useState(swirl);
   let [clearCanvas, setClearCanvas] = useState(false);
   let [uploadImage, setUploadImage] = useState(false);
-  let [savedImage, setSavedImage] = useState("");
   let [imageSource, setImageSource] = useState("");
   let [drawingId, setDrawingId] = useState(uuidv4);
-  let [saveWin, setSaveWin] = useState("homepage__save--success hidden");
-  let [saveLose, setSaveLose] = useState("homepage__save--fail hidden");
-  let [saveTry, setSaveTry] = useState("homepage__save--try hidden");
+  let [saveWin, setSaveWin] = useState("paint__save--success hidden");
+  let [saveLose, setSaveLose] = useState("paint__save--fail hidden");
+  let [saveTry, setSaveTry] = useState("paint__save--try hidden");
 
   //useEffect hook for canvas and tools
   useEffect(() => {
@@ -37,19 +38,19 @@ export default function Main(props) {
     const ctx = canvas.getContext("2d");
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
+    ctx.globalAlpha = lineOpacity;
     ctx.strokeStyle = strokeStyle;
     ctx.lineWidth = lineWidth;
-    ctx.eraserWidth = eraserWidth;
     ctx.imageSmoothingEnabled = false;
     ctxRef.current = ctx;
-  }, [strokeStyle, lineWidth, eraserWidth, undoArr]);
+  }, [strokeStyle, lineWidth, lineOpacity]);
 
   // Variables
   const classes = {
-    icon: "homepage__paint-tools--icon",
-    attempt: "homepage__save--try",
-    success: "homepage__save--success",
-    failure: "homepage__save--fail",
+    icon: "paint__tools--icon",
+    attempt: "paint__save--try",
+    success: "paint__save--success",
+    failure: "paint__save--fail",
     active: "active",
     display: "display",
     hidden: "hidden",
@@ -61,8 +62,8 @@ export default function Main(props) {
   let eraserClass = className(classes.icon);
   let fillClass = className(classes.icon);
   let stampClass = className(classes.icon);
-  let undoClass = className(classes.icon);
-  let points = [];
+  let sprayClass = className(classes.icon);
+  let interval;
 
   // ============= Functions ================= //
 
@@ -123,45 +124,42 @@ export default function Main(props) {
 
   //Start drawing
   const startDraw = (event) => {
-    if (fillActive) {
+    if (fillActive || stampActive) {
       return;
     }
     getMouse(event);
     const ctx = ctxRef.current;
-
     ctx.beginPath();
     if (brushActive) {
-      points.push({
-        x: mx,
-        y: my,
-        mode: "draw",
-        stroke: ctx.strokeStyle,
-        width: ctx.lineWidth,
-      });
       ctx.globalCompositeOperation = "source-over";
       ctx.strokeStyle = strokeStyle;
     }
     if (eraserActive) {
-      points.push({ x: mx, y: my, mode: "erase", width: ctx.eraserWidth });
       ctx.globalCompositeOperation = "destination-out";
       ctx.strokeStyle = "rgba(255,255,255,1)";
     }
-
-    ctx.moveTo(mx, my);
-    ctx.lineTo(mx, my);
-    ctx.stroke();
+    if (brushActive || eraserActive) {
+      ctx.moveTo(mx, my);
+      ctx.lineTo(mx, my);
+      ctx.stroke();
+    }
+    if (sprayActive) {
+      interval = setInterval(spray(event), 50);
+    }
     setIsDrawing(true);
   };
 
   //End drawing
   const endDraw = (event) => {
+    if (sprayActive) {
+      clearInterval(interval, false);
+    }
     getMouse(event);
     ctxRef.current.closePath();
-    setUndoArr([...undoArr, points]);
-    points = [];
     setIsDrawing(false);
   };
 
+  console.log(interval);
   //Drawing
   const draw = (event) => {
     if (!isDrawing) {
@@ -172,33 +170,32 @@ export default function Main(props) {
     if (brushActive) {
       ctx.globalCompositeOperation = "source-over";
       ctx.strokeStyle = strokeStyle;
-      points.push({
-        x: mx,
-        y: my,
-        mode: "draw",
-        stroke: ctx.strokeStyle,
-        width: ctx.lineWidth,
-      });
       ctx.lineTo(mx, my);
       ctx.stroke();
     }
     if (eraserActive) {
-      points.push({ x: mx, y: my, mode: "erase", width: ctx.eraserWidth });
       ctx.globalCompositeOperation = "destination-out";
       ctx.strokeStyle = "rgba(255,255,255,1)";
       ctx.lineTo(mx, my);
       ctx.stroke();
     }
+    if (sprayActive) {
+      interval = setInterval(spray(event), 50);
+    }
+  };
+
+  //Click handler for fill and stamp
+  const toolClick = (event, stroke, stampItem) => {
+    if (stampActive) {
+      stamp(event, stampItem);
+    }
+    if (fillActive) {
+      fillStart(event, stroke);
+    }
   };
 
   //Fill
   const fillStart = (event, stroke) => {
-    points.push({
-      mode: "fill",
-      clientX: event.clientX,
-      clientY: event.clientY,
-      stroke: stroke,
-    });
     getMouse(event);
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
@@ -246,8 +243,6 @@ export default function Main(props) {
         if (lR === hexR && lG === hexG && lB === hexB) {
           return false;
         }
-        /*         return (Math.abs(r - startR) + Math.abs(g - startG) + Math.abs(b - startB) < 255);
-         */
       };
 
       const colourPixel = (pixelPos, newR, newG, newB) => {
@@ -306,51 +301,50 @@ export default function Main(props) {
     floodFill(mx, my, startR, startG, startB);
   };
 
-  //Undo
-  const undo = () => {
-    undoClass = className(classes.icon, classes.active);
+  //Stamp
+  const stamp = (event, source, stroke) => {
+    getMouse(event);
     const canvas = canvasRef.current;
-    const ctx = ctxRef.current;
-    if (savedImage) {
-      redrawImage(canvasRef, savedImage);
-    }
-    let next = undoArr.slice(0, -1);
-    next = next.filter((elem) => elem.length > 0);
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const ctx = canvas.getContext("2d");
+    let img = new Image();
+    img.onload = () => {
+      img.style = `color: ${source}`;
+      ctx.drawImage(img, mx - img.width / 2, my - img.height / 2);
+    };
+    img.src = source;
+  };
 
-    next.forEach((path) => {
-      if (path[0].mode === "draw") {
-        ctx.globalCompositeOperation = "source-over";
-        ctx.strokeStyle = path[0].stroke;
-        ctx.lineWidth = path[0].width;
-        ctx.beginPath();
-        ctx.moveTo(path[0].x, path[0].y);
-        ctx.lineTo(path[0].x, path[0].y);
-        for (let i = 1; i < path.length; i++) {
-          ctx.lineTo(path[i].x, path[i].y);
-        }
-        ctx.stroke();
+  //Spray
+  const spray = (event) => {
+    console.log("spray");
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+    ctx.fillStyle = strokeStyle;
+    getMouse(event);
+    const randomize = (radius) => {
+      let random_angle = Math.random() * (2 * Math.PI);
+      let random_radius = Math.random() * radius;
+
+      return {
+        x: Math.cos(random_angle) * random_radius,
+        y: Math.sin(random_angle) * random_radius,
+      };
+    };
+
+    const sprayParticles = () => {
+      let density = 50;
+
+      for (let i = 0; i < density; i++) {
+        let offset = randomize(lineWidth);
+
+        let x = mx + offset.x;
+        let y = my + offset.y;
+
+        ctx.fillRect(x, y, 1, 1);
       }
-      if (path[0].mode === "erase") {
-        ctx.globalCompositeOperation = "destination-out";
-        ctx.strokeStyle = "rgba(255,255,255,1)";
-        ctx.eraserWidth = path[0].width;
-        ctx.lineTo(path[0].x, path[0].y);
-        if (path.length > 1) {
-          for (let i = 1; i < path.length; i++) {
-            ctx.lineTo(path[i].x, path[i].y);
-          }
-        }
-        ctx.stroke();
-      }
-      if (path[0].mode === "fill") {
-        fillStart(
-          { clientX: path[0].clientX, clientY: path[0].clientY },
-          path[0].stroke
-        );
-      }
-    });
-    setUndoArr(next);
+    };
+
+    sprayParticles();
   };
 
   //Upload, download, and save image to profile handlers
@@ -386,7 +380,7 @@ export default function Main(props) {
     const lineart = lineartRef.current;
     const saveCanvas = saveRef.current;
     const saveCanvasCtx = saveCanvas.getContext("2d");
-    setSaveTry(className(classes.attempt, classes.display))
+    setSaveTry(className(classes.attempt, classes.display));
     setTimeout(function () {
       setSaveTry(className(classes.attempt, classes.hidden));
     }, 3000);
@@ -455,7 +449,6 @@ export default function Main(props) {
           lineCtx.clearRect(0, 0, lineart.width, lineart.height);
           return;
         }
-        setSavedImage(res.data.colours);
         redrawImage(lineartRef, res.data.lineart);
         redrawImage(canvasRef, res.data.colours);
       })
@@ -489,8 +482,6 @@ export default function Main(props) {
     const canvas = canvasRef.current;
     const ctx = ctxRef.current;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    setUndoArr([]);
-    setSavedImage("");
     setClearCanvas(false);
   }
 
@@ -511,86 +502,91 @@ export default function Main(props) {
     stampClass = className(classes.icon, classes.active);
   }
 
+  if (sprayActive) {
+    sprayClass = className(classes.icon, classes.active);
+  }
+
   return (
-    <section className="homepage">
-      <div className="homepage__container">
+    <section className="paint">
+      <div className="paint__container">
         <canvas
           ref={saveRef}
-          className="homepage__save"
+          className="paint__save"
           width={500}
           height={500}
         ></canvas>
         <canvas
           ref={lineartRef}
-          className="homepage__lineart"
+          className="paint__lineart"
           width={500}
           height={500}
         ></canvas>
         <canvas
-          className="homepage__canvas"
+          className="paint__canvas"
           ref={canvasRef}
           onMouseDown={startDraw}
           onMouseUp={endDraw}
           onMouseLeave={endDraw}
           onMouseMove={draw}
           onClick={(event) => {
-            fillStart(event, strokeStyle);
+            toolClick(event, strokeStyle, stampSource);
           }}
           width={500}
           height={500}
         ></canvas>
       </div>
-      <div className="homepage__tools">
+      <div className="paint__tools--container">
         <PaintTools
           clearClass={clearClass}
           pencilClass={pencilClass}
           eraserClass={eraserClass}
           fillClass={fillClass}
           stampClass={stampClass}
-          undoClass={undoClass}
+          sprayClass={sprayClass}
           lineWidth={lineWidth}
-          eraserWidth={eraserWidth}
           setBrushActive={setBrushActive}
           setEraserActive={setEraserActive}
           setFillActive={setFillActive}
           setStampActive={setStampActive}
+          setSprayActive={setSprayActive}
           setLineWidth={setLineWidth}
+          setLineOpacity={setLineOpacity}
           setStrokeStyle={setStrokeStyle}
-          setEraserWidth={setEraserWidth}
+          setStampSource={setStampSource}
           setClearCanvas={setClearCanvas}
-          undo={undo}
         />
-        <label
-          onChange={handleUploadImage}
-          htmlFor="upload-image"
-          className="homepage__button--up"
-        >
-          Upload Image
-          <input
-            id="upload-image"
-            type="file"
-            accept="image/*"
-            name="upload-image"
-          ></input>
-        </label>
-        <a
-          ref={linkRef}
-          download="gallerai-image.png"
-          href=""
-          className="homepage__button--down"
-          onClick={handleDownloadImage}
-        >
-          Download Image
-        </a>
-        <button className="homepage__button--save" onClick={handleSaveImage}>
-          Save Image To Profile
-        </button><p className={saveTry}>
-          Saving...
-        </p>
-        <p className={saveWin}>Saved!</p>
-        <p className={saveLose}>
-          No save slots available - please delete a picture
-        </p>
+        <div className="paint__button">
+          <label
+            onChange={handleUploadImage}
+            htmlFor="upload-image"
+            className="paint__button--up"
+          >
+            Upload Image
+            <input
+              id="upload-image"
+              type="file"
+              accept="image/*"
+              name="upload-image"
+            ></input>
+          </label>
+          <a
+            ref={linkRef}
+            download="gallerai-image.png"
+            href=""
+            className="paint__button--down"
+            onClick={handleDownloadImage}
+          >
+            Download Image
+          </a>
+          <button className="paint__button--save" onClick={handleSaveImage}>
+            Save Image To Profile
+          </button>
+          <p className={saveTry}>Saving...</p>
+          <p className={saveWin}>Saved!</p>
+          <p className={saveLose}>
+            No save slots available - please delete a picture
+          </p>
+        </div>
       </div>
     </section>
   );

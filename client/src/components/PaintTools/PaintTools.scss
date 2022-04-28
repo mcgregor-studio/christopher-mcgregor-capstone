@@ -1,5 +1,5 @@
-.homepage {
-    &__paint-tools {
+.paint {
+    &__tools {
         display: flex;
         flex-wrap: wrap;
         &--color {
@@ -12,6 +12,15 @@
             width: 2rem;
             height: 2rem;
             cursor: pointer;
+        }
+        &--modal {
+            &--icon {
+                padding: 0.25rem;
+                border-radius: 0.25rem;
+                width: 2rem;
+                height: 2rem;
+                cursor: pointer;
+            }
         }
     }
 }

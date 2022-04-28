@@ -6,9 +6,8 @@ import "./Header.scss";
 export default function Header() {
   return (
     <header className="header">
-      <Logo />
       <Menu />
-      <p>This is the header.</p>
+      <Logo />
     </header>
   );
 }
