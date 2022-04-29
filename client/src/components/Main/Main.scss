@@ -40,11 +40,24 @@
   &__background {
     background-color: colors.$White;
     border-radius: 0.25rem;
-    height: 99%;
+    height: calc(99% - 3rem);
     width: 100.5%;
     position: absolute;
     top: 0;
     pointer-events: none;
+  }
+  &__book {
+    height: 3rem;
+    display: flex;
+    justify-content: space-around;
+    &--icon {
+      cursor: pointer;
+      margin-top: 1rem;
+      width: 1rem;
+      height: 1rem;
+      background-color: colors.$K;
+      border-radius: 50%;
+    }
   }
   &__tools {
     &--container {

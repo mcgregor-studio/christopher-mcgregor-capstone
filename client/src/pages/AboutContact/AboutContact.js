@@ -9,8 +9,9 @@ export default function AboutContact() {
       <img className="ac__picture" src={picture} />
       <p className="ac__text">
         Christopher McGregor is a interactive media designer, developer, and
-        all-around great guy.
+        all-around great guy. He hopes you enjoy 
       </p>
+      <p>Show him your stuff</p>
       <a className="ac__link" href="mailto:christopher.mcgregor@hotmail.com">E-mail</a>
       <a className="ac__link" href="https://github.com/mcgregor-studio">GitHub</a>
 

@@ -5,6 +5,8 @@ import { v4 as uuidv4 } from "uuid";
 import className from "classnames";
 import PaintTools from "../PaintTools/PaintTools";
 import swirl from "../../data/swirl.png";
+import bookIcon from "../../data/small.svg";
+import activeBookIcon from "../../data/input-end.svg";
 import "./Main.scss";
 
 export default function Main(props) {
@@ -27,12 +29,19 @@ export default function Main(props) {
   let [clearCanvas, setClearCanvas] = useState(false);
   let [uploadImage, setUploadImage] = useState(false);
   let [imageSource, setImageSource] = useState("");
+  let [samples, setSamples] = useState("");
   let [drawingId, setDrawingId] = useState(uuidv4);
   let [saveWin, setSaveWin] = useState("paint__save--success hidden");
   let [saveLose, setSaveLose] = useState("paint__save--fail hidden");
   let [saveTry, setSaveTry] = useState("paint__save--try hidden");
 
   //useEffect hooks for canvas and tools
+  useEffect(() => {
+    axios.get(`http://localhost:3100/auth/samples`).then((result) => {
+      setSamples(result.data);
+    }).catch(e => console.error(e));
+
+  }, []);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -49,6 +58,7 @@ export default function Main(props) {
   // Variables
   const classes = {
     icon: "paint__tools--icon",
+    bookIcon: "paint__book--icon",
     attempt: "paint__save--try",
     success: "paint__save--success",
     failure: "paint__save--fail",
@@ -64,7 +74,7 @@ export default function Main(props) {
   let fillClass = className(classes.icon);
   let stampClass = className(classes.icon);
   let sprayClass = className(classes.icon);
-  let interval;
+  let bookClass = className(classes.bookIcon);
 
   // ============= Functions ================= //
 
@@ -145,7 +155,7 @@ export default function Main(props) {
       ctx.stroke();
     }
     if (sprayActive) {
-      interval = setInterval(spray(event), 50);
+      spray(event);
     }
     setIsDrawing(true);
   };
@@ -153,7 +163,6 @@ export default function Main(props) {
   //End drawing
   const endDraw = (event) => {
     if (sprayActive) {
-      clearInterval(interval, false);
     }
     getMouse(event);
     ctxRef.current.closePath();
@@ -180,7 +189,7 @@ export default function Main(props) {
       ctx.stroke();
     }
     if (sprayActive) {
-      interval = setInterval(spray(event), 50);
+      spray(event);
     }
   };
 
@@ -316,7 +325,6 @@ export default function Main(props) {
 
   //Spray
   const spray = (event) => {
-    console.log("spray");
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
     ctx.fillStyle = strokeStyle;
@@ -332,7 +340,7 @@ export default function Main(props) {
     };
 
     const sprayParticles = () => {
-      let density = 50;
+      let density = 1;
 
       for (let i = 0; i < density; i++) {
         let offset = randomize(lineWidth);
@@ -536,7 +544,25 @@ export default function Main(props) {
           height={500}
         ></canvas>
         <div className="paint__background"></div>
+        <div className="paint__book">
+          <div onClick={() => {
+            redrawImage(lineartRef, samples[0].path)
+          }} className={bookClass}></div>
+          <div onClick={() => {
+            redrawImage(lineartRef, samples[1].path)
+          }} className={bookClass}></div>
+          <div onClick={() => {
+            redrawImage(lineartRef, samples[2].path)
+          }} className={bookClass}></div>
+          <div onClick={() => {
+            redrawImage(lineartRef, samples[3].path)
+          }} className={bookClass}></div>
+          <div onClick={() => {
+            redrawImage(lineartRef, samples[4].path)
+          }} className={bookClass}></div>
+        </div>
       </div>
+
       <div className="paint__tools--container">
         <PaintTools
           clearClass={clearClass}

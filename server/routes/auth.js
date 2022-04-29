@@ -283,4 +283,15 @@ router.get("/logout", (req, res) => {
   res.redirect(process.env.CLIENT_URL);
 });
 
+//Sample images GET request
+router.get("/samples", (_, res) => {
+  let sampleArr = [];
+  for (let i = 1; i <= process.env.SAMPLES; i++) {
+    sampleArr.push({
+      path: `${process.env.GALLERAI_URL}/gallerai-samples/sample-${i}.png`,
+    });
+  }
+  res.status(200).json(sampleArr);
+});
+
 module.exports = router;
