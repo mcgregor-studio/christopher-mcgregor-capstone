@@ -1,5 +1,7 @@
+@use "../../partials/colors.scss";
+
 .header {
     display: flex;
-    background-color: goldenrod;
+    background-color: colors.$Magenta;
     padding: 1rem;
 }

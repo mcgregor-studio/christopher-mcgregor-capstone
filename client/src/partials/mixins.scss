@@ -1,7 +1,9 @@
+@use "../partials/colors.scss";
+
 @mixin scrub-bar {
     -webkit-appearance: none;
     background: black;
-    background-image: linear-gradient(goldenrod, goldenrod);
+    background-image: linear-gradient(colors.$Cyan, colors.$Cyan);
     background-repeat: no-repeat;
     height: 0.25rem;
     border-radius: 0.625rem;
@@ -10,9 +12,16 @@
 @mixin scrub-button {
     -webkit-appearance: none;
     appearance: none;
-    width: 2rem;
-    height: 2rem;
+    width: 1rem;
+    height: 1rem;
     border: 0;
-    background: url('../../src/data/scrub.svg');
+    background: url("../data/scrub.svg");
     cursor: pointer;
+}
+
+@mixin dl-button {
+    background-color: colors.$K;
+      color: colors.$White;
+      padding: 0.5rem;
+      border-radius: 0.5rem;
 }

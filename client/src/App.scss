@@ -1,4 +1,7 @@
+@use "../src/partials/colors.scss";
+
 html, body {
+  background-color: colors.$Yellow;
   width: 100%;
   height: 100%;
   overflow-x: hidden;

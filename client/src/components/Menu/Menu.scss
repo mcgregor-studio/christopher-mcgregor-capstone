@@ -1,3 +1,5 @@
+@use "../../partials/colors.scss";
+
 @keyframes fade-in {
     0% {
         opacity: 0;
@@ -16,11 +18,12 @@
     }
     &__ham {
         width: 2rem;
+        cursor: pointer;
     }
     &__modal {
         animation-name: fade-in;
         animation-duration: 0.5s;
-        background-color: white;
+        background-color: colors.$White;
         padding: 0 1rem 1rem 1rem;
         width: 15rem;
         border-radius: 0.5rem;

@@ -1,0 +1,23 @@
+@use "../../partials/colors.scss";
+
+.ac {
+    &__title {
+        text-align: center;
+    }
+    &__text {
+        width: 40%;
+        margin: auto;
+    }
+    &__picture {
+        width: 25%;
+        display: block;
+        margin: auto;
+    }
+    &__link {
+        cursor: pointer;
+        background-color: colors.$K;
+        color: colors.$White;
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+    }
+}

@@ -1,3 +1,6 @@
+@use "../../partials/colors.scss";
+@use "../../partials/mixins.scss";
+
 @keyframes save {
   0% {
     opacity: 0;
@@ -21,14 +24,26 @@
     position: relative;
   }
   &__canvas {
+    cursor: crosshair;
+    position: relative;
+    z-index: 5;
     width: 100%;
-    border-bottom: 1px solid black;
+    border-bottom: 1px solid colors.$K;
     image-rendering: pixelated;
   }
   &__lineart {
     width: 100%;
     position: absolute;
     z-index: 10;
+    pointer-events: none;
+  }
+  &__background {
+    background-color: colors.$White;
+    border-radius: 0.25rem;
+    height: 99%;
+    width: 100.5%;
+    position: absolute;
+    top: 0;
     pointer-events: none;
   }
   &__tools {
@@ -47,26 +62,22 @@
     align-items: center;
     top: 8rem;
     &--up {
+      @include mixins.dl-button;
       cursor: pointer;
-      background-color: black;
-      color: white;
-      padding: 0.5rem;
-      border-radius: 0.5rem;
+      width: 9rem;
+      text-align: center;
     }
     &--down {
+      @include mixins.dl-button;
+      width: 9rem;
+      text-align: center;
       margin-top: 0.5rem;
-      background-color: black;
-      color: white;
-      padding: 0.5rem;
-      border-radius: 0.5rem;
     }
     &--save {
+      @include mixins.dl-button;
+      width: 10rem;
       border: 0;
       margin: 0.5rem 0;
-      background-color: black;
-      color: white;
-      padding: 0.5rem;
-      border-radius: 0.5rem;
     }
   }
   &__save {
@@ -95,7 +106,7 @@
     flex-direction: row;
     justify-content: center;
     &__canvas {
-      border: 0.0625rem solid black;
+      border: 0.0625rem solid colors.$K;
       border-radius: 0.25rem;
       box-shadow: 0 0.25rem 0.25rem darkgoldenrod;
     }

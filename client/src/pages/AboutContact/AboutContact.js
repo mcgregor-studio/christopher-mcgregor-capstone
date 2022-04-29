@@ -1,5 +1,19 @@
-import React from 'react';
+import React from "react";
+import picture from "../../data/about-pic.png";
+import "./AboutContact.scss";
 
 export default function AboutContact() {
-    return <p>This is the about/contact page.</p>
+  return (
+    <section className="ac">
+      <h1 className="ac__title">About</h1>
+      <img className="ac__picture" src={picture} />
+      <p className="ac__text">
+        Christopher McGregor is a interactive media designer, developer, and
+        all-around great guy.
+      </p>
+      <a className="ac__link" href="mailto:christopher.mcgregor@hotmail.com">E-mail</a>
+      <a className="ac__link" href="https://github.com/mcgregor-studio">GitHub</a>
+
+    </section>
+  );
 }

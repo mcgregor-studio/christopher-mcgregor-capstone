@@ -32,7 +32,8 @@ export default function Main(props) {
   let [saveLose, setSaveLose] = useState("paint__save--fail hidden");
   let [saveTry, setSaveTry] = useState("paint__save--try hidden");
 
-  //useEffect hook for canvas and tools
+  //useEffect hooks for canvas and tools
+
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
@@ -534,6 +535,7 @@ export default function Main(props) {
           width={500}
           height={500}
         ></canvas>
+        <div className="paint__background"></div>
       </div>
       <div className="paint__tools--container">
         <PaintTools

@@ -1,3 +1,5 @@
+@use "../../../src/partials/colors.scss";
+
 @keyframes loading {
   0% {
     opacity: 0;
@@ -14,6 +16,7 @@
   &__container {
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
   }
   &__title {
     animation-name: loading;
@@ -24,6 +27,7 @@
     animation-duration: 1s;
   }
   &__new {
+    margin: 0.5rem 0.5rem;
     animation-name: loading;
     animation-duration: 1s;
     transition: transform 0.2s;
@@ -31,8 +35,9 @@
       transform: scale(1.1);
     }
     &--icon {
+      background-color: colors.$White;
+      border: 1px solid colors.$K;
       border-radius: 0.25rem;
-      border: 1px solid black;
       width: 4rem;
       height: 4rem;
       padding: 2rem;

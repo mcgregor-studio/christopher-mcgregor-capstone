@@ -69,7 +69,7 @@ export default class Profile extends React.Component {
           <section className="profile">
             <h1 className="profile__title">Welcome, {username}!</h1>
             <p className="profile__text">
-              {12 - drawings.length}/12 slots open
+              {12 - drawings.length}/12 save slots open
             </p>
             <div className="profile__container">
               {drawings.map((image) => {
