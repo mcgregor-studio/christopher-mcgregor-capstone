@@ -1,4 +1,5 @@
 @use "../../../src/partials/colors.scss";
+@use "../../../src/partials/mixins.scss";
 
 @keyframes loading {
   0% {
@@ -32,9 +33,25 @@
     }
     &--modal {
       position: absolute;
+      top: 0.05rem;
+      left: 0.05rem;
       width: 8rem;
       height: 8rem;
-      background-color: rgba(255, 255, 255, 0.5);
+      background-color: rgba(255, 255, 255, 0.75);
+      & > p {
+        text-align: center;
+      }
+      &--container {
+        display: flex;
+        justify-content: center;
+      }
+      &--yes {
+        @include mixins.md-button;
+        margin-right: 1rem;
+      }
+      &--no {
+        @include mixins.md-button;
+      }
     }
     &--thumbnail {
       background-color: colors.$White;
@@ -45,6 +62,21 @@
       cursor: pointer;
       &:hover {
         transform: scale(1.1);
+      }
+    }
+  }
+}
+
+@media (min-width: 668px) {
+  .profile {
+    &__image {
+      &--thumbnail {
+        width: 9rem;
+        height: 9rem;
+      }
+      &--modal {
+        width: 9.05rem;
+        height: 9.05rem;
       }
     }
   }

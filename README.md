@@ -11,6 +11,7 @@ This is the capstone project that I created for the BrainStation web development
  - Download current image on canvas to computer
  - Delete saved images
  - Max image saves per account
+ - Logout
  - Cycle through images to colour
  - Formatting
  - Brush tool with colour picker
@@ -20,9 +21,6 @@ This is the capstone project that I created for the BrainStation web development
  - Stamp tool with 4 different options
  - Spray paint tool
  - Clear all tool
-
- ## In Progress
- - Logout
 
  ## Upcoming Items
   - Different cursors depending on active tool

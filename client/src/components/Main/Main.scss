@@ -111,14 +111,20 @@
     display: none;
     pointer-events: none;
     &--success {
+      position: absolute;
+      top: 7.75rem;
       animation-name: save;
       animation-duration: 5s;
     }
     &--fail {
+      position: absolute;
+      top: 7.75rem;
       animation-name: save;
       animation-duration: 5s;
     }
     &--try {
+      position: absolute;
+      top: 7.75rem;
       animation-name: save;
       animation-duration: 3s;
     }

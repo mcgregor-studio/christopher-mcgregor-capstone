@@ -279,7 +279,6 @@ router.delete("/profile/:drawingId", authorize, (req, res) => {
 
 //Logout GET request
 router.get("/logout", authorize, (req, res) => {
-  console.log(req.decoded);
   res.status(200).json({ message: "Logout successful" });
 });
 

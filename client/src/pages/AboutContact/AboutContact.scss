@@ -7,7 +7,12 @@
     &__text {
         width: 40%;
         margin: 1rem auto;
-        text-align:center;
+        text-align: center;
+    }
+    &__italic {
+        @extend .ac__text;
+        margin-top: 3rem;
+        font-style: italic;
     }
     &__link {
         cursor: pointer;

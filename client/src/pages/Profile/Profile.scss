@@ -48,3 +48,20 @@
     margin-top: 5rem;
   }
 }
+
+@media (min-width: 668px) { 
+  .profile {
+    &__title {
+      text-align: center;
+    }
+    &__text {
+      text-align: center;
+    }
+    &__new {
+      &--icon {
+        width: 5rem;
+        height: 5rem;
+      }
+    }
+  }
+}

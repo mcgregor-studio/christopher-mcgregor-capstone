@@ -12,7 +12,7 @@ export default function AboutContact() {
         to their profile for them to continue later, or they can save their own
         finished works to their computer to use for other purposes.
       </p>
-      <p className="ac__text">Noticed a bug? Want to see more? Get in touch:</p>
+      <p className="ac__italic">Noticed a bug? Want to see more?<br /> Get in touch:</p>
       <div className="ac__container">
         <a className="ac__link" href="mailto:christopher.mcgregor@hotmail.com">
           E-mail

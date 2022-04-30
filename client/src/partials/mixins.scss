@@ -25,3 +25,18 @@
       padding: 0.5rem;
       border-radius: 0.5rem;
 }
+
+@mixin md-button {
+    cursor: pointer;
+    width: 1.5rem;
+    height: 1.5rem;
+    border: 1px solid colors.$K;
+    border-radius: 50%;
+    background-color: colors.$White;
+    font-weight: bolder;
+    transition: background-color 0.2s, color 0.2s;
+    &:hover {
+        background-color: colors.$K;
+        color: colors.$White;
+    }
+}
