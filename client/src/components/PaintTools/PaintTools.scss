@@ -21,9 +21,25 @@
       display: flex;
     }
     &--slider {
+      &-o {
+        @include mixins.scrub-bar;
+        margin-top: 1.05rem;
+        background-size: 100% 100%;
+        &::-webkit-slider-thumb {
+          @include mixins.scrub-button;
+        }
+      }
+      &-s {
+        @include mixins.scrub-bar;
+        margin-top: 1.05rem;
+        background-size: 20% 100%;
+        &::-webkit-slider-thumb {
+          @include mixins.scrub-button;
+        }
+      }
       @include mixins.scrub-bar;
       margin-top: 1.05rem;
-      background-size: 50% 100%;
+      background-size: 100% 100%;
       &::-webkit-slider-thumb {
         @include mixins.scrub-button;
       }

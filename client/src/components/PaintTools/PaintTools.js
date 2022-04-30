@@ -102,7 +102,7 @@ export default class PaintTools extends React.Component {
             />
             <input
               ref={widthRef}
-              className="paint__tools--slider"
+              className="paint__tools--slider-s"
               type="range"
               min="1"
               max="50"
@@ -129,7 +129,7 @@ export default class PaintTools extends React.Component {
             />
             <input
             ref={opacityRef}
-              className="paint__tools--slider"
+              className="paint__tools--slider-o"
               type="range"
               min="1"
               max="100"
