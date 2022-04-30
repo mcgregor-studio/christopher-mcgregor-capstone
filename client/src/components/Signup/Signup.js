@@ -1,10 +1,14 @@
 import React from "react";
+import Logo from "../Logo/Logo";
 import "./Signup.scss";
 
 export default function Signup(props) {
 
   return (
-    <div className={props.className}>      
+    <div className={props.className}>  
+    <div className="margin">
+        <Logo />
+      </div>    
     <h1 className="signup__form--title">Signup</h1>
       <form className="signup__form" onSubmit={props.handleSignup}>
         <input
@@ -25,7 +29,7 @@ export default function Signup(props) {
           type="password"
           placeholder="Password"
         ></input>
-        <input className="signup__form--submit"type="submit" value="Sign up"></input>
+        <input className="signup__form--submit"type="submit" value="Sign Up"></input>
       </form>
     </div>
   );

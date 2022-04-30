@@ -6,6 +6,7 @@
 
 .button {
     &__login {
+        cursor: pointer;
         margin-top: 5rem;
         max-width: 5rem;
         border: none;
@@ -16,4 +17,8 @@
     &__signup {
         @extend .button__login
     }
+}
+
+.margin {
+    margin-top: 3rem;
 }

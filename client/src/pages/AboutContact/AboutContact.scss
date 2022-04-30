@@ -6,12 +6,8 @@
     }
     &__text {
         width: 40%;
-        margin: auto;
-    }
-    &__picture {
-        width: 25%;
-        display: block;
-        margin: auto;
+        margin: 1rem auto;
+        text-align:center;
     }
     &__link {
         cursor: pointer;
@@ -19,5 +15,11 @@
         color: colors.$White;
         padding: 0.5rem;
         border-radius: 0.5rem;
+    }
+    &__container {
+        margin: 1rem auto;
+        width: 30%;
+        display: flex;
+        justify-content: space-evenly;
     }
 }

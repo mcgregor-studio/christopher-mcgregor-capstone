@@ -37,10 +37,12 @@ export default function Main(props) {
 
   //useEffect hooks for canvas and tools
   useEffect(() => {
-    axios.get(`http://localhost:3100/auth/samples`).then((result) => {
-      setSamples(result.data);
-    }).catch(e => console.error(e));
-
+    axios
+      .get(`http://localhost:3100/auth/samples`)
+      .then((result) => {
+        setSamples(result.data);
+      })
+      .catch((e) => console.error(e));
   }, []);
 
   useEffect(() => {
@@ -381,10 +383,6 @@ export default function Main(props) {
   };
 
   const handleSaveImage = () => {
-    if (!sessionStorage.getItem("token")) {
-      <Redirect to="/" />;
-    }
-
     const canvas = canvasRef.current;
     const lineart = lineartRef.current;
     const saveCanvas = saveRef.current;
@@ -545,21 +543,36 @@ export default function Main(props) {
         ></canvas>
         <div className="paint__background"></div>
         <div className="paint__book">
-          <div onClick={() => {
-            redrawImage(lineartRef, samples[0].path)
-          }} className={bookClass}></div>
-          <div onClick={() => {
-            redrawImage(lineartRef, samples[1].path)
-          }} className={bookClass}></div>
-          <div onClick={() => {
-            redrawImage(lineartRef, samples[2].path)
-          }} className={bookClass}></div>
-          <div onClick={() => {
-            redrawImage(lineartRef, samples[3].path)
-          }} className={bookClass}></div>
-          <div onClick={() => {
-            redrawImage(lineartRef, samples[4].path)
-          }} className={bookClass}></div>
+          <div
+            onClick={() => {
+              redrawImage(lineartRef, samples[0].path);
+            }}
+            className={bookClass}
+          ></div>
+          <div
+            onClick={() => {
+              redrawImage(lineartRef, samples[1].path);
+            }}
+            className={bookClass}
+          ></div>
+          <div
+            onClick={() => {
+              redrawImage(lineartRef, samples[2].path);
+            }}
+            className={bookClass}
+          ></div>
+          <div
+            onClick={() => {
+              redrawImage(lineartRef, samples[3].path);
+            }}
+            className={bookClass}
+          ></div>
+          <div
+            onClick={() => {
+              redrawImage(lineartRef, samples[4].path);
+            }}
+            className={bookClass}
+          ></div>
         </div>
       </div>
 

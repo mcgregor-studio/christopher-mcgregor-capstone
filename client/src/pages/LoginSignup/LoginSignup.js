@@ -13,7 +13,6 @@ export default class LoginSignup extends React.Component {
   };
 
   render() {
-    const SERVER_URL = process.env.GALLERAE_URL;
     const classes = {
       login: "login",
       signup: "signup",
@@ -86,7 +85,7 @@ export default class LoginSignup extends React.Component {
 
     
     return (
-      <div className="login-signup">
+      <section className="login-signup">
         <Login className={loginClass} handleLogin={handleLogin} />
         <Signup className={signupClass} handleSignup={handleSignup} />
 
@@ -96,7 +95,7 @@ export default class LoginSignup extends React.Component {
         <button onClick={toggleView} className={buttonSignupClass}>
           Signup
         </button>
-      </div>
+      </section>
     );
   }
 }

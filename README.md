@@ -22,7 +22,6 @@ This is the capstone project that I created for the BrainStation web development
  - Clear all tool
 
  ## In Progress
-
  - Logout
 
  ## Upcoming Items

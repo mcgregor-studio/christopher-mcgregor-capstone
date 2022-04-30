@@ -110,6 +110,6 @@ export default class Profile extends React.Component {
         </section>
       );
     }
-    return <h1>Loading...</h1>;
+    return <h1 className="profile__loading">Loading...</h1>;
   }
 }
