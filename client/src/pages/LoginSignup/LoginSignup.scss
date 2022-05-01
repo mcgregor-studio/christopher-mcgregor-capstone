@@ -1,24 +1,32 @@
-.login-signup {
-    display: flex;
-    flex-direction:column;
-    align-items: center;
-}
+@use "../../partials/fonts.scss";
+@use "../../partials/colors.scss";
 
-.button {
-    &__login {
-        cursor: pointer;
-        margin-top: 5rem;
-        max-width: 5rem;
-        border: none;
-        padding: 1rem;
-        background-color: none;
-        border-radius: 0.5rem;
+.login-signup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  &__button {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+    padding: 1rem 0;
+    text-align: center;
+    font-family: "Roboto", arial, sans-serif;
+    width: 15rem;
+    background-color: colors.$K;
+    box-shadow: rgb(0 0 0 / 25%) 0px 2px 4px 0px;
+    transition: background-color 0.218s ease 0s, border-color 0.218s ease 0s,
+      box-shadow 0.218s ease 0s;
+    &:visited {
+      color: colors.$White;
     }
-    &__signup {
-        @extend .button__login
+    &:hover {
+        box-shadow: rgb(66 133 244 / 30%) 0px 0px 3px 3px;
     }
+  }
 }
 
 .margin {
-    margin-top: 3rem;
+  margin-top: 8rem;
+  margin-bottom: 3rem;
 }

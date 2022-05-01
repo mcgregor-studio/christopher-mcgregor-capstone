@@ -19,6 +19,7 @@
     animation-name: loading;
     animation-duration: 1s;
     &--close {
+      background-color: colors.$White;
       padding: 0.25rem;
       border-radius: 50%;
       width: 0.75rem;
@@ -28,7 +29,6 @@
       z-index: 50;
       &:hover {
         filter: invert(1);
-        background-color: colors.$White;
       }
     }
     &--modal {

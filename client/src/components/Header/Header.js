@@ -10,19 +10,6 @@ export default class Header extends React.Component {
     isLoggedOut: false
   }
   render() {
-    const logout = () => {
-      axios
-        .get("http://localhost:3100/auth/logout", {
-          headers: {
-            authorization: sessionStorage.getItem("token"),
-          },
-        })
-        .then(() => {
-          sessionStorage.clear();
-          this.setState({isLoggedOut: true})
-        })
-        .catch((e) => console.error(e));
-    };
 
     if (this.state.isLoggedOut) {
       return <Redirect to="/" />;
@@ -34,9 +21,7 @@ export default class Header extends React.Component {
         <Link to="/paint">
           <Logo />
         </Link>
-        <div className="header__logout">
-          <p onClick={logout}>Logout</p>
-        </div>
+       {/*  <a href="#" onclick={signOut}>Sign out</a> */}
       </header>
     );
   }

@@ -317,9 +317,13 @@ export default function Main(props) {
     getMouse(event);
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
+    
+    
     let img = new Image();
     img.onload = () => {
-      img.style = `color: ${source}`;
+      ctx.fillStyle = stroke;
+      ctx.fillRect(0,0,canvas.width, canvas.height);
+      ctx.globalCompositeOperation = "destination-in";
       ctx.drawImage(img, mx - img.width / 2, my - img.height / 2);
     };
     img.src = source;
@@ -330,6 +334,8 @@ export default function Main(props) {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
     ctx.fillStyle = strokeStyle;
+    ctx.globalCompositeOperation = "source-over";
+
     getMouse(event);
     const randomize = (radius) => {
       let random_angle = Math.random() * (2 * Math.PI);

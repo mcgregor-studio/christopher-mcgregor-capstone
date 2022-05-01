@@ -37,7 +37,7 @@ const authorize = (req, res, next) => {
   });
 };
 
-//Authentication GET requests
+//Google authentication GET requests
 router.get(
   "/google",
   passport.authenticate("google", { scope: ["email", "profile"] })
@@ -49,79 +49,18 @@ router.get(
     failureRedirect: `${process.env.CLIENT_URL}/google/failure`,
   }),
   (_, res) => {
-    res.redirect(process.env.CLIENT_URL);
+    res.redirect(`${process.env.CLIENT_URL}/profile`);
   }
 );
 
 //Success callback
 router.get("/google/success", (req, res) => {
   if (req.user) {
+    console.log(req.user)
     res.status(200).json(req.user);
   } else {
     res.status(401).json({ message: "User is not logged in" });
   }
-});
-
-//Login POST request
-router.post("/login", (req, res) => {
-  const { email, password } = req.body;
-  knex("users")
-    .where("email", email)
-    .first()
-    .then((user) => {
-      if (user && bcrypt.compareSync(password, user.password)) {
-        const token = jwt.sign(
-          {
-            email: user.email,
-          },
-          secretKey
-        );
-        return res.json({ token });
-      }
-    })
-    .catch((e) => console.error("Error fetching a user:", e));
-});
-
-//Signup POST request
-router.post("/signup", (req, res) => {
-  const { username, email, password } = req.body;
-  const hashPass = bcrypt.hashSync(password, saltRounds);
-  knex("users")
-    .where("email", email)
-    .first()
-    .then((result) => {
-      if (result) {
-        return res.json({ success: "false" });
-      }
-      knex("users")
-        .where("username", username)
-        .first()
-        .then((result) => {
-          if (result) {
-            return res.json({ success: "false" });
-          }
-          knex("users")
-            .insert({
-              username: username,
-              google_id: "null",
-              email: email,
-              password: hashPass,
-            })
-            .then((user) => {
-              if (user && bcrypt.compareSync(hashPass, password)) {
-                const token = jwt.sign(
-                  {
-                    email: user.email,
-                  },
-                  secretKey
-                );
-                return res.json({ token });
-              }
-            })
-            .catch((e) => console.error("Error creating a user:", e));
-        });
-    })
-    .catch((e) => console.error("Error creating a user:", e));
 });
 
 //User profile GET request
@@ -279,6 +218,8 @@ router.delete("/profile/:drawingId", authorize, (req, res) => {
 
 //Logout GET request
 router.get("/logout", authorize, (_, res) => {
+  res.logout();
+  res.session.destroy();
   res.status(200).json({ message: "Logout successful" });
 });
 
