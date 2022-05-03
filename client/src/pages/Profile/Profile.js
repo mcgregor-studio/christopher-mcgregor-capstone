@@ -16,11 +16,7 @@ export default class Profile extends React.Component {
 
   componentDidMount() {
     axios
-      .get(`http://localhost:3100/auth/profile`, {
-        headers: {
-          authorization: sessionStorage.getItem("token"),
-        },
-      })
+      .get(`http://localhost:3100/auth/profile`)
       .then((res) => {
         this.setState({
           username: res.data.username,

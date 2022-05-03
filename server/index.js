@@ -1,5 +1,6 @@
 const express = require("express");
-const expressSession = require("express-session");
+const session = require("express-session");
+const helmet = require("helmet");
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth2").Strategy;
 const knex = require("knex")(require("./knexfile.js").development);
@@ -21,11 +22,12 @@ app.use((req, res, next) => {
 //Node libraries to ensure pages load properly
 app.use(express.json({ limit: "250mb" }));
 app.use(express.static("public"));
+app.use(helmet());
 app.use(
-  expressSession({
+  session({
     secret: process.env.SESSION_SECRET,
-    resave: false,
     saveUninitialized: true,
+    resave: false, 
   })
 );
 app.use(
@@ -51,28 +53,22 @@ passport.use(
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL: process.env.GOOGLE_CALLBACK_URL,
-      passReqToCallback: true,
     },
     function (request, accessToken, refreshToken, profile, done) {
-      /* User.findOrCreate({ googleId: profile.id }, function (err, user) {
-        return done(err, user);
-      }); */
-
       knex("users")
-        .select("id")
-        .where({ google_id: profile.id })
+        .select("g_id")
+        .where({ g_id: profile.id })
         .then((user) => {
           if (user.length) {
             done(null, user[0]);
           } else {
             knex("users")
               .insert({
-                google_id: profile.id,
-                username: profile.displayName,
-                email: profile.email,
+                g_id: profile.id,
+                username: profile.name.givenName,
               })
               .then((userId) => {
-                done(null, { id: userId[0] });
+                done(null, { g_id: userId[0] });
               })
               .catch((e) => console.error("Error creating a user:", e));
           }
@@ -84,13 +80,13 @@ passport.use(
 
 passport.serializeUser((user, done) => {
   console.log("serializeUser (user object):", user);
-  done(null, user.id);
+  done(null, user.g_id);
 });
 
 passport.deserializeUser((userId, done) => {
   console.log("deserializeUser (user id):", userId);
   knex("users")
-    .where({ id: userId })
+    .where({ g_id: userId })
     .then((user) => {
       console.log("req.user:", user[0]);
       done(null, user[0]);

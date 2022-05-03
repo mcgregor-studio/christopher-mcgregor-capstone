@@ -10,7 +10,7 @@
         host: '127.0.0.1',
         user: 'root',
         password: 'rootr00t',
-        database: 'galler.ai_dev',
+        database: 'galler.ai_users',
         charset: 'utf8',
       },
     }

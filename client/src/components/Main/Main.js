@@ -1,12 +1,9 @@
 import React, { useRef, useEffect, useState } from "react";
-import { Redirect } from "react-router-dom";
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import className from "classnames";
 import PaintTools from "../PaintTools/PaintTools";
 import swirl from "../../data/swirl.png";
-import bookIcon from "../../data/small.svg";
-import activeBookIcon from "../../data/input-end.svg";
 import "./Main.scss";
 
 export default function Main(props) {
@@ -421,8 +418,7 @@ export default function Main(props) {
       axios
         .put("http://localhost:3100/auth/profile", formData, {
           headers: {
-            authorization: sessionStorage.getItem("token"),
-            drawingId: drawingId,
+            drawingId: drawingId
           },
         })
         .then(() => {
@@ -450,7 +446,6 @@ export default function Main(props) {
     axios
       .get(`http://localhost:3100/auth/profile/${props.drawingId}`, {
         headers: {
-          authorization: sessionStorage.getItem("token"),
           drawingId: props.drawingId,
         },
       })

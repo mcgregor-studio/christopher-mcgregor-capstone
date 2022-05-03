@@ -21,7 +21,7 @@ export default class Header extends React.Component {
         <Link to="/paint">
           <Logo />
         </Link>
-       {/*  <a href="#" onclick={signOut}>Sign out</a> */}
+       <div></div>
       </header>
     );
   }
