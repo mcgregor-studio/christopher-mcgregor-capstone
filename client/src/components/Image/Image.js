@@ -69,7 +69,7 @@ export default class Image extends React.Component {
         <Link
           to={{
             pathname: `/paint/${this.props.id}`,
-            state: { drawingId: this.props.id },
+            state: { drawingId: this.props.id, drawItem: this.props.drawItem },
           }}
         >
           <img

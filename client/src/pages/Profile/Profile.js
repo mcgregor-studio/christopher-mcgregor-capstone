@@ -2,6 +2,8 @@ import axios from "axios";
 import React from "react";
 import { v4 as uuidv4 } from "uuid";
 import { Link } from "react-router-dom";
+import { css } from "@emotion/react";
+import SquareLoader from "react-spinners/SquareLoader";
 import Image from "../../components/Image/Image";
 import plus from "../../data/plus.svg";
 import "./Profile.scss";
@@ -11,17 +13,17 @@ export default class Profile extends React.Component {
     username: "",
     drawings: [],
     drawingId: "",
-    isLoaded: false,
+    loading: true,
   };
 
   componentDidMount() {
     axios
-      .get(`http://localhost:3100/auth/profile`)
+      .get(`http://localhost:3100/auth/profile`, { withCredentials: true })
       .then((res) => {
         this.setState({
           username: res.data.username,
           drawings: res.data.drawings,
-          isLoaded: true,
+          loading: false,
         });
       })
       .catch((e) => console.error(e));
@@ -29,24 +31,21 @@ export default class Profile extends React.Component {
 
   render() {
     //Reference variables
-    let { username, drawings, isLoaded } = this.state;
+    let { username, drawings, loading } = this.state;
     let newId = uuidv4();
+    const override = css`
+      display: block;
+      margin: 0 auto;
+    `;
 
     //DELETE request for saved images
     const delImage = (id) => {
       axios
-        .delete(`http://localhost:3100/auth/profile/${id}`, {
-          headers: {
-            authorization: sessionStorage.getItem("token"),
-            drawingId: id,
-          },
-        })
+        .delete(`http://localhost:3100/auth/profile/${id}`)
         .then(() => {
           axios
             .get(`http://localhost:3100/auth/profile`, {
-              headers: {
-                authorization: sessionStorage.getItem("token"),
-              },
+              withCredentials: true,
             })
             .then((res) => {
               this.setState({
@@ -59,7 +58,7 @@ export default class Profile extends React.Component {
         .catch((e) => console.error(e));
     };
 
-    if (isLoaded) {
+    if (!loading) {
       if (drawings.length < 12) {
         return (
           <section className="profile">
@@ -92,7 +91,7 @@ export default class Profile extends React.Component {
           <h1 className="profile__title">Welcome, {username}!</h1>
 
           <div className="profile__container">
-            <p>{drawings.length}/12 slots used</p>
+            <p>{drawings.length}/12 save slots used</p>
             {drawings.map((image) => {
               return (
                 <Image
@@ -106,6 +105,19 @@ export default class Profile extends React.Component {
         </section>
       );
     }
-    return <h1 className="profile__loading">Loading...</h1>;
+    return (
+      <section>
+        <h1 className="profile__loading">Loading...</h1>
+        <div>
+          <SquareLoader
+            css={override}
+            size={150}
+            color={"#000000"}
+            loading={this.state.loading}
+            speedMultiplier={1}
+          />
+        </div>
+      </section>
+    );
   }
 }

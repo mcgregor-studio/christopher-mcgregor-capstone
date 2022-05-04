@@ -314,12 +314,11 @@ export default function Main(props) {
     getMouse(event);
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
-    
-    
+
     let img = new Image();
     img.onload = () => {
       ctx.fillStyle = stroke;
-      ctx.fillRect(0,0,canvas.width, canvas.height);
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.globalCompositeOperation = "destination-in";
       ctx.drawImage(img, mx - img.width / 2, my - img.height / 2);
     };
@@ -399,26 +398,33 @@ export default function Main(props) {
     saveCanvasCtx.drawImage(lineart, 0, 0);
     let canvasFile, lineFile, saveFile;
     canvas.toBlob(function (blob) {
-      canvasFile = new File([blob], "colours.png", { type: "image/png" });
+      canvasFile = new File([blob], `colours-${drawingId}.png`, {
+        type: "image/png",
+      });
     }, "image/png");
     lineart.toBlob(function (blob) {
-      lineFile = new File([blob], "lineart.png", { type: "image/png" });
+      lineFile = new File([blob], `lineart-${drawingId}.png`, {
+        type: "image/png",
+      });
     }, "image/png");
     saveCanvas.toBlob(function (blob) {
-      saveFile = new File([blob], "thumbnail.png", { type: "image/png" });
+      saveFile = new File([blob], `thumbnail-${drawingId}.png`, {
+        type: "image/png",
+      });
     }, "image/png");
 
     let formData = new FormData();
 
     setTimeout(function () {
-      formData.append("colours", canvasFile);
-      formData.append("lineart", lineFile);
-      formData.append("thumbnail", saveFile);
+      formData.append(`colours`, canvasFile);
+      formData.append(`lineart`, lineFile);
+      formData.append(`thumbnail`, saveFile);
 
       axios
         .put("http://localhost:3100/auth/profile", formData, {
+          withCredentials: true,
           headers: {
-            drawingId: drawingId
+            drawingId: drawingId,
           },
         })
         .then(() => {
@@ -444,11 +450,15 @@ export default function Main(props) {
   if (props.drawingId && drawingId !== props.drawingId) {
     setDrawingId(props.drawingId);
     axios
-      .get(`http://localhost:3100/auth/profile/${props.drawingId}`, {
-        headers: {
-          drawingId: props.drawingId,
-        },
-      })
+      .get(
+        `http://localhost:3100/auth/profile/${props.drawingId}`,
+        { withCredentials: true },
+        {
+          headers: {
+            drawingId: props.drawingId,
+          },
+        }
+      )
       .then((res) => {
         if (res.status === 205) {
           setClearCanvas(true);
