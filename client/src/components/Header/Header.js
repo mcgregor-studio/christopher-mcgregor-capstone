@@ -7,13 +7,21 @@ import "./Header.scss";
 
 export default class Header extends React.Component {
   state = {
-    isLoggedOut: false
-  }
+    isLoggedOut: false,
+  };
   render() {
-
     if (this.state.isLoggedOut) {
       return <Redirect to="/" />;
     }
+
+    const logout = () => {
+      axios
+        .get("http://localhost:3100/auth/logout", { withCredentials: true })
+        .then(() => {
+          this.setState({ isLoggedOut: true });
+        })
+        .catch((e) => console.error(e));
+    };
 
     return (
       <header className="header">
@@ -21,7 +29,11 @@ export default class Header extends React.Component {
         <Link to="/paint">
           <Logo />
         </Link>
-       <div></div>
+        <div>
+          <p className="header__logout" onClick={logout}>
+            Logout
+          </p>
+        </div>
       </header>
     );
   }

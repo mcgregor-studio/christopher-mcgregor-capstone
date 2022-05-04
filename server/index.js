@@ -1,5 +1,5 @@
 const express = require("express");
-const session = require("express-session");
+const eSession = require("express-session");
 const helmet = require("helmet");
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth2").Strategy;
@@ -9,13 +9,12 @@ const cors = require("cors");
 require("dotenv").config();
 
 const port = process.env.PORT || 3100;
-const authRoutes = require("./routes/auth");
 
 //Server test to see what methods are being called at which endpoints
 //Header added to allow images to be written to the canvas without tainting it
 app.use((req, res, next) => {
   console.log(`${req.method}: ${req.url}`);
-  res.header("Access-Control-Allow-Origin", "http://localhost:3000")
+  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
   next();
 });
 
@@ -24,24 +23,19 @@ app.use(express.json({ limit: "250mb" }));
 app.use(express.static("public"));
 app.use(helmet());
 app.use(
-  session({
-    secret: process.env.SESSION_SECRET,
-    saveUninitialized: true,
-    resave: false, 
-  })
-);
-app.use(
   cors({
     origin: true,
     credentials: true,
-    exposedHeaders: "Access-Control-Allow-Origin"
-    })
+    exposedHeaders: "Access-Control-Allow-Origin",
+  })
 );
-app.use("/auth", authRoutes);
-
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
+app.use(
+  eSession({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+  })
+);
 
 //Passport configuration
 app.use(passport.initialize());
@@ -53,8 +47,9 @@ passport.use(
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL: process.env.GOOGLE_CALLBACK_URL,
+      pressReqToCallback: true
     },
-    function (request, accessToken, refreshToken, profile, done) {
+    function (_request, _accessToken, _refreshToken, profile, done) {
       knex("users")
         .select("g_id")
         .where({ g_id: profile.id })
@@ -80,6 +75,7 @@ passport.use(
 
 passport.serializeUser((user, done) => {
   console.log("serializeUser (user object):", user);
+  console.log(user.g_id)
   done(null, user.g_id);
 });
 
@@ -94,4 +90,12 @@ passport.deserializeUser((userId, done) => {
     .catch((err) => {
       console.error("Error finding user", err);
     });
+});
+
+//Routes
+const authRoutes = require("./routes/auth");
+app.use("/auth", authRoutes);
+
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
 });

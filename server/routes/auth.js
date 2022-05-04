@@ -45,10 +45,10 @@ router.get(
 
 //User profile GET request
 router.get("/profile", (req, res) => {
-  if (req.session.passport.user === undefined) {
+  if (req.user === undefined) {
     return res.status(401).json({ message: "Unauthorized" });
   }
-  let userId = req.session.passport.user;
+  let userId = req.user.g_id;
   let profileInfo = {};
   knex("users")
     .where("g_id", userId)
@@ -80,7 +80,7 @@ router.get("/profile", (req, res) => {
 
 //User drawing GET request
 router.get("/profile/:drawingId", (req, res) => {
-  if (req.session.passport.user === undefined) {
+  if (req.user === undefined) {
     return res.status(401).json({ message: "Unauthorized" });
   }
   let drawingInfo = {};
@@ -109,7 +109,7 @@ router.put(
   ]),
   (req, res) => {
     knex("drawings")
-      .where("user_id", req.session.passport.user)
+      .where("user_id", req.user)
       .then((result) => {
         if (result.length <= 11) {
           knex("drawings")
@@ -134,7 +134,7 @@ router.put(
               knex("drawings")
                 .where("id", req.headers.drawingid)
                 .update({
-                  user_id: req.session.passport.user,
+                  user_id: req.user,
                   id: req.headers.drawingid,
                   thumbnail: `${process.env.SERVER_URL}/images/${req.files.thumbnail[0].filename}`,
                   colours: `${process.env.SERVER_URL}/images/${req.files.colours[0].filename}`,
@@ -183,11 +183,10 @@ router.delete("/profile/:drawingId", (req, res) => {
 });
 
 //Logout GET request
-router.get("/logout", (_, res) => {
-  res.logout();
-  res.sessionStore.close();
-  res.redirect(process.env.REACT_APP_URL);
-  res.status(200).json({ message: "Logout successful" });
+router.get("/logout", (req, res) => {
+    req.logout();
+    res.status(200).json({ message: "Logout successful" });
+    res.redirect(process.env.REACT_APP_URL); 
 });
 
 //Sample images GET request
