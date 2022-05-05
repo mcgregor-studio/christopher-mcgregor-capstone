@@ -4,7 +4,6 @@ import Main from "../../components/Main/Main";
 export default class Paint extends React.Component {
   render() {
     let blankId = "";
-    console.log(this.props.loginCheck)
     let loginCheck = this.props.loginCheck;
 
     if (this.props.location.state === undefined) {

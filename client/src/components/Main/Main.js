@@ -78,8 +78,6 @@ export default function Main(props) {
   let bookClass = className(classes.bookIcon);
   let buttonClass = className(classes.saveButton);
 
-  console.log(props)
-
   // ============= Functions ================= //
 
   //Get mouse location to keep mouse position in canvas on resize
