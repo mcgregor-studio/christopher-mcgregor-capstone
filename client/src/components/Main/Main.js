@@ -3,6 +3,7 @@ import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import className from "classnames";
 import PaintTools from "../PaintTools/PaintTools";
+import SaveToProfile from "../SaveToProfile/SaveToProfile";
 import swirl from "../../data/swirl.png";
 import "./Main.scss";
 
@@ -58,6 +59,7 @@ export default function Main(props) {
   const classes = {
     icon: "paint__tools--icon",
     bookIcon: "paint__book--icon",
+    saveButton: "paint__button--save",
     attempt: "paint__save--try",
     success: "paint__save--success",
     failure: "paint__save--fail",
@@ -74,6 +76,9 @@ export default function Main(props) {
   let stampClass = className(classes.icon);
   let sprayClass = className(classes.icon);
   let bookClass = className(classes.bookIcon);
+  let buttonClass = className(classes.saveButton);
+
+  console.log(props)
 
   // ============= Functions ================= //
 
@@ -524,6 +529,10 @@ export default function Main(props) {
     sprayClass = className(classes.icon, classes.active);
   }
 
+  if (!props.loginCheck) {
+    buttonClass = className(classes.saveButton, classes.hidden)
+  }
+
   return (
     <section className="paint">
       <div className="paint__container">
@@ -632,14 +641,11 @@ export default function Main(props) {
           >
             Download Image
           </a>
-          <button className="paint__button--save" onClick={handleSaveImage}>
-            Save Image To Profile
-          </button>
-          <p className={saveTry}>Saving...</p>
-          <p className={saveWin}>Saved!</p>
-          <p className={saveLose}>
-            No save slots available - please delete a picture
-          </p>
+          <SaveToProfile handleSaveImage={handleSaveImage}
+          saveButton={buttonClass}
+          saveTry={saveTry}
+          saveWin={saveWin}
+          saveLose={saveLose}/>
         </div>
       </div>
     </section>

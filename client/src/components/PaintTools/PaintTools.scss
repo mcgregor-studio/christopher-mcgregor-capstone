@@ -44,11 +44,31 @@
         @include mixins.scrub-button;
       }
       &--icon {
-        padding: 0.25rem;
-        border-radius: 0.25rem;
+        &-s {
+          background-color: colors.$K;
+          margin: 0.95rem 1rem 1.05rem 1rem;
+          border-radius: 50%;
+          width: 0.5rem;
+          height: 0.5rem;
+          cursor: pointer;
+        }
+        &-o {
+          background-color: grey;
+          margin: 0.25rem;
+          border: 2px solid colors.$K;
+          border-radius: 50%;
+          width: calc(2rem - 4px);
+          height: calc(2rem - 4px);
+          cursor: pointer;
+        }
+        &--end {
+        background-color: colors.$K;
+        margin: 0.25rem;
+        border-radius: 50%;
         width: 2rem;
         height: 2rem;
         cursor: pointer;
+        }
       }
     }
     &--icon {

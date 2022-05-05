@@ -11,3 +11,9 @@
         cursor: pointer;
     }
 }
+
+@media (min-width: 667px) {
+    .header {
+        padding: 1rem 2rem;
+    }
+}

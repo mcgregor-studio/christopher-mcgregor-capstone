@@ -1,5 +1,6 @@
 import axios from "axios";
 import React from "react";
+import GoogleButton from "react-google-button";
 import { v4 as uuidv4 } from "uuid";
 import { Link } from "react-router-dom";
 import { css } from "@emotion/react";
@@ -14,24 +15,29 @@ export default class Profile extends React.Component {
     drawings: [],
     drawingId: "",
     loading: true,
+    profile: true,
   };
 
   componentDidMount() {
     axios
       .get(`http://localhost:3100/auth/profile`, { withCredentials: true })
       .then((res) => {
+        this.props.setLoginCheck(true);
         this.setState({
           username: res.data.username,
           drawings: res.data.drawings,
           loading: false,
         });
       })
-      .catch((e) => console.error(e));
+      .catch((e) => {
+        this.setState({ profile: false });
+        console.error(e);
+      });
   }
 
   render() {
     //Reference variables
-    let { username, drawings, loading } = this.state;
+    let { username, drawings, loading, profile } = this.state;
     let newId = uuidv4();
     const override = css`
       display: block;
@@ -73,12 +79,19 @@ export default class Profile extends React.Component {
                     thumbnail={image.thumbnail}
                     id={image.id}
                     delImage={delImage}
+                    loginCheck={this.props.loginCheck}
                   />
                 );
               })}
               <Link
                 className="profile__new"
-                to={{ pathname: "/paint", state: { drawingId: newId } }}
+                to={{
+                  pathname: "/paint",
+                  state: {
+                    drawingId: newId,
+                    loginCheck: this.props.loginCheck,
+                  },
+                }}
               >
                 <img className="profile__new--icon" alt="plus" src={plus} />
               </Link>
@@ -105,8 +118,18 @@ export default class Profile extends React.Component {
         </section>
       );
     }
+    if (!profile) {
+      return (
+        <section className="profile">
+          <h1 className="profile__loading">No profile available</h1>
+          <a href="http://localhost:3100/auth/google">
+            <GoogleButton type="light" />
+          </a>
+        </section>
+      );
+    }
     return (
-      <section>
+      <section className="profile">
         <h1 className="profile__loading">Loading...</h1>
         <div>
           <SquareLoader

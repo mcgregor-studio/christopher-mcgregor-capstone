@@ -95,11 +95,7 @@ export default class PaintTools extends React.Component {
       <section className="paint__tools">
         <div className="paint__tools--controller">
           <div className="paint__tools--size">
-            <img
-              className="paint__tools--slider--icon"
-              src={small}
-              alt="small brush"
-            />
+            <div className="paint__tools--slider--icon-s"></div>
             <input
               ref={widthRef}
               className="paint__tools--slider-s"
@@ -108,27 +104,19 @@ export default class PaintTools extends React.Component {
               max="50"
               value={this.props.lineWidth}
               onInput={() => {
-                  const widthSlider = widthRef.current;
-                  changeScrubColour(widthSlider);
+                const widthSlider = widthRef.current;
+                changeScrubColour(widthSlider);
               }}
               onChange={(event) => {
                 this.props.setLineWidth(event.target.value);
               }}
             ></input>
-            <img
-              className="paint__tools--slider--icon"
-              src={inputEnd}
-              alt="big brush"
-            />
+            <div className="paint__tools--slider--icon--end"></div>
           </div>
           <div className="paint__tools--opacity">
-            <img
-              className="paint__tools--slider--icon"
-              src={opacity}
-              alt="transparent brush"
-            />
+            <div className="paint__tools--slider--icon-o"></div>
             <input
-            ref={opacityRef}
+              ref={opacityRef}
               className="paint__tools--slider-o"
               type="range"
               min="1"
@@ -137,16 +125,12 @@ export default class PaintTools extends React.Component {
               onInput={() => {
                 const opacitySlider = opacityRef.current;
                 changeScrubColour(opacitySlider);
-            }}
+              }}
               onChange={(event) => {
                 this.props.setLineOpacity(event.target.value / 100);
               }}
             ></input>
-            <img
-              className="paint__tools--slider--icon"
-              src={inputEnd}
-              alt="opaque brush"
-            />
+            <div className="paint__tools--slider--icon--end"></div>
           </div>
           <input
             className="paint__tools--color"

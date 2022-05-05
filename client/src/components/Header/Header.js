@@ -1,5 +1,6 @@
 import React from "react";
 import axios from "axios";
+import classNames from "classnames";
 import { Link, Redirect } from "react-router-dom";
 import Logo from "../Logo/Logo";
 import Menu from "../Menu/Menu";
@@ -10,18 +11,31 @@ export default class Header extends React.Component {
     isLoggedOut: false,
   };
   render() {
-    if (this.state.isLoggedOut) {
-      return <Redirect to="/" />;
-    }
+    const classes = {
+      logout: "header__logout",
+      hidden: "hidden",
+      display: "display",
+    };
+
+    let logoutClass = classNames(classes.logout, classes.hidden);
 
     const logout = () => {
       axios
         .get("http://localhost:3100/auth/logout", { withCredentials: true })
         .then(() => {
+          this.props.setLoginCheck(false);
           this.setState({ isLoggedOut: true });
         })
         .catch((e) => console.error(e));
     };
+
+    if (this.state.isLoggedOut) {
+      return <Redirect to="/" />;
+    }
+
+    if (this.props.loginCheck) {
+      logoutClass = classNames(classes.logout, classes.display);
+    }
 
     return (
       <header className="header">
@@ -30,7 +44,7 @@ export default class Header extends React.Component {
           <Logo />
         </Link>
         <div>
-          <p className="header__logout" onClick={logout}>
+          <p className={logoutClass} onClick={logout}>
             Logout
           </p>
         </div>
