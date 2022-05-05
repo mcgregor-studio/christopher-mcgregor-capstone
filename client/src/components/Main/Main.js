@@ -198,7 +198,7 @@ export default function Main(props) {
   //Click handler for fill and stamp
   const toolClick = (event, stroke, stampItem) => {
     if (stampActive) {
-      stamp(event, stampItem);
+      stamp(event, stampItem, stroke);
     }
     if (fillActive) {
       fillStart(event, stroke);
@@ -317,12 +317,10 @@ export default function Main(props) {
     getMouse(event);
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
-
+    console.log("stamp")
     let img = new Image();
     img.onload = () => {
       ctx.fillStyle = stroke;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.globalCompositeOperation = "destination-in";
       ctx.drawImage(img, mx - img.width / 2, my - img.height / 2);
     };
     img.src = source;
@@ -373,32 +371,32 @@ export default function Main(props) {
     const canvas = canvasRef.current;
     const lineart = lineartRef.current;
     const saveCanvas = saveRef.current;
-    const saveCanvasCtx = saveCanvas.getContext("2d");
+    const saveCtx = saveCanvas.getContext("2d");
     const link = linkRef.current;
 
-    saveCanvasCtx.fillStyle = "white";
-    saveCanvasCtx.fillRect(0, 0, saveCanvas.width, saveCanvas.height);
-    saveCanvasCtx.drawImage(canvas, 0, 0);
-    saveCanvasCtx.drawImage(lineart, 0, 0);
+    saveCtx.fillStyle = "white";
+    saveCtx.fillRect(0, 0, saveCanvas.width, saveCanvas.height);
+    saveCtx.drawImage(canvas, 0, 0);
+    saveCtx.drawImage(lineart, 0, 0);
 
     let downloadSource = saveCanvas.toDataURL("image/png");
     link.href = downloadSource;
 
-    saveCanvasCtx.clearRect(0, 0, saveCanvas.width, saveCanvas.height);
+    saveCtx.clearRect(0, 0, saveCanvas.width, saveCanvas.height);
   };
 
   const handleSaveImage = () => {
     const canvas = canvasRef.current;
     const lineart = lineartRef.current;
     const saveCanvas = saveRef.current;
-    const saveCanvasCtx = saveCanvas.getContext("2d");
+    const saveCtx = saveCanvas.getContext("2d");
     setSaveTry(className(classes.attempt, classes.display));
     setTimeout(function () {
       setSaveTry(className(classes.attempt, classes.hidden));
     }, 3000);
 
-    saveCanvasCtx.drawImage(canvas, 0, 0);
-    saveCanvasCtx.drawImage(lineart, 0, 0);
+    saveCtx.drawImage(canvas, 0, 0);
+    saveCtx.drawImage(lineart, 0, 0);
     let canvasFile, lineFile, saveFile;
     canvas.toBlob(function (blob) {
       canvasFile = new File([blob], `colours-${drawingId}.png`, {
@@ -435,7 +433,7 @@ export default function Main(props) {
           setTimeout(function () {
             setSaveWin(className(classes.success, classes.hidden));
           }, 5000);
-          saveCanvasCtx.clearRect(0, 0, saveCanvas.width, saveCanvas.height);
+          saveCtx.clearRect(0, 0, saveCanvas.width, saveCanvas.height);
         })
         .catch((e) => {
           console.error(e);
@@ -528,7 +526,7 @@ export default function Main(props) {
   }
 
   if (!props.loginCheck) {
-    buttonClass = className(classes.saveButton, classes.hidden)
+    buttonClass = className(classes.saveButton, classes.hidden);
   }
 
   return (
@@ -639,11 +637,13 @@ export default function Main(props) {
           >
             Download Image
           </a>
-          <SaveToProfile handleSaveImage={handleSaveImage}
-          saveButton={buttonClass}
-          saveTry={saveTry}
-          saveWin={saveWin}
-          saveLose={saveLose}/>
+          <SaveToProfile
+            handleSaveImage={handleSaveImage}
+            saveButton={buttonClass}
+            saveTry={saveTry}
+            saveWin={saveWin}
+            saveLose={saveLose}
+          />
         </div>
       </div>
     </section>

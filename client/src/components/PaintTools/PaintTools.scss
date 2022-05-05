@@ -1,9 +1,20 @@
 @use "../../partials/mixins.scss";
 @use "../../partials/colors.scss";
 
+@keyframes slowfade {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
 .paint {
   &__tools {
     display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     &--color {
       cursor: pointer;
       height: 2rem;
@@ -53,7 +64,7 @@
           cursor: pointer;
         }
         &-o {
-          background-color: grey;
+          background-color: lightgrey;
           margin: 0.25rem;
           border: 2px solid colors.$K;
           border-radius: 50%;
@@ -62,12 +73,12 @@
           cursor: pointer;
         }
         &--end {
-        background-color: colors.$K;
-        margin: 0.25rem;
-        border-radius: 50%;
-        width: 2rem;
-        height: 2rem;
-        cursor: pointer;
+          background-color: colors.$K;
+          margin: 0.25rem;
+          border-radius: 50%;
+          width: 2rem;
+          height: 2rem;
+          cursor: pointer;
         }
       }
     }
@@ -89,7 +100,7 @@
       position: absolute;
       background-color: colors.$White;
       border-radius: 0.5rem;
-      box-shadow: 0 0.25rem 0.25rem rgba(0,0,0,0.5);
+      box-shadow: 0 0.25rem 0.25rem rgba(0, 0, 0, 0.5);
       padding: 0.5rem;
       width: 7rem;
       height: 7rem;
@@ -103,7 +114,50 @@
         cursor: pointer;
       }
     }
+    &--warning {
+      animation-name: slowfade;
+      animation-duration: 1s;
+      border-radius: 0.25rem;
+      position: absolute;
+      z-index: 44;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      background-color: colors.$Magenta;
+      
+      & > div {
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        & > p {
+          text-align: center;
+        }
+        & > img {
+          width: 5rem;
+        }
+        & > div {
+          display: flex;
+          justify-content: center;
+        }
+      }
+      &--button {
+        @include mixins.dl-button;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        &:hover {
+          background-color: colors.$DeepMagenta;
+        }
+      }
+    }
   }
+}
+
+.left {
+  margin-left: 0.5rem;
 }
 
 @media (min-width: 668px) {
@@ -111,7 +165,7 @@
     &__tools {
       flex-direction: column;
       &--size {
-          margin-top: 0.5rem;
+        margin-top: 0.5rem;
         justify-content: center;
       }
       &--click {

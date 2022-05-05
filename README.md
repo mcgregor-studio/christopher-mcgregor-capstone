@@ -4,6 +4,7 @@ This is the capstone project that I created for the BrainStation web development
 
  ## Features
  - Menu modal
+ - Google strategy implementation
  - Create user profile
  - Save image to user profile
  - Load saved image from profile to canvas
@@ -20,8 +21,10 @@ This is the capstone project that I created for the BrainStation web development
  - Fill tool that recognizes lineart
  - Stamp tool with 4 different options
  - Spray paint tool
- - Clear all tool
+ - Clear all tool with warning
 
  ## Upcoming Items
+  - Stamp affected by colour changes
+  - Lineart turning purely black and white, then making all white transparent
   - Different cursors depending on active tool
-  - Google strategy implementation
+

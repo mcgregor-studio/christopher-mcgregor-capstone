@@ -84,7 +84,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    top: 8rem;
+    top: 15rem;
     &--up {
       @include mixins.dl-button;
       cursor: pointer;
@@ -120,6 +120,14 @@
       top: 7.75rem;
       animation-name: save;
       animation-duration: 3s;
+    }
+  }
+}
+
+@media (min-width: 561px) {
+  .paint {
+    &__button {
+      top: 8rem;
     }
   }
 }

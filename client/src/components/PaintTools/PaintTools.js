@@ -5,9 +5,6 @@ import fill from "../../data/fill.svg";
 import bomb from "../../data/bomb.svg";
 import eraser from "../../data/eraser.svg";
 import spray from "../../data/spray.svg";
-import small from "../../data/small.svg";
-import opacity from "../../data/opacity.svg";
-import inputEnd from "../../data/input-end.svg";
 import stamp from "../../data/stamp.svg";
 import swirl from "../../data/swirl.png";
 import star from "../../data/star.png";
@@ -18,6 +15,7 @@ import "./PaintTools.scss";
 export default class PaintTools extends React.Component {
   state = {
     displayModal: false,
+    displayWarning: false,
     swirlActive: true,
     starActive: false,
     crossActive: false,
@@ -31,6 +29,7 @@ export default class PaintTools extends React.Component {
     const classes = {
       icon: "paint__tools--modal--icon",
       modal: "paint__tools--modal",
+      warning: "paint__tools--warning",
       hidden: "hidden",
       display: "display",
       active: "active",
@@ -40,8 +39,15 @@ export default class PaintTools extends React.Component {
     let starClass = classNames(classes.icon);
     let crossClass = classNames(classes.icon);
     let dustClass = classNames(classes.icon);
-    let { displayModal, swirlActive, starActive, crossActive, dustActive } =
-      this.state;
+    let warningClass = classNames(classes.warning, classes.hidden);
+    let {
+      displayModal,
+      displayWarning,
+      swirlActive,
+      starActive,
+      crossActive,
+      dustActive,
+    } = this.state;
 
     //Toggle modal on click function
     const toggleModal = () => {
@@ -54,10 +60,19 @@ export default class PaintTools extends React.Component {
 
     //Hide modal for other icon clicks
     const hideModal = () => {
-      if (displayModal) {
-        this.setState({ displayModal: false });
+      if (displayModal || displayWarning) {
+        this.setState({ displayModal: false, displayWarning: false });
         return;
       }
+    };
+
+    //Warning toggle
+    const warningToggle = () => {
+      if (displayWarning) {
+        this.setState({ displayWarning: false });
+        return;
+      }
+      this.setState({ displayWarning: true });
     };
 
     //changing scrub colour
@@ -68,9 +83,13 @@ export default class PaintTools extends React.Component {
       target.style.backgroundSize =
         ((value - min) * 100) / (max - min) + "% 100%";
     };
-    //if statement to check for modal on re-render
+    //if statement to check for modal and warning on re-render
     if (displayModal) {
       modalClass = classNames(classes.modal, classes.display);
+    }
+
+    if (displayWarning) {
+      warningClass = classNames(classes.warning, classes.display);
     }
 
     //Checking for active stamp
@@ -273,12 +292,37 @@ export default class PaintTools extends React.Component {
             <img
               className={this.props.clearClass}
               onClick={() => {
-                this.props.setClearCanvas(true);
+                warningToggle();
                 hideModal();
               }}
               src={bomb}
               alt="bomb"
             />
+          </div>
+        </div>
+        <div className={warningClass} onClick={warningToggle}>
+          <div>
+            <img src={bomb} />
+            <p>Are you sure you want to do this?<br /> There's no turning back...</p>
+            <div>
+              <button
+                className="paint__tools--warning--button"
+                onClick={() => {
+                  this.props.setClearCanvas(true);
+                  hideModal();
+                }}
+              >
+                Yes, erase it!
+              </button>
+              <button
+                className="paint__tools--warning--button left"
+                onClick={() => {
+                  hideModal();
+                }}
+              >
+                I changed my mind!
+              </button>
+            </div>
           </div>
         </div>
       </section>
