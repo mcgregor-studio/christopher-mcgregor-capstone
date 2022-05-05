@@ -1,0 +1,13 @@
+@use "../../partials/mixins.scss";
+
+.paint {
+  &__button {
+    &--save {
+      @include mixins.dl-button;
+      cursor: pointer;
+      width: 10rem;
+      border: 0;
+      margin: 0.5rem 0;
+    }
+  }
+}
