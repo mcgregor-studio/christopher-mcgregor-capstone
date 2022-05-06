@@ -1,5 +1,6 @@
 @use "../../partials/mixins.scss";
 @use "../../partials/colors.scss";
+@use "../../partials/screens.scss";
 
 @keyframes slowfade {
   0% {
@@ -160,7 +161,7 @@
   margin-left: 0.5rem;
 }
 
-@media (min-width: 668px) {
+@media (min-width: screens.$Tablet) {
   .paint {
     &__tools {
       flex-direction: column;
@@ -170,6 +171,17 @@
       }
       &--click {
         justify-content: center;
+      }
+    }
+  }
+}
+
+@media (max-height: screens.$Mobile) {
+  .paint {
+    &__tools {
+      &--container {
+        width: 20vw;
+        height: 90vh;
       }
     }
   }

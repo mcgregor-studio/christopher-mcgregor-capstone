@@ -69,6 +69,7 @@ router.get("/profile", (req, res) => {
             ) {
               i++;
             }
+            delete drawing.user_id;
             list.splice(i, 0, drawing);
             return list;
           }, []);
@@ -109,7 +110,7 @@ router.put(
   ]),
   (req, res) => {
     knex("drawings")
-      .where("user_id", req.user)
+      .where("user_id", req.user.g_id)
       .then((result) => {
         if (result.length <= 11) {
           knex("drawings")
@@ -134,7 +135,7 @@ router.put(
               knex("drawings")
                 .where("id", req.headers.drawingid)
                 .update({
-                  user_id: req.user,
+                  user_id: req.user.g_id,
                   id: req.headers.drawingid,
                   thumbnail: `${process.env.SERVER_URL}/images/${req.files.thumbnail[0].filename}`,
                   colours: `${process.env.SERVER_URL}/images/${req.files.colours[0].filename}`,

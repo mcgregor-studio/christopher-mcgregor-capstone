@@ -22,11 +22,20 @@ export default class Profile extends React.Component {
     axios
       .get(`http://localhost:3100/auth/profile`, { withCredentials: true })
       .then((res) => {
+        console.log(res.data.drawings);
         this.props.setLoginCheck(true);
         this.setState({
           username: res.data.username,
           drawings: res.data.drawings,
           loading: false,
+        });
+      })
+      .then(() => {
+        this.state.drawings.forEach((drawing) => {
+          axios
+            .get(drawing.thumbnail)
+            .then()
+            .catch((e) => console.error(e));
         });
       })
       .catch((e) => {

@@ -1,5 +1,6 @@
 @use "../../partials/colors.scss";
 @use "../../partials/mixins.scss";
+@use "../../partials/screens.scss";
 
 @keyframes save {
   0% {
@@ -124,24 +125,29 @@
   }
 }
 
-@media (min-width: 561px) {
+/* @media (min-width: 561px) {
   .paint {
     &__button {
       top: 8rem;
     }
   }
-}
+} */
 
-@media (min-width: 668px) {
+@media (min-width: screens.$Tablet) {
   .paint {
     margin: 1rem 1rem 0 1rem;
     flex-direction: row;
     justify-content: center;
     &__canvas {
-      max-height: calc(80vh - 3rem);
+      height: calc(80vh - 3rem);
       border: 0.0625rem solid colors.$K;
       border-radius: 0.25rem;
-      box-shadow: 0 0.25rem 0.25rem darkgoldenrod;
+      box-shadow: 0 0.25rem 0.25rem colors.$Yellow;
+    }
+    &__lineart {
+      height: calc(80vh - 3rem);
+      top: 0.0625rem;
+      left: 0.0625rem;
     }
     &__tools {
       &--container {
@@ -157,7 +163,70 @@
     }
     &__button {
       position: relative;
-      top: 0;
+      top: 1rem;
+    }
+  }
+}
+
+@media (max-height: screens.$Mobile) {
+  .paint {
+    margin: 0;
+    justify-content: flex-start;
+    &__container {
+      display: flex;
+    }
+    &__book {
+      margin-left: 1rem;
+      height: 100vh;
+      width: 3rem;
+      flex-direction: column;
+      &--icon {
+        margin-bottom: 100%;
+      }
+    }
+    &__canvas {
+      border: none;
+      border-radius: 0;
+      border-right: 1px solid colors.$K;
+      margin-left: 4rem;
+      height: 100vh;
+      width: 100vh;
+      box-shadow: none;
+    }
+    &__lineart {
+      margin-left: 4rem;
+      height: 100vh;
+      width: 100vh;
+    }
+    &__background {
+      border-radius: 0;
+      background-color: colors.$White;
+      height: 100vh;
+      width: 100vh;
+      margin-left: 4rem;
+      max-height: 100vh;
+    }
+    &__tools {
+      &--container {
+        margin-left: 0;
+        justify-content: flex-start;
+        height: 90vh;
+        flex-wrap: nowrap;
+      }
+    }
+    &__button {
+      &--up {
+        padding: 0;
+        height: 1.5rem;
+      }
+      &--down {
+        padding: 0;
+        height: 1.5rem;
+      }
+      &--save {
+        padding: 0;
+        height: 1.5rem;
+      }
     }
   }
 }

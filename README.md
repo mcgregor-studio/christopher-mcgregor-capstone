@@ -24,7 +24,7 @@ This is the capstone project that I created for the BrainStation web development
  - Clear all tool with warning
 
  ## Upcoming Items
-  - Stamp affected by colour changes
-  - Lineart turning purely black and white, then making all white transparent
   - Different cursors depending on active tool
 
+ ## Debug
+  - Fill filling everything on first usage

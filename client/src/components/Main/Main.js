@@ -46,12 +46,15 @@ export default function Main(props) {
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
+    const saveCanvas = saveRef.current;
+    const saveCtx = saveCanvas.getContext("2d");
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
     ctx.globalAlpha = lineOpacity;
     ctx.strokeStyle = strokeStyle;
     ctx.lineWidth = lineWidth;
     ctx.imageSmoothingEnabled = false;
+    saveCtx.imageSmoothingEnabled = false;
     ctxRef.current = ctx;
   }, [strokeStyle, lineWidth, lineOpacity]);
 
@@ -97,6 +100,41 @@ export default function Main(props) {
     const rdCtx = redraw.getContext("2d");
     let img = new Image();
     img.crossOrigin = "anonymous";
+
+    const grayscale = (input) => {
+      let width = input.width;
+      let height = input.height;
+      let imgPixels = rdCtx.getImageData(0, 0, width, height);
+      rdCtx.clearRect(0, 0, redraw.width, redraw.height);
+
+      for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+          let i = y * 4 * width + x * 4;
+          let avg =
+            (imgPixels.data[i] +
+              imgPixels.data[i + 1] +
+              imgPixels.data[i + 2]) /
+            3;
+          if (avg >= 204) {
+            imgPixels.data[i + 3] = 0;
+          }
+          imgPixels.data[i] = avg;
+          imgPixels.data[i + 1] = avg;
+          imgPixels.data[i + 2] = avg;
+        }
+      }
+
+      rdCtx.putImageData(
+        imgPixels,
+        0,
+        0,
+        0,
+        0,
+        imgPixels.width,
+        imgPixels.height
+      );
+    };
+
     img.onload = () => {
       let hRatio = redraw.width / img.width;
       let vRatio = redraw.height / img.height;
@@ -115,13 +153,16 @@ export default function Main(props) {
         img.width * ratio,
         img.height * ratio
       );
+      if (imageSource) {
+        grayscale(img);
+      }
     };
     img.src = source;
   };
 
   //Colour helpers
-  const testColour = (r, g, b, a) => {
-    return r + g + b < 100 && a > 155;
+  const testColour = (a) => {
+    return a > 180;
   };
 
   const hexToRGB = (hex) => {
@@ -239,7 +280,7 @@ export default function Main(props) {
           lG = lineData.data[pixelPos + 1],
           lB = lineData.data[pixelPos + 2],
           lA = lineData.data[pixelPos + 3];
-        if (testColour(lR, lG, lB, lA)) {
+        if (testColour(lA)) {
           return false;
         }
 
@@ -317,13 +358,23 @@ export default function Main(props) {
     getMouse(event);
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
-    console.log("stamp")
+    const saveCanvas = saveRef.current;
+    const saveCtx = saveCanvas.getContext("2d");
+
+    console.log(stroke);
     let img = new Image();
     img.onload = () => {
-      ctx.fillStyle = stroke;
-      ctx.drawImage(img, mx - img.width / 2, my - img.height / 2);
+      saveCtx.globalCompositeOperation = "source-over";
+      saveCtx.drawImage(img, mx - img.width / 2, my - img.height / 2);
+      saveCtx.globalCompositeOperation = "source-in";
+      saveCtx.fillStyle = stroke;
+      saveCtx.fillRect(0, 0, saveCanvas.width, saveCanvas.height);
+
+      ctx.drawImage(saveCanvas, 0, 0);
     };
+
     img.src = source;
+    saveCtx.clearRect(0, 0, saveCanvas.width, saveCanvas.height);
   };
 
   //Spray
@@ -363,7 +414,6 @@ export default function Main(props) {
   //Upload, download, and save image to profile handlers
   const handleUploadImage = (event) => {
     setImageSource(URL.createObjectURL(event.target.files[0]));
-
     setUploadImage(true);
   };
 
@@ -374,6 +424,7 @@ export default function Main(props) {
     const saveCtx = saveCanvas.getContext("2d");
     const link = linkRef.current;
 
+    saveCtx.globalCompositeOperation = "source-over";
     saveCtx.fillStyle = "white";
     saveCtx.fillRect(0, 0, saveCanvas.width, saveCanvas.height);
     saveCtx.drawImage(canvas, 0, 0);
@@ -390,6 +441,8 @@ export default function Main(props) {
     const lineart = lineartRef.current;
     const saveCanvas = saveRef.current;
     const saveCtx = saveCanvas.getContext("2d");
+    saveCtx.globalCompositeOperation = "source-over";
+
     setSaveTry(className(classes.attempt, classes.display));
     setTimeout(function () {
       setSaveTry(className(classes.attempt, classes.hidden));
@@ -477,21 +530,6 @@ export default function Main(props) {
   //Upload image
   if (uploadImage) {
     redrawImage(lineartRef, imageSource);
-    const lineart = lineartRef.current;
-    const lineCtx = lineart.getContext("2d");
-    let imgPixels = lineCtx.getImageData(0, 0, lineart.width, lineart.height);
-    for (let y = 0; y < imgPixels.height; y++) {
-      for (let x = 0; x < imgPixels.width; x++) {
-        let i = y * 4 * imgPixels.width + x * 4;
-        let avg =
-          (imgPixels.data[i] + imgPixels.data[i + 1] + imgPixels.data[i + 2]) /
-          3;
-        imgPixels.data[i] = avg;
-        imgPixels.data[i + 1] = avg;
-        imgPixels.data[i + 2] = avg;
-      }
-    }
-    lineCtx.putImageData(imgPixels, 0, 0);
     setUploadImage(false);
   }
 
@@ -551,6 +589,10 @@ export default function Main(props) {
           onMouseUp={endDraw}
           onMouseLeave={endDraw}
           onMouseMove={draw}
+          onTouchStart={startDraw}
+          onTouchMove={draw}
+          onTouchEnd={endDraw}
+          onTouchCancel={endDraw}
           onClick={(event) => {
             toolClick(event, strokeStyle, stampSource);
           }}
