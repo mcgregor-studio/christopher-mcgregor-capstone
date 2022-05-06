@@ -1,5 +1,6 @@
 @use "../../../src/partials/colors.scss";
 @use "../../../src/partials/mixins.scss";
+@use "../../../src/partials/screens.scss";
 
 @keyframes loading {
   0% {
@@ -67,7 +68,7 @@
   }
 }
 
-@media (min-width: 668px) {
+@media (min-width: screens.$Tablet) {
   .profile {
     &__image {
       &--thumbnail {

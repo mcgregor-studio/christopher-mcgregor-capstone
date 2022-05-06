@@ -358,6 +358,7 @@ export default function Main(props) {
     getMouse(event);
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
+    ctx.globalCompositeOperation = "source-over";
     const saveCanvas = saveRef.current;
     const saveCtx = saveCanvas.getContext("2d");
 
@@ -573,14 +574,14 @@ export default function Main(props) {
         <canvas
           ref={saveRef}
           className="paint__save"
-          width={500}
-          height={500}
+          width={1000}
+          height={1000}
         ></canvas>
         <canvas
           ref={lineartRef}
           className="paint__lineart"
-          width={500}
-          height={500}
+          width={1000}
+          height={1000}
         ></canvas>
         <canvas
           className="paint__canvas"
@@ -596,8 +597,8 @@ export default function Main(props) {
           onClick={(event) => {
             toolClick(event, strokeStyle, stampSource);
           }}
-          width={500}
-          height={500}
+          width={1000}
+          height={1000}
         ></canvas>
         <div className="paint__background"></div>
         <div className="paint__book">

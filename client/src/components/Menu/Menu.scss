@@ -51,22 +51,3 @@
         }
     }
 }
-
-@media (max-height: screens.$Mobile) {
-    .menu {
-        &__container {
-            height: 3.5rem;
-            width: 1.5rem;
-        }
-        &__ham {
-            height: 1.5rem;
-            width: 1.5rem;
-            margin: 1rem 0;
-        }
-        &__modal {
-            &--background {
-                width: 100vw;
-            }
-        }
-    }
-}

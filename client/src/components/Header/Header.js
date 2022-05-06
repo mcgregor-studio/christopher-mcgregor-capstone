@@ -39,7 +39,7 @@ export default class Header extends React.Component {
 
     return (
       <header className="header">
-        <Menu />
+        <Menu loginCheck={this.props.loginCheck}/>
         <Link to="/paint">
           <Logo />
         </Link>

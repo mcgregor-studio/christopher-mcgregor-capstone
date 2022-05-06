@@ -39,7 +39,7 @@ export default class Menu extends React.Component {
           <div className="menu__modal">
             <Link
               className="menu__modal--item"
-              to={{ pathname: "/paint", state: { drawingId: drawingId} }}
+              to={{ pathname: "/paint", state: { drawingId: drawingId, loginCheck: this.props.loginCheck} }}
             >
               Paint
             </Link>

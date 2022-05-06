@@ -113,7 +113,7 @@ export default class PaintTools extends React.Component {
     return (
       <section className="paint__tools">
         <div className="paint__tools--controller">
-          <div className="paint__tools--size">
+          <div className="paint__tools--width">
             <div className="paint__tools--slider--icon-s"></div>
             <input
               ref={widthRef}

@@ -26,6 +26,9 @@
       background: none;
       box-sizing: content-box;
     }
+    &--width {
+      display: flex;
+    }
     &--size {
       display: flex;
     }
@@ -176,13 +179,3 @@
   }
 }
 
-@media (max-height: screens.$Mobile) {
-  .paint {
-    &__tools {
-      &--container {
-        width: 20vw;
-        height: 90vh;
-      }
-    }
-  }
-}
