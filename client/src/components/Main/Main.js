@@ -5,6 +5,8 @@ import className from "classnames";
 import PaintTools from "../PaintTools/PaintTools";
 import SaveToProfile from "../SaveToProfile/SaveToProfile";
 import swirl from "../../data/swirl.png";
+import upload from "../../data/upload.svg";
+import download from "../../data/download.svg";
 import "./Main.scss";
 
 export default function Main(props) {
@@ -635,58 +637,68 @@ export default function Main(props) {
         </div>
       </div>
 
-      <div className="paint__tools--container">
-        <PaintTools
-          clearClass={clearClass}
-          pencilClass={pencilClass}
-          eraserClass={eraserClass}
-          fillClass={fillClass}
-          stampClass={stampClass}
-          sprayClass={sprayClass}
-          lineWidth={lineWidth}
-          lineOpacity={lineOpacity}
-          strokeStyle={strokeStyle}
-          setBrushActive={setBrushActive}
-          setEraserActive={setEraserActive}
-          setFillActive={setFillActive}
-          setStampActive={setStampActive}
-          setSprayActive={setSprayActive}
-          setLineWidth={setLineWidth}
-          setLineOpacity={setLineOpacity}
-          setStrokeStyle={setStrokeStyle}
-          setStampSource={setStampSource}
-          setClearCanvas={setClearCanvas}
-        />
-        <div className="paint__button">
-          <label
-            onChange={handleUploadImage}
-            htmlFor="upload-image"
-            className="paint__button--up"
-          >
-            Upload Image
-            <input
-              id="upload-image"
-              type="file"
-              accept="image/*"
-              name="upload-image"
-            ></input>
-          </label>
-          <a
-            ref={linkRef}
-            download="gallerai-image.png"
-            href=""
-            className="paint__button--down"
-            onClick={handleDownloadImage}
-          >
-            Download Image
-          </a>
-          <SaveToProfile
-            handleSaveImage={handleSaveImage}
-            saveButton={buttonClass}
-            saveTry={saveTry}
-            saveWin={saveWin}
-            saveLose={saveLose}
+      <div className="align">
+        <div className="paint__tools--container">
+          <PaintTools
+            clearClass={clearClass}
+            pencilClass={pencilClass}
+            eraserClass={eraserClass}
+            fillClass={fillClass}
+            stampClass={stampClass}
+            sprayClass={sprayClass}
+            lineWidth={lineWidth}
+            lineOpacity={lineOpacity}
+            strokeStyle={strokeStyle}
+            setBrushActive={setBrushActive}
+            setEraserActive={setEraserActive}
+            setFillActive={setFillActive}
+            setStampActive={setStampActive}
+            setSprayActive={setSprayActive}
+            setLineWidth={setLineWidth}
+            setLineOpacity={setLineOpacity}
+            setStrokeStyle={setStrokeStyle}
+            setStampSource={setStampSource}
+            setClearCanvas={setClearCanvas}
           />
+          <div className="paint__button">
+            <label
+              onChange={handleUploadImage}
+              htmlFor="upload-image"
+              className="paint__button--up"
+            >
+              <img
+                className="paint__button--icon"
+                src={upload}
+                alt="Upload image"
+              />
+              <input
+                id="upload-image"
+                type="file"
+                accept="image/*"
+                name="upload-image"
+              ></input>
+            </label>
+            <a
+              ref={linkRef}
+              download="gallerai-image.png"
+              href=""
+              className="paint__button--down"
+              onClick={handleDownloadImage}
+            >
+              <img
+                className="paint__button--icon"
+                src={download}
+                alt="Download image"
+              />
+            </a>
+            <SaveToProfile
+              handleSaveImage={handleSaveImage}
+              saveButton={buttonClass}
+              saveTry={saveTry}
+              saveWin={saveWin}
+              saveLose={saveLose}
+            />
+          </div>
         </div>
       </div>
     </section>

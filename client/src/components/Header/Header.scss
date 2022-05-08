@@ -1,20 +1,27 @@
 @use "../../partials/colors.scss";
+@use "../../partials/fonts.scss";
 @use "../../partials/screens.scss";
 
 .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: colors.$Magenta;
-    padding: 1rem;
-    box-shadow: 0 0.25rem 0.25rem rgba(135, 132, 148, 0.5);
-    & > div {
-        cursor: pointer;
-    }
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: colors.$Magenta;
+  padding: 1rem;
+  box-shadow: 0 0.25rem 0.25rem rgba(135, 132, 148, 0.5);
+  & > div {
+    cursor: pointer;
+  }
+  &__logout {
+    font-family: "Quicksand", sans-serif;
+    font-weight: 700;
+  }
 }
 
-@media (min-width: screens.$Tablet) {
+@media (orientation: landscape) {
+  @media (min-width: screens.$Tablet) {
     .header {
-        padding: 1rem 2rem;
+      padding: 1rem 2rem;
     }
+  }
 }

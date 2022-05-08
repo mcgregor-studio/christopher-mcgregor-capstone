@@ -1,13 +1,38 @@
 @use "../../partials/mixins.scss";
+@use "../../partials/screens.scss";
 
 .paint {
   &__button {
     &--save {
       @include mixins.dl-button;
       cursor: pointer;
-      width: 10rem;
       border: 0;
       margin: 0.5rem 0;
+    }
+    &--icon {
+      width: 2rem;
+      filter: invert(1);
+    }
+  }
+}
+
+@media (orientation: landscape) {
+  @media (min-width: screens.$Tablet) {
+    .paint {
+      &__button {
+        &--icon {
+          width: 1rem;
+        }
+      }
+    }
+  }
+  @media (min-width: screens.$Desktop) {
+    .paint {
+      &__button {
+        &--icon {
+          width: 2rem;
+        }
+      }
     }
   }
 }

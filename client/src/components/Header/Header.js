@@ -41,7 +41,7 @@ export default class Header extends React.Component {
       <header className="header">
         <Menu loginCheck={this.props.loginCheck}/>
         <Link to="/paint">
-          <Logo />
+          <Logo className="logo"/>
         </Link>
         <div>
           <p className={logoutClass} onClick={logout}>

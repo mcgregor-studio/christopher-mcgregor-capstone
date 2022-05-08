@@ -1,12 +1,16 @@
 @use "../../partials/colors.scss";
+@use "../../partials/fonts.scss";
 @use "../../partials/screens.scss";
 
 .ac {
     &__title {
+        font-family: "Quicksand", sans-serif;
+        font-weight: 700;
         text-align: center;
     }
     &__text {
-        width: 40%;
+        font-family: "Quicksand", sans-serif;
+        width: 70%;
         margin: 1rem auto;
         text-align: center;
     }
@@ -16,6 +20,7 @@
         font-style: italic;
     }
     &__link {
+        font-family: "Quicksand", sans-serif;
         cursor: pointer;
         background-color: colors.$K;
         color: colors.$White;
@@ -24,8 +29,21 @@
     }
     &__container {
         margin: 1rem auto;
-        width: 30%;
+        width: 50%;
         display: flex;
         justify-content: space-evenly;
+    }
+}
+
+@media(orientation: landscape) {
+    @media(min-width: screens.$Tablet) {
+        .ac {
+            &__text {
+                width: 40%;
+            }
+            &__container {
+                width: 30%;
+            }
+        }
     }
 }

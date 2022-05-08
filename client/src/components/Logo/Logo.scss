@@ -1,12 +1,5 @@
 @use "../../partials/screens.scss";
 
 .logo {
-    max-height: 4rem;
-}
-
-@media (max-height: screens.$Mobile) {
-    .logo {
-        max-height: 2.5rem;
-        
-    }
+    max-height: 2.5rem;
 }

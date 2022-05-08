@@ -28,17 +28,20 @@
     }
     &--width {
       display: flex;
+      justify-content: center;
+      align-items: center;
     }
     &--size {
       display: flex;
     }
     &--opacity {
       display: flex;
+      justify-content: center;
+      align-items: center;
     }
     &--slider {
       &-o {
         @include mixins.scrub-bar;
-        margin-top: 1.05rem;
         background-size: 100% 100%;
         &::-webkit-slider-thumb {
           @include mixins.scrub-button;
@@ -46,7 +49,6 @@
       }
       &-s {
         @include mixins.scrub-bar;
-        margin-top: 1.05rem;
         background-size: 20% 100%;
         &::-webkit-slider-thumb {
           @include mixins.scrub-button;
@@ -129,7 +131,7 @@
       height: 100%;
       width: 100%;
       background-color: colors.$Magenta;
-      
+
       & > div {
         padding: 2rem;
         display: flex;
@@ -164,6 +166,7 @@
   margin-left: 0.5rem;
 }
 
+@media (orientation: landscape) {
 @media (min-width: screens.$Tablet) {
   .paint {
     &__tools {
@@ -175,7 +178,42 @@
       &--click {
         justify-content: center;
       }
+      &--slider {
+        &-s {
+          margin-top: 0;
+        }
+        &--icon {
+          &-s {
+            width: 0.25rem;
+            height: 0.25rem;
+            margin: 0 0.65rem;
+          }
+          &-o {
+            width: calc(1rem - 4px);
+            height: calc(1rem - 4px);
+          }
+          &--end {
+            width: calc(1rem - 4px);
+            height: calc(1rem - 4px);
+          }
+        }
+      }
+      &--icon {
+        width: 2rem;
+        height: 2rem;
+      }
     }
   }
 }
 
+@media (min-width: screens.$Desktop) {
+  .paint {
+    &__tools {
+      &--icon {
+        width: 3rem;
+        height: 3rem;
+      }
+    }
+  }
+}
+}
