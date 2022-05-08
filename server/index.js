@@ -3,7 +3,7 @@ const eSession = require("express-session");
 const helmet = require("helmet");
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth2").Strategy;
-const knex = require("knex")(require("./knexfile.js").development);
+const knex = require("knex")(require("./knexfile.js").production);
 const app = express();
 const cors = require("cors");
 require("dotenv").config();
