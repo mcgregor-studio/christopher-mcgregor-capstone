@@ -4,7 +4,7 @@
  * @type { Object.<string, import("knex").Knex.Config> }
  */
 
-const connections = {
+module.exports = {
   development: {
     client: 'mysql',
     connection: {
@@ -14,15 +14,5 @@ const connections = {
       database: 'galler.ai_users',
       charset: 'utf8',
     },
-  },
-  production: {
-    client: 'mysql',
-    connection: process.env.JAWSDB_URL
   }
-
 }
- module.exports = 
-    process.env.NODE_ENV === 'production'
-    ? connections.production
-    : connections.development;
-  ;
