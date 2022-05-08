@@ -24,6 +24,9 @@
   color: colors.$White;
   padding: 0.5rem;
   border-radius: 0.5rem;
+}
+
+@mixin hover-y {
   transition: background-color 0.2s, filter 0.2s;
   &:hover {
     background-color: #082a73;

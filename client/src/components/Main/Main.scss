@@ -88,11 +88,13 @@
     top: 15rem;
     &--up {
       @include mixins.dl-button;
+      @include mixins.hover-y;
       cursor: pointer;
       margin-right: 0.5rem;
     }
     &--down {
       @include mixins.dl-button;
+      @include mixins.hover-y;
       margin-right: 0.5rem;
     }
   }

@@ -1,5 +1,6 @@
 @use "../../partials/mixins.scss";
 @use "../../partials/colors.scss";
+@use "../../partials/fonts.scss";
 @use "../../partials/screens.scss";
 
 @keyframes slowfade {
@@ -139,6 +140,7 @@
         justify-content: center;
         align-items: center;
         & > p {
+          font-family: "Quicksand", sans-serif;
           text-align: center;
         }
         & > img {
@@ -151,6 +153,7 @@
       }
       &--button {
         @include mixins.dl-button;
+        font-family: "Quicksand", sans-serif;
         border: none;
         cursor: pointer;
         transition: background-color 0.2s;
