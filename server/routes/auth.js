@@ -10,7 +10,7 @@ const storage = multer.diskStorage({
   },
 });
 const upload = multer({ storage: storage });
-const knex = require("knex")(require("../knexfile.js").development);
+const knex = require("knex")(require("../knexfile.js").production);
 const router = express.Router();
 const passport = require("passport");
 require("dotenv").config();
