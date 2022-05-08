@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import className from "classnames";
 import PaintTools from "../PaintTools/PaintTools";
 import SaveToProfile from "../SaveToProfile/SaveToProfile";
-import API_URL from "../../config/index";
+import { API_URL } from "../../config/index";
 import swirl from "../../data/swirl.png";
 import upload from "../../data/upload.svg";
 import download from "../../data/download.svg";

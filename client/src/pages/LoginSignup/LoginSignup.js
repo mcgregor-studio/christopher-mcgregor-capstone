@@ -1,6 +1,6 @@
 import React from "react";
 import GoogleButton from "react-google-button";
-import API_URL from "../../config/index";
+import { API_URL } from "../../config/index";
 import { Link, Redirect } from "react-router-dom";
 import Logo from "../../components/Logo/Logo";
 import profile from "../../data/profile.svg";

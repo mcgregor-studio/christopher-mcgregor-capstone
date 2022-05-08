@@ -1,6 +1,6 @@
 import React from "react";
 import axios from "axios";
-import API_URL from "../../config/index";
+import { API_URL } from "../../config/index";
 import classNames from "classnames";
 import { Link, Redirect } from "react-router-dom";
 import Logo from "../Logo/Logo";

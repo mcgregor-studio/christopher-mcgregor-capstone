@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import { Link } from "react-router-dom";
 import { css } from "@emotion/react";
 import SquareLoader from "react-spinners/SquareLoader";
-import API_URL from "../../config/index";
+import { API_URL } from "../../config/index";
 import Image from "../../components/Image/Image";
 import plus from "../../data/plus.svg";
 import "./Profile.scss";
