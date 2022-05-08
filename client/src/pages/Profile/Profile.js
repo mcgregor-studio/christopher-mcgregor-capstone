@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import { Link } from "react-router-dom";
 import { css } from "@emotion/react";
 import SquareLoader from "react-spinners/SquareLoader";
+import API_URL from "../../config/index";
 import Image from "../../components/Image/Image";
 import plus from "../../data/plus.svg";
 import "./Profile.scss";
@@ -20,7 +21,7 @@ export default class Profile extends React.Component {
 
   componentDidMount() {
     axios
-      .get(`http://localhost:3100/auth/profile`, { withCredentials: true })
+      .get(`${API_URL}/auth/profile`, { withCredentials: true })
       .then((res) => {
         console.log(res.data.drawings);
         this.props.setLoginCheck(true);
@@ -56,10 +57,10 @@ export default class Profile extends React.Component {
     //DELETE request for saved images
     const delImage = (id) => {
       axios
-        .delete(`http://localhost:3100/auth/profile/${id}`)
+        .delete(`${API_URL}/auth/profile/${id}`)
         .then(() => {
           axios
-            .get(`http://localhost:3100/auth/profile`, {
+            .get(`${API_URL}/auth/profile`, {
               withCredentials: true,
             })
             .then((res) => {
@@ -131,7 +132,7 @@ export default class Profile extends React.Component {
       return (
         <section className="profile">
           <h1 className="profile__loading">No profile available</h1>
-          <a href="http://localhost:3100/auth/google">
+          <a href={`${API_URL}/auth/google`}>
             <GoogleButton type="light" />
           </a>
         </section>

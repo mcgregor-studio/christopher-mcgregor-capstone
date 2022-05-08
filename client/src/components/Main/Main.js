@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import className from "classnames";
 import PaintTools from "../PaintTools/PaintTools";
 import SaveToProfile from "../SaveToProfile/SaveToProfile";
+import API_URL from "../../config/index";
 import swirl from "../../data/swirl.png";
 import upload from "../../data/upload.svg";
 import download from "../../data/download.svg";
@@ -38,7 +39,7 @@ export default function Main(props) {
   //useEffect hooks for canvas and tools
   useEffect(() => {
     axios
-      .get(`http://localhost:3100/auth/samples`)
+      .get(`${API_URL}/auth/samples`)
       .then((result) => {
         setSamples(result.data);
       })
@@ -478,7 +479,7 @@ export default function Main(props) {
       formData.append(`thumbnail`, saveFile);
 
       axios
-        .put("http://localhost:3100/auth/profile", formData, {
+        .put(`${API_URL}/auth/profile`, formData, {
           withCredentials: true,
           headers: {
             drawingId: drawingId,
@@ -508,7 +509,7 @@ export default function Main(props) {
     setDrawingId(props.drawingId);
     axios
       .get(
-        `http://localhost:3100/auth/profile/${props.drawingId}`,
+        `${API_URL}/auth/profile/${props.drawingId}`,
         { withCredentials: true },
         {
           headers: {

@@ -1,5 +1,6 @@
 import React from "react";
 import axios from "axios";
+import API_URL from "../../config/index";
 import classNames from "classnames";
 import { Link, Redirect } from "react-router-dom";
 import Logo from "../Logo/Logo";
@@ -21,7 +22,7 @@ export default class Header extends React.Component {
 
     const logout = () => {
       axios
-        .get("http://localhost:3100/auth/logout", { withCredentials: true })
+        .get(`${API_URL}/auth/logout`, { withCredentials: true })
         .then(() => {
           this.props.setLoginCheck(false);
           this.setState({ isLoggedOut: true });

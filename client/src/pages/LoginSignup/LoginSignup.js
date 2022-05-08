@@ -1,5 +1,6 @@
 import React from "react";
 import GoogleButton from "react-google-button";
+import API_URL from "../../config/index";
 import { Link, Redirect } from "react-router-dom";
 import Logo from "../../components/Logo/Logo";
 import profile from "../../data/profile.svg";
@@ -20,7 +21,7 @@ export default class LoginSignup extends React.Component {
         <div className="margin">
           <Logo />
         </div>
-        <a href="http://localhost:3100/auth/google">
+        <a href={`${API_URL}/auth/google`}>
           <GoogleButton type="light"/>
         </a>
         <Link className="login-signup__button" to="/paint">
