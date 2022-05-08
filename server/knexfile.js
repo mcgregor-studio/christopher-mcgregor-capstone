@@ -3,18 +3,17 @@
 /**
  * @type { Object.<string, import("knex").Knex.Config> }
  */
+ require("dotenv").config();
 
-require('dotenv').config();
-
-module.exports = {
+ module.exports = {
   development: {
-    client: 'mysql',
+    client: process.env.DB_CLIENT,
     connection: {
-      host: '127.0.0.1',
-      user: process.env.MYSQL_USER,
-      password: process.env.MYSQL_PW,
-      database: 'galler.ai_users',
-      charset: 'utf8',
+      host: process.env.DB_HOST,
+      user: process.env.DB_USER,
+      password: process.env.DB_PW,
+      database: process.env.DB_NAME,
     },
   }
-}
+};
+
