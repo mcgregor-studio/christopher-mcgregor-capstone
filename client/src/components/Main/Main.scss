@@ -132,7 +132,7 @@
   }
 }
 
-@media (min-width: 545px) {
+@media (min-width: 562px) {
   .paint {
     &__button {
       top: 8rem;
@@ -147,7 +147,7 @@
       flex-direction: row;
       justify-content: center;
       align-items: center;
-      height: calc(100vh - 5.5rem);
+      height: calc(100vh - 4.75rem);
       &__container {
         position: relative;
         top: 0;
