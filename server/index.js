@@ -8,7 +8,7 @@ const app = express();
 const cors = require("cors");
 require("dotenv").config();
 
-/* const port = process.env.PORT || 3100; */
+const port = process.env.PORT;
 
 //Server test to see what methods are being called at which endpoints
 //Header added to allow images to be written to the canvas without tainting it
