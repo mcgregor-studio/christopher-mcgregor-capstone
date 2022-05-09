@@ -1,7 +1,6 @@
 const express = require("express");
 const eSession = require("express-session");
-const redis = require("redis");
-const redisStore = require("connect-redis")(eSession);
+const sessionStore = require("connect-session-knex")(eSession);
 const helmet = require("helmet");
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth2").Strategy;
@@ -11,16 +10,9 @@ const cors = require("cors");
 require("dotenv").config();
 
 
-//Establishing redis and connection
+//Establishing store and connection
 const port = process.env.PORT;
-let redisClient = redis.createClient()
-
-redisClient.on('error', function (err) {
-  console.log('Could not establish a connection with redis. ' + err);
-});
-redisClient.on('connect', function (err) {
-  console.log('Connected to redis successfully');
-});
+const store = new sessionStore();
 
 //Server test to see what methods are being called at which endpoints
 //Header added to allow images to be written to the canvas without tainting it
@@ -43,10 +35,10 @@ app.use(
 );
 app.use(
   eSession({
-    store: new redisStore({client: redisClient}),
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
+    store
   })
 );
 
@@ -87,17 +79,14 @@ passport.use(
 );
 
 passport.serializeUser((user, done) => {
-  console.log("serializeUser (user object):", user);
-  return done(null, user.g_id);
+  done(null, user.g_id);
 });
 
 passport.deserializeUser((userId, done) => {
-  console.log("deserializeUser (user id):", userId);
   knex("users")
     .where({ g_id: userId })
     .then((user) => {
-      console.log("req.user:", user[0]);
-      return done(null, user[0]);
+      done(null, user[0]);
     })
     .catch((err) => {
       console.error("Error finding user", err);
