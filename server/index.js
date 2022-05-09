@@ -64,7 +64,7 @@ passport.use(
                 username: profile.name.givenName,
               })
               .then((userId) => {
-                done(null, { g_id: userId[0] });
+                return done(null, { g_id: userId[0] });
               })
               .catch((e) => console.error("Error creating a user:", e));
           }
@@ -75,17 +75,15 @@ passport.use(
 );
 
 passport.serializeUser((user, done) => {
-  console.log("serializeUser (user object):", user);
-  done(null, user.g_id);
+  return done(null, user.g_id);
 });
 
 passport.deserializeUser((userId, done) => {
-  console.log("deserializeUser (user id):", userId);
   knex("users")
     .where({ g_id: userId })
     .then((user) => {
       console.log("req.user:", user[0]);
-      done(null, user[0]);
+      return done(null, user[0]);
     })
     .catch((err) => {
       console.error("Error finding user", err);
