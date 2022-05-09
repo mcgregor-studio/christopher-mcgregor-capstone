@@ -47,7 +47,7 @@ passport.use(
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL: process.env.GOOGLE_CALLBACK_URL,
-      pressReqToCallback: true
+      pressReqToCallback: true,
     },
     function (_request, _accessToken, _refreshToken, profile, done) {
       knex("users")
@@ -75,7 +75,6 @@ passport.use(
 
 passport.serializeUser((user, done) => {
   console.log("serializeUser (user object):", user);
-  console.log(user.g_id)
   done(null, user.g_id);
 });
 
