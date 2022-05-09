@@ -44,7 +44,7 @@ app.use(
 
 //Passport configuration
 app.use(passport.initialize());
-app.use(passport.eSession());
+app.use(passport.session());
 
 passport.use(
   new GoogleStrategy(
