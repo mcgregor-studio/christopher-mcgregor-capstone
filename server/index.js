@@ -52,14 +52,14 @@ passport.use(
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL: process.env.GOOGLE_CALLBACK_URL,
+
     },
     function (_request, _accessToken, _refreshToken, profile, done) {
       knex("users")
         .select("g_id")
         .where({ g_id: profile.id })
         .then((user) => {
-          console.log(user)
-          if (!user) {
+          if (user.length) {
             done(null, user[0]);
           } else {
             knex("users")
