@@ -79,14 +79,17 @@ passport.use(
 );
 
 passport.serializeUser((user, done) => {
-  done(null, user.g_id);
+  console.log("serializeUser (user object):", user);
+  return done(null, user.g_id);
 });
 
 passport.deserializeUser((userId, done) => {
+  console.log("deserializeUser (user id):", userId);
   knex("users")
     .where({ g_id: userId })
     .then((user) => {
-      done(null, user[0]);
+      console.log("req.user:", user[0]);
+      return done(null, user[0]);
     })
     .catch((err) => {
       console.error("Error finding user", err);
