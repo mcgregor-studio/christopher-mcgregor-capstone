@@ -14,7 +14,6 @@ require("dotenv").config();
 //Establishing redis and connection
 const port = process.env.PORT;
 const redisClient = redis.createClient({
-  client: process.env.REACT_APP_URL,
   port: port
 })
 
