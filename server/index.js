@@ -34,7 +34,7 @@ app.use(
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: true, sameSite: "none" },
+    cookie: { secure: true, sameSite: "none" }
   })
 );
 
@@ -64,7 +64,7 @@ passport.use(
                 username: profile.name.givenName,
               })
               .then((userId) => {
-                return done(null, { g_id: userId[0] });
+                done(null, { g_id: userId[0] });
               })
               .catch((e) => console.error("Error creating a user:", e));
           }
@@ -75,10 +75,12 @@ passport.use(
 );
 
 passport.serializeUser((user, done) => {
+  console.log("serializeUser (user object):", user);
   return done(null, user.g_id);
 });
 
 passport.deserializeUser((userId, done) => {
+  console.log("deserializeUser (user id):", userId);
   knex("users")
     .where({ g_id: userId })
     .then((user) => {
