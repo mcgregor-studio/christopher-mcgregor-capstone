@@ -58,7 +58,8 @@ passport.use(
         .select("g_id")
         .where({ g_id: profile.id })
         .then((user) => {
-          if (user.length) {
+          console.log(user)
+          if (!user) {
             done(null, user[0]);
           } else {
             knex("users")
