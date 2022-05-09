@@ -187,6 +187,11 @@ router.delete("/profile/:drawingId", (req, res) => {
 //Logout GET request
 router.get("/logout", (req, res) => {
     req.logout();
+    req.session.destroy(err => {
+      if (err) {
+          return console.log(err);
+      }
+    })
     res.status(200).json({ message: "Logout successful" });
     res.redirect(process.env.REACT_APP_URL); 
 });

@@ -1,5 +1,7 @@
 const express = require("express");
 const eSession = require("express-session");
+const redis = require("redis");
+const redisStore = require("connect-redis")(eSession);
 const helmet = require("helmet");
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth2").Strategy;
@@ -8,7 +10,20 @@ const app = express();
 const cors = require("cors");
 require("dotenv").config();
 
+
+//Establishing redis and connection
 const port = process.env.PORT;
+const redisClient = redis.createClient({
+  client: process.env.REACT_APP_URL,
+  port: port
+})
+
+redisClient.on('error', function (err) {
+  console.log('Could not establish a connection with redis. ' + err);
+});
+redisClient.on('connect', function (err) {
+  console.log('Connected to redis successfully');
+});
 
 //Server test to see what methods are being called at which endpoints
 //Header added to allow images to be written to the canvas without tainting it
@@ -31,6 +46,7 @@ app.use(
 );
 app.use(
   eSession({
+    store: new redisStore({client: redisClient}),
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
