@@ -12,8 +12,6 @@ require("dotenv").config();
 //Establishing routes, store and connection
 const port = process.env.PORT;
 const store = new sessionStore();
-const authRoutes = require("./routes/auth");
-app.use("/auth", authRoutes);
 
 //Server test to see what methods are being called at which endpoints
 //Header added to allow images to be written to the canvas without tainting it
@@ -43,6 +41,10 @@ app.use(
     store: store
   })
 );
+
+//Routes
+const authRoutes = require("./routes/auth");
+app.use("/auth", authRoutes);
 
 //Passport configuration
 app.use(passport.initialize());
