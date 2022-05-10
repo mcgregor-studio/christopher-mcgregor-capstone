@@ -235,7 +235,6 @@ export default function Main(props) {
       getMouse(event);
       }
     if (event.type === "touchmove" ) {
-      event.preventDefault();
       getMouse(event.touches[0]);
     }
     const ctx = ctxRef.current;
