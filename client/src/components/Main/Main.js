@@ -184,7 +184,10 @@ export default function Main(props) {
     if (fillActive || stampActive) {
       return;
     }
+    if (event.type === "mousedown") {
     getMouse(event);
+    }
+    getMouse(event.touches[0]);
     const ctx = ctxRef.current;
     ctx.beginPath();
     if (brushActive) {
@@ -201,7 +204,10 @@ export default function Main(props) {
       ctx.stroke();
     }
     if (sprayActive) {
+      if (event.type === "mousemove") {
       spray(event);
+      }
+      spray(event.touches[0]);
     }
     setIsDrawing(true);
   };
@@ -210,6 +216,7 @@ export default function Main(props) {
   const endDraw = (event) => {
     if (sprayActive) {
     }
+
     getMouse(event);
     ctxRef.current.closePath();
     setIsDrawing(false);
@@ -220,8 +227,11 @@ export default function Main(props) {
     if (!isDrawing) {
       return;
     }
+    if (event.type === "mousemove") {
+      getMouse(event);
+      }
+      getMouse(event.touches[0]);
     const ctx = ctxRef.current;
-    getMouse(event);
     if (brushActive) {
       ctx.globalCompositeOperation = "source-over";
       ctx.strokeStyle = strokeStyle;
@@ -235,7 +245,10 @@ export default function Main(props) {
       ctx.stroke();
     }
     if (sprayActive) {
-      spray(event);
+      if (event.type === "mousemove") {
+        spray(event);
+        }
+        spray(event.touches[0]);
     }
   };
 
