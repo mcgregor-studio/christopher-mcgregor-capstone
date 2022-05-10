@@ -1,3 +1,4 @@
+const cookieParser = require("cookie-parser")
 const express = require("express");
 const eSession = require("express-session");
 const sessionStore = require("connect-session-knex")(eSession);
@@ -23,6 +24,7 @@ app.use((req, res, next) => {
 });
 
 //Node libraries to ensure pages load properly
+app.use(cookieParser());
 app.use(express.json({ limit: "250mb" }));
 app.use(express.static("public"));
 app.use(helmet());
@@ -38,7 +40,10 @@ app.use(
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
-    store: store
+    store: store,
+    cookie: {
+
+    }
   })
 );
 
