@@ -39,7 +39,7 @@ router.get(
     failureRedirect: process.env.SERVER_URL,
   }),
   (_, res) => {
-    res.redirect(301, `${process.env.REACT_APP_URL}/profile`);
+    res.redirect(301, `${process.env.REACT_APP_URL}profile`);
   }
 );
 
@@ -185,8 +185,8 @@ router.delete("/profile/:drawingId", (req, res) => {
 
 //Logout GET request
 router.get("/logout", (req, res) => {
-    req.logout();
-    res.status(200).json({ message: "Logout successful" }).redirect(process.env.REACT_APP_URL); 
+  req.logout();
+  res.status(200).json({message: "Logout successful"}).redirect(process.env.REACT_APP_URL);
 });
 
 //Sample images GET request

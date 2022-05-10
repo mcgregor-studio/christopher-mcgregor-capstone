@@ -16,7 +16,7 @@ const store = new sessionStore();
 //Header added to allow images to be written to the canvas without tainting it
 app.use((req, res, next) => {
   console.log(`${req.method}: ${req.url}`);
-  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.header("access-control-allow-origin", "http://localhost:3000");
   next();
 });
 
@@ -28,7 +28,7 @@ app.use(
   cors({
     origin: true,
     credentials: true,
-    exposedHeaders: "Access-Control-Allow-Origin",
+    exposedHeaders: "access-control-allow-origin",
   })
 );
 app.use(

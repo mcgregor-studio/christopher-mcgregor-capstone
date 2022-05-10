@@ -364,8 +364,6 @@ export default function Main(props) {
     ctx.globalCompositeOperation = "source-over";
     const saveCanvas = saveRef.current;
     const saveCtx = saveCanvas.getContext("2d");
-
-    console.log(stroke);
     let img = new Image();
     img.onload = () => {
       saveCtx.globalCompositeOperation = "source-over";
