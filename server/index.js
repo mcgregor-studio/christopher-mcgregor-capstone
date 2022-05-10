@@ -79,7 +79,7 @@ passport.use(
 
 passport.serializeUser((user, done) => {
   console.log("serializeUser (user object):", user);
-  return done(null, user.g_id);
+  done(null, user.g_id);
 });
 
 passport.deserializeUser((userId, done) => {
@@ -88,7 +88,7 @@ passport.deserializeUser((userId, done) => {
     .where({ g_id: userId })
     .then((user) => {
       console.log("req.user:", user[0]);
-      return done(null, user[0]);
+      done(null, user[0]);
     })
     .catch((err) => {
       console.error("Error finding user", err);
