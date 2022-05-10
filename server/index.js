@@ -19,7 +19,7 @@ app.use("/auth", authRoutes);
 //Header added to allow images to be written to the canvas without tainting it
 app.use((req, res, next) => {
   console.log(`${req.method}: ${req.url}`);
-  res.header(process.env.REACT_APP_URL);
+  res.header("Access-Control-Allow-Origin", process.env.REACT_APP_URL);
   console.log("res: ", res)
   next();
 });
