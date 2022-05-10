@@ -24,7 +24,6 @@ app.use((req, res, next) => {
 });
 
 //Node libraries to ensure pages load properly
-app.use(cookieParser());
 app.use(express.json({ limit: "250mb" }));
 app.use(express.static("public"));
 app.use(helmet());
