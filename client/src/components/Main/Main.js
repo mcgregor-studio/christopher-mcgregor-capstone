@@ -577,14 +577,14 @@ export default function Main(props) {
         <canvas
           ref={saveRef}
           className="paint__save"
-          width={1000}
-          height={1000}
+          width={500}
+          height={500}
         ></canvas>
         <canvas
           ref={lineartRef}
           className="paint__lineart"
-          width={1000}
-          height={1000}
+          width={500}
+          height={500}
         ></canvas>
         <canvas
           className="paint__canvas"
@@ -600,8 +600,8 @@ export default function Main(props) {
           onClick={(event) => {
             toolClick(event, strokeStyle, stampSource);
           }}
-          width={1000}
-          height={1000}
+          width={500}
+          height={500}
         ></canvas>
         <div className="paint__background"></div>
         <div className="paint__book">

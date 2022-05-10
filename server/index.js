@@ -1,5 +1,6 @@
 const express = require("express");
 const eSession = require("express-session");
+const sessionStore = require("connect-session-knex")(eSession);
 const helmet = require("helmet");
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth2").Strategy;
@@ -9,6 +10,7 @@ const cors = require("cors");
 require("dotenv").config();
 
 const port = process.env.PORT || 3100;
+const store = new sessionStore();
 
 //Server test to see what methods are being called at which endpoints
 //Header added to allow images to be written to the canvas without tainting it
@@ -31,9 +33,10 @@ app.use(
 );
 app.use(
   eSession({
+    store: store,
     secret: process.env.SESSION_SECRET,
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: true 
   })
 );
 
@@ -62,8 +65,8 @@ passport.use(
                 g_id: profile.id,
                 username: profile.name.givenName,
               })
-              .then((userId) => {
-                done(null, { g_id: userId[0] });
+              .then(() => {
+                done(null, { g_id: profile.id });
               })
               .catch((e) => console.error("Error creating a user:", e));
           }

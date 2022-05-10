@@ -23,7 +23,6 @@ export default class Profile extends React.Component {
     axios
       .get(`${API_URL}/auth/profile`, { withCredentials: true })
       .then((res) => {
-        console.log(res.data.drawings);
         this.props.setLoginCheck(true);
         this.setState({
           username: res.data.username,
