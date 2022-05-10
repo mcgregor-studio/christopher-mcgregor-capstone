@@ -18,7 +18,6 @@ const store = new sessionStore();
 app.use((req, res, next) => {
   console.log(`${req.method}: ${req.url}`);
   res.header("Access-Control-Allow-Origin", process.env.REACT_APP_URL);
-  console.log("res: ", res)
   next();
 });
 
