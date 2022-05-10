@@ -39,7 +39,7 @@ router.get(
     failureRedirect: process.env.SERVER_URL,
   }),
   (_req, res) => {
-    console.log("success: ", res)
+    console.log("success: ", res.session)
     res.redirect(301, `${process.env.REACT_APP_URL}/profile`);
   }
 );
