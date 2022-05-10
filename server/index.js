@@ -34,10 +34,10 @@ app.use(
 );
 app.use(
   eSession({
+    store: store,
     secret: process.env.SESSION_SECRET,
     resave: false,
-    saveUninitialized: true,
-    store: store
+    saveUninitialized: true 
   })
 );
 
@@ -66,8 +66,8 @@ passport.use(
                 g_id: profile.id,
                 username: profile.name.givenName,
               })
-              .then((userId) => {
-                return done(null, { g_id: userId[0] });
+              .then(() => {
+                done(null, { g_id: profile.id });
               })
               .catch((e) => console.error("Error creating a user:", e));
           }

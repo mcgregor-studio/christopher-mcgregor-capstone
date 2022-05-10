@@ -5,6 +5,7 @@
   &__button {
     &--save {
       @include mixins.dl-button;
+      @include mixins.hover-y;
       cursor: pointer;
       border: 0;
       margin: 0.5rem 0;
