@@ -187,7 +187,9 @@ export default function Main(props) {
     if (event.type === "mousedown") {
     getMouse(event);
     }
+    if (event.type === "touchstart") {
     getMouse(event.touches[0]);
+    }
     const ctx = ctxRef.current;
     ctx.beginPath();
     if (brushActive) {
@@ -204,10 +206,12 @@ export default function Main(props) {
       ctx.stroke();
     }
     if (sprayActive) {
-      if (event.type === "mousemove") {
+      if (event.type === "mousedown") {
       spray(event);
       }
+      if (event.type === "touchstart") {
       spray(event.touches[0]);
+      }
     }
     setIsDrawing(true);
   };
@@ -230,7 +234,10 @@ export default function Main(props) {
     if (event.type === "mousemove") {
       getMouse(event);
       }
+    if (event.type === "touchmove" ) {
+      event.preventDefault();
       getMouse(event.touches[0]);
+    }
     const ctx = ctxRef.current;
     if (brushActive) {
       ctx.globalCompositeOperation = "source-over";
@@ -248,7 +255,9 @@ export default function Main(props) {
       if (event.type === "mousemove") {
         spray(event);
         }
+      if (event.type === "touchmove") {
         spray(event.touches[0]);
+      }
     }
   };
 
@@ -683,7 +692,7 @@ export default function Main(props) {
               <img
                 className="paint__button--icon"
                 src={upload}
-                alt="Upload image"
+                alt="Upload"
               />
               <input
                 id="upload-image"
@@ -702,7 +711,7 @@ export default function Main(props) {
               <img
                 className="paint__button--icon"
                 src={download}
-                alt="Download image"
+                alt="Download"
               />
             </a>
             <SaveToProfile
