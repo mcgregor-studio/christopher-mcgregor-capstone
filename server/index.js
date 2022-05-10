@@ -1,4 +1,3 @@
-const cookieParser = require("cookie-parser")
 const express = require("express");
 const eSession = require("express-session");
 const sessionStore = require("connect-session-knex")(eSession);
@@ -10,10 +9,11 @@ const app = express();
 const cors = require("cors");
 require("dotenv").config();
 
-
-//Establishing store and connection
+//Establishing routes, store and connection
 const port = process.env.PORT;
 const store = new sessionStore();
+const authRoutes = require("./routes/auth");
+app.use("/auth", authRoutes);
 
 //Server test to see what methods are being called at which endpoints
 //Header added to allow images to be written to the canvas without tainting it
@@ -40,10 +40,7 @@ app.use(
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
-    store: store,
-    cookie: {
-      sameSite: "none"
-    }
+    store: store
   })
 );
 
@@ -100,10 +97,6 @@ passport.deserializeUser((userId, done) => {
       console.error("Error finding user", err);
     });
 });
-
-//Routes
-const authRoutes = require("./routes/auth");
-app.use("/auth", authRoutes);
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
