@@ -60,6 +60,7 @@ passport.use(
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL: process.env.GOOGLE_CALLBACK_URL,
+      passReqToCallback: true
     },
     function (_request, _accessToken, _refreshToken, profile, done) {
       knex("users")
