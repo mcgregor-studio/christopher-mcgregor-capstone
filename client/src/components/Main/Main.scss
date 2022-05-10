@@ -27,6 +27,7 @@
   &__canvas {
     &--colours {
       cursor: crosshair;
+      touch-action: none;
       position: relative;
       z-index: 5;
       width: 100%;
