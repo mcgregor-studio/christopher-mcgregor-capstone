@@ -37,7 +37,7 @@ app.use(
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
-    store: store
+    store
   })
 );
 
@@ -60,7 +60,6 @@ passport.use(
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL: process.env.GOOGLE_CALLBACK_URL,
-      passReqToCallback: true
     },
     function (_request, _accessToken, _refreshToken, profile, done) {
       knex("users")
@@ -68,17 +67,14 @@ passport.use(
         .where({ g_id: profile.id })
         .then((user) => {
           if (user.length) {
-            console.log("found user")
             done(null, user[0]);
           } else {
-            console.log("making user")
             knex("users")
               .insert({
                 g_id: profile.id,
                 username: profile.name.givenName,
               })
               .then((userId) => {
-                console.log("user made")
                 done(null, { g_id: userId[0] });
               })
               .catch((e) => console.error("Error creating a user:", e));
