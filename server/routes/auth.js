@@ -18,10 +18,10 @@ require("dotenv").config();
 //Authentication middleware
 /* const checkAuth = (req, _, next) => {
   console.log(req.session)
-  if (req.sessions.passport.user !== undefined) {
+  if (req.user !== undefined) {
     next();
     return {
-      user: req.sessions.passport.user,
+      user: req.user,
       drawingId: req.drawingId || "none",
     };
   }
