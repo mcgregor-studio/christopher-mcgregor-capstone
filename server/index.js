@@ -17,7 +17,7 @@ const store = new sessionStore();
 //Header added to allow images to be written to the canvas without tainting it
 app.use((req, res, next) => {
   console.log(`${req.method}: ${req.url}`);
-  res.header("Access-Control-Allow-Origin", process.env.REACT_APP_URL);
+  res.header("access-control-allow-origin", process.env.REACT_APP_URL);
   next();
 });
 
