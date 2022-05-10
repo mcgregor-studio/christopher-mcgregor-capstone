@@ -574,36 +574,38 @@ export default function Main(props) {
   return (
     <section className="paint">
       <div className="paint__container">
-        <canvas
-          ref={saveRef}
-          className="paint__save"
-          width={500}
-          height={500}
-        ></canvas>
-        <canvas
-          ref={lineartRef}
-          className="paint__lineart"
-          width={500}
-          height={500}
-        ></canvas>
-        <canvas
-          className="paint__canvas"
-          ref={canvasRef}
-          onMouseDown={startDraw}
-          onMouseUp={endDraw}
-          onMouseLeave={endDraw}
-          onMouseMove={draw}
-          onTouchStart={startDraw}
-          onTouchMove={draw}
-          onTouchEnd={endDraw}
-          onTouchCancel={endDraw}
-          onClick={(event) => {
-            toolClick(event, strokeStyle, stampSource);
-          }}
-          width={500}
-          height={500}
-        ></canvas>
-        <div className="paint__background"></div>
+        <div className="paint__canvas">
+          <canvas
+            ref={saveRef}
+            className="paint__canvas--save"
+            width={500}
+            height={500}
+          ></canvas>
+          <canvas
+            ref={lineartRef}
+            className="paint__canvas--lineart"
+            width={500}
+            height={500}
+          ></canvas>
+          <canvas
+            className="paint__canvas--colours"
+            ref={canvasRef}
+            onMouseDown={startDraw}
+            onMouseUp={endDraw}
+            onMouseLeave={endDraw}
+            onMouseMove={draw}
+            onTouchStart={startDraw}
+            onTouchMove={draw}
+            onTouchEnd={endDraw}
+            onTouchCancel={endDraw}
+            onClick={(event) => {
+              toolClick(event, strokeStyle, stampSource);
+            }}
+            width={500}
+            height={500}
+          ></canvas>
+          <div className="paint__canvas--background"></div>
+        </div>
         <div className="paint__book">
           <div
             onClick={() => {

@@ -25,27 +25,35 @@
     position: relative;
   }
   &__canvas {
-    cursor: crosshair;
-    position: relative;
-    z-index: 5;
-    width: 100%;
-    border-bottom: 1px solid colors.$K;
-    image-rendering: pixelated;
-  }
-  &__lineart {
-    width: 100%;
-    position: absolute;
-    z-index: 10;
-    pointer-events: none;
-  }
-  &__background {
-    background-color: colors.$White;
-    border-radius: 0.25rem;
-    height: calc(100% - 3.25rem);
-    width: 100%;
-    position: absolute;
-    top: 0;
-    pointer-events: none;
+    &--colours {
+      cursor: crosshair;
+      position: relative;
+      z-index: 5;
+      width: 100%;
+      border-bottom: 1px solid colors.$K;
+      image-rendering: pixelated;
+    }
+    &--lineart {
+      width: 100%;
+      position: absolute;
+      z-index: 10;
+      pointer-events: none;
+    }
+    &--background {
+      background-color: colors.$White;
+      border-radius: 0.25rem;
+      height: calc(100% - 3.25rem);
+      width: 100%;
+      position: absolute;
+      top: 0;
+      pointer-events: none;
+    }
+    &--save {
+      width: 100%;
+      position: absolute;
+      display: none;
+      pointer-events: none;
+    }
   }
   &__book {
     height: 3rem;
@@ -99,10 +107,6 @@
     }
   }
   &__save {
-    width: 100%;
-    position: absolute;
-    display: none;
-    pointer-events: none;
     &--success {
       font-family: "Quicksand", sans-serif;
       position: absolute;
@@ -147,27 +151,27 @@
       flex-direction: row;
       justify-content: center;
       align-items: center;
-      height: calc(100vh - 5.25rem);
       &__container {
-        position: relative;
-        top: 0;
-        width: calc(100vh - 5.25rem);
         display: flex;
         align-items: center;
       }
       &__canvas {
-        width: calc(100% - 0.5rem);
-        border: 0.0625rem solid colors.$K;
-        border-radius: 0.25rem;
-        box-shadow: 0 0.25rem 0.25rem colors.$Yellow;
-      }
-      &__lineart {
-        left: 0.0625rem;
-        width: calc(100% - 0.5rem);
-      }
-      &__background {
-        height: calc(100% - 0.125rem);
-        width: calc(100% - 0.25rem);
+        top: 0.25rem;
+        width: calc(100vh - 5.5rem);
+        position: relative;
+        &--colours {
+          width: calc(100% - 0.5rem);
+          border: 0.0625rem solid colors.$K;
+          border-radius: 0.25rem;
+          box-shadow: 0 0.25rem 0.25rem colors.$Yellow;
+        }
+        &--lineart {
+          width: calc(100% - 0.375rem);
+        }
+        &--background {
+          height: calc(100% - 0.125rem);
+          width: calc(100% - 0.275rem);
+        }
       }
       &__book {
         margin: 0 1rem;
@@ -178,8 +182,6 @@
       &__tools {
         &--container {
           padding: 0.5rem;
-          margin: 0;
-          margin-left: 3rem;
           width: 13rem;
           display: flex;
           flex-direction: column;
