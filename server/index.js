@@ -13,6 +13,7 @@ require("dotenv").config();
 const port = process.env.PORT;
 const store = new sessionStore();
 
+console.log(process.env)
 //Server test to see what methods are being called at which endpoints
 //Header added to allow images to be written to the canvas without tainting it
 app.use((req, res, next) => {
