@@ -68,8 +68,10 @@ passport.use(
         .where({ g_id: profile.id })
         .then((user) => {
           if (user.length) {
+            console.log("found user")
             done(null, user[0]);
           } else {
+            console.log("making user")
             knex("users")
               .insert({
                 g_id: profile.id,
