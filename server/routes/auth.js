@@ -38,7 +38,8 @@ router.get(
   passport.authenticate("google", {
     failureRedirect: process.env.SERVER_URL,
   }),
-  (_, res) => {
+  (_req, res) => {
+    console.log("success: ", res)
     res.redirect(301, `${process.env.REACT_APP_URL}/profile`);
   }
 );
