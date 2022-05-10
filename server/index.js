@@ -78,6 +78,7 @@ passport.use(
                 username: profile.name.givenName,
               })
               .then((userId) => {
+                console.log("user made")
                 done(null, { g_id: userId[0] });
               })
               .catch((e) => console.error("Error creating a user:", e));
