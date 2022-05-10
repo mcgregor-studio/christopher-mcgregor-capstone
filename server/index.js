@@ -9,16 +9,18 @@ const knex = require("knex")(require("./knexfile.js").production);
 const app = express();
 require("dotenv").config();
 
-//Establishing store and connection
+//Establishing routes, store and connection
 const port = process.env.PORT;
 const store = new sessionStore();
+const authRoutes = require("./routes/auth");
+app.use("/auth", authRoutes);
 
 //Server test to see what methods are being called at which endpoints
 //Header added to allow images to be written to the canvas without tainting it
 app.use((req, res, next) => {
   console.log(`${req.method}: ${req.url}`);
   res.header("Access-Control-Allow-Origin", process.env.REACT_APP_URL);
-  console.log("res headers: ", res.headers)
+  console.log("res: ", res)
   next();
 });
 
@@ -41,10 +43,6 @@ app.use(
     store: store
   })
 );
-
-//Establishing routes
-const authRoutes = require("./routes/auth");
-app.use("/auth", authRoutes);
 
 //Passport configuration
 app.use(passport.initialize());
