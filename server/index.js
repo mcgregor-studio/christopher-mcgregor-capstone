@@ -41,15 +41,6 @@ app.use(
   })
 );
 
-//Routes
-const authRoutes = require("./routes/auth");
-app.use("/auth", authRoutes);
-
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
-
-
 //Passport configuration
 app.use(passport.initialize());
 app.use(passport.session());
@@ -102,4 +93,12 @@ passport.deserializeUser((userId, done) => {
     .catch((err) => {
       console.error("Error finding user", err);
     });
+});
+
+//Routes
+const authRoutes = require("./routes/auth");
+app.use("/auth", authRoutes);
+
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
 });
