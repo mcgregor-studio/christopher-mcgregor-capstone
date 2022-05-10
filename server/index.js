@@ -1,12 +1,12 @@
 const express = require("express");
 const eSession = require("express-session");
 const sessionStore = require("connect-session-knex")(eSession);
+const cors = require("cors");
 const helmet = require("helmet");
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth2").Strategy;
 const knex = require("knex")(require("./knexfile.js").development);
 const app = express();
-const cors = require("cors");
 require("dotenv").config();
 
 const port = process.env.PORT || 3100;
