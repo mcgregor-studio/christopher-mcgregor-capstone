@@ -36,7 +36,7 @@ app.use(
     store: store,
     secret: process.env.SESSION_SECRET,
     resave: false,
-    saveUninitialized: true 
+    saveUninitialized: true,
   })
 );
 
@@ -50,7 +50,7 @@ passport.use(
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL: process.env.GOOGLE_CALLBACK_URL,
-      passReqToCallback: true
+      passReqToCallback: true,
     },
     function (_request, _accessToken, _refreshToken, profile, done) {
       knex("users")
@@ -66,7 +66,10 @@ passport.use(
                 username: profile.name.givenName,
               })
               .then(() => {
-                done(null, { g_id: profile.id });
+                done(null, {
+                  g_id: profile.id,
+                  username: profile.name.givenName,
+                });
               })
               .catch((e) => console.error("Error creating a user:", e));
           }
@@ -78,7 +81,6 @@ passport.use(
 
 passport.serializeUser((user, done) => {
   console.log("serializeUser (user object):", user);
-  console.log(user.g_id)
   done(null, user.g_id);
 });
 
