@@ -14,7 +14,7 @@ This is the capstone project that I created for the BrainStation web development
  - Max image saves per account
  - Logout
  - Cycle through images to colour
- - Formatting
+ - Responsive at all screen sizes
  - Brush tool with colour picker
  - Eraser tool
  - Opacity and brush/eraser size sliders
@@ -25,6 +25,3 @@ This is the capstone project that I created for the BrainStation web development
 
  ## Upcoming Items
   - Different cursors depending on active tool
-
- ## Debug
-  - Fill filling everything on first usage

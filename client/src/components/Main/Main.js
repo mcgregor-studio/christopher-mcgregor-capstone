@@ -36,7 +36,7 @@ export default function Main(props) {
   let [saveLose, setSaveLose] = useState("paint__save--fail hidden");
   let [saveTry, setSaveTry] = useState("paint__save--try hidden");
 
-  //useEffect hooks for canvas and tools
+  //useEffect hooks for canvas, tools, and preventing memory leaks
   useEffect(() => {
     axios
       .get(`${API_URL}/auth/samples`)
@@ -44,7 +44,23 @@ export default function Main(props) {
         setSamples(result.data);
       })
       .catch((e) => console.error(e));
-  }, []);
+
+      let tryTimer = setTimeout(function () {
+        setSaveTry(className(classes.attempt, classes.hidden));
+      }, 3000);
+      let winTimer = setTimeout(function () {
+        setSaveWin(className(classes.success, classes.hidden));
+      }, 5000);
+      let loseTimer = setTimeout(function () {
+        setSaveLose(className(classes.failure, classes.hidden));
+      }, 5000);
+
+      return () => {
+        clearTimeout(tryTimer);
+        clearTimeout(winTimer);
+        clearTimeout(loseTimer);
+      }
+  }, [saveTry, saveWin, saveLose]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -311,6 +327,10 @@ export default function Main(props) {
         lR = colourData.data[pixelPos];
         lG = colourData.data[pixelPos + 1];
         lB = colourData.data[pixelPos + 2];
+        lA = colourData.data[pixelPos + 3];
+        if (testColour(lA)) {
+          return false;
+        }
 
         if (lR === sR && lG === sG && lB === sB) {
           return true;
@@ -467,9 +487,7 @@ export default function Main(props) {
     saveCtx.globalCompositeOperation = "source-over";
 
     setSaveTry(className(classes.attempt, classes.display));
-    setTimeout(function () {
-      setSaveTry(className(classes.attempt, classes.hidden));
-    }, 3000);
+    
 
     saveCtx.drawImage(canvas, 0, 0);
     saveCtx.drawImage(lineart, 0, 0);
@@ -506,17 +524,13 @@ export default function Main(props) {
         })
         .then(() => {
           setSaveWin(className(classes.success, classes.display));
-          setTimeout(function () {
-            setSaveWin(className(classes.success, classes.hidden));
-          }, 5000);
+          
           saveCtx.clearRect(0, 0, saveCanvas.width, saveCanvas.height);
         })
         .catch((e) => {
           console.error(e);
           setSaveLose(className(classes.failure, classes.display));
-          setTimeout(function () {
-            setSaveLose(className(classes.failure, classes.hidden));
-          }, 5000);
+          
         });
     }, 3000);
   };

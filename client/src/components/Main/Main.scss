@@ -115,6 +115,8 @@
       right: 3.5rem;
       animation-name: save;
       animation-duration: 5s;
+      animation-fill-mode: forwards;
+      -webkit-animation-fill-mode: forwards;
     }
     &--fail {
       font-family: "Quicksand", sans-serif;
@@ -125,6 +127,8 @@
       text-align: center;
       animation-name: save;
       animation-duration: 5s;
+      animation-fill-mode: forwards;
+      -webkit-animation-fill-mode: forwards;
     }
     &--try {
       font-family: "Quicksand", sans-serif;
@@ -133,6 +137,8 @@
       right: 3rem;
       animation-name: save;
       animation-duration: 3s;
+      animation-fill-mode: forwards;
+      -webkit-animation-fill-mode: forwards;
     }
   }
 }

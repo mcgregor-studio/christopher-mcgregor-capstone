@@ -178,7 +178,8 @@ router.delete("/profile/:drawingId", (req, res) => {
       fs.unlinkSync(`./public/images/lineart-${data[0].id}.png`, (e) =>
         console.error(e)
       );
-      return knex("drawings").del().where("id", data[0].id);
+    }).then(() => {
+       return knex("drawings").del().where("id", req.params.drawingId); 
     })
     .catch((e) => console.error("Error deleting a drawing:", e));
 });

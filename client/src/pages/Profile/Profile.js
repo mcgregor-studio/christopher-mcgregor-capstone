@@ -85,6 +85,7 @@ export default class Profile extends React.Component {
               {drawings.map((image) => {
                 return (
                   <Image
+                    key={image.id}
                     thumbnail={image.thumbnail}
                     id={image.id}
                     delImage={delImage}
@@ -117,6 +118,7 @@ export default class Profile extends React.Component {
             {drawings.map((image) => {
               return (
                 <Image
+                key={image.id}
                   thumbnail={image.thumbnail}
                   id={image.id}
                   delImage={delImage}
