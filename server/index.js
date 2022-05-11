@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const eSession = require("express-session");
 const sessionStore = require("connect-session-knex")(eSession);
@@ -5,10 +6,10 @@ const cors = require("cors");
 const helmet = require("helmet");
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth2").Strategy;
-const environment = process.env.NODE_ENV || 'development';
+const environment = process.env.NODE_ENV;
 const knex = require("knex")(require("./knexfile.js")[environment]);
 const app = express();
-require("dotenv").config();
+
 
 //Establishing routes, store and connection
 const port = process.env.PORT;
@@ -41,8 +42,8 @@ app.use(
     proxy: true,
     cookie: {
       sameSite: "none",
-      secure: true
-    }
+      /* secure: true */
+    } 
   })
 );
 
