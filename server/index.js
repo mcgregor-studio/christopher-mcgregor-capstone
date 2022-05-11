@@ -5,7 +5,8 @@ const cors = require("cors");
 const helmet = require("helmet");
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth2").Strategy;
-const knex = require("knex")(require("./knexfile.js").production);
+const environment = process.env.NODE_ENV || 'development';
+const knex = require("knex")(require("./knexfile.js")[environment]);
 const app = express();
 require("dotenv").config();
 
