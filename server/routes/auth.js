@@ -45,7 +45,6 @@ router.get(
 
 //User profile GET request
 router.get("/profile", (req, res) => {
-  console.log(req.session)
   if (req.user === undefined) {
     return res.status(401).json({ message: "Unauthorized" });
   }
@@ -120,7 +119,7 @@ router.put(
               if (!result[0]) {
                 knex("drawings")
                   .insert({
-                    user_id: req.session.passport.user,
+                    user_id: req.user.g_id,
                     id: req.headers.drawingid,
                     thumbnail: `${process.env.SERVER_URL}/images/${req.files.thumbnail[0].filename}`,
                     colours: `${process.env.SERVER_URL}/images/${req.files.colours[0].filename}`,

@@ -13,11 +13,9 @@ require("dotenv").config();
 const port = process.env.PORT;
 const store = new sessionStore();
 
-console.log(process.env)
 //Server test to see what methods are being called at which endpoints
 //Header added to allow images to be written to the canvas without tainting it
 app.use((req, res, next) => {
-  console.log(`${req.method}: ${req.url}`);
   res.header("access-control-allow-origin", process.env.REACT_APP_URL);
   next();
 });
@@ -87,16 +85,13 @@ passport.use(
 );
 
 passport.serializeUser((user, done) => {
-  console.log("serializeUser (user object):", user);
   return done(null, user.g_id);
 });
 
 passport.deserializeUser((userId, done) => {
-  console.log("deserializeUser (user id):", userId);
   knex("users")
     .where({ g_id: userId })
     .then((user) => {
-      console.log("req.user:", user[0]);
       return done(null, user[0]);
     })
     .catch((err) => {
