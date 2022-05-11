@@ -13,6 +13,7 @@ export default function App() {
 
   return (
     <main className="App">
+      <div className="bg"></div>
       <BrowserRouter>
         <Switch>
           <Route path="/" exact component={LoginSignup} />
