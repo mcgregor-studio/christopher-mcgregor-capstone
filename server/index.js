@@ -40,10 +40,10 @@ app.use(
     resave: false,
     saveUninitialized: true,
     proxy: true,
-    /* cookie: {
+    cookie: {
       sameSite: "none",
-      /* secure: true
-    }  */
+      secure: true
+    } 
   })
 );
 
