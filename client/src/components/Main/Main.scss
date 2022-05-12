@@ -217,4 +217,19 @@
       align-items: center;
     }
   }
+  @media (min-width: screens.$Desktop) {
+    .paint {
+      &__save {
+        &--success {
+          top: 4rem;
+        }
+        &--fail {
+          right: 4rem;
+        }
+        &--try {
+          right: 4rem;
+        }
+      }
+    }
+  }
 }
