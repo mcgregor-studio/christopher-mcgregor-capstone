@@ -44,23 +44,12 @@ export default function Main(props) {
         setSamples(result.data);
       })
       .catch((e) => console.error(e));
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext("2d");
+      ctx.fillStyle = "white";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      let tryTimer = setTimeout(function () {
-        setSaveTry(className(classes.attempt, classes.hidden));
-      }, 3000);
-      let winTimer = setTimeout(function () {
-        setSaveWin(className(classes.success, classes.hidden));
-      }, 5000);
-      let loseTimer = setTimeout(function () {
-        setSaveLose(className(classes.failure, classes.hidden));
-      }, 5000);
-
-      return () => {
-        clearTimeout(tryTimer);
-        clearTimeout(winTimer);
-        clearTimeout(loseTimer);
-      }
-  }, [saveTry, saveWin, saveLose]);
+  }, []);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -75,7 +64,22 @@ export default function Main(props) {
     ctx.imageSmoothingEnabled = false;
     saveCtx.imageSmoothingEnabled = false;
     ctxRef.current = ctx;
-  }, [strokeStyle, lineWidth, lineOpacity]);
+    let tryTimer = setTimeout(function () {
+      setSaveTry(className(classes.attempt, classes.hidden));
+    }, 3000);
+    let winTimer = setTimeout(function () {
+      setSaveWin(className(classes.success, classes.hidden));
+    }, 5000);
+    let loseTimer = setTimeout(function () {
+      setSaveLose(className(classes.failure, classes.hidden));
+    }, 5000);
+
+    return () => {
+      clearTimeout(tryTimer);
+      clearTimeout(winTimer);
+      clearTimeout(loseTimer);
+    }
+  }, [strokeStyle, lineWidth, lineOpacity, saveTry, saveWin, saveLose]);
 
   // Variables
   const classes = {
@@ -328,9 +332,6 @@ export default function Main(props) {
         lG = colourData.data[pixelPos + 1];
         lB = colourData.data[pixelPos + 2];
         lA = colourData.data[pixelPos + 3];
-        if (testColour(lA)) {
-          return false;
-        }
 
         if (lR === sR && lG === sG && lB === sB) {
           return true;
@@ -339,6 +340,8 @@ export default function Main(props) {
         if (lR === hexR && lG === hexG && lB === hexB) {
           return false;
         }
+
+        
       };
 
       const colourPixel = (pixelPos, newR, newG, newB) => {
@@ -439,7 +442,7 @@ export default function Main(props) {
     };
 
     const sprayParticles = () => {
-      let density = 1;
+      let density = 10;
 
       for (let i = 0; i < density; i++) {
         let offset = randomize(lineWidth);
