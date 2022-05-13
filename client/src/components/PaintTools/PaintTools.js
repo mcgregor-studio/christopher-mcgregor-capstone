@@ -151,14 +151,17 @@ export default class PaintTools extends React.Component {
             ></input>
             <div className="paint__tools--slider--icon--end"></div>
           </div>
+          <div className="paint__tools--color">
+            <img className="paint__tools--color--icon" src={pencil} />
           <input
-            className="paint__tools--color"
+            className="paint__tools--color--input"
             type="color"
             value={this.props.strokeStyle}
             onChange={(event) => {
               this.props.setStrokeStyle(event.target.value);
             }}
           ></input>
+          </div>
         </div>
         <div>
           <div className="paint__tools--size">

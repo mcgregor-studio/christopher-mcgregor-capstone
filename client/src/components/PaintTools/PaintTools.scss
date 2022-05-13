@@ -17,15 +17,28 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    &--controller {
+      margin-right: 0.25rem;
+    }
     &--color {
       cursor: pointer;
       height: 2rem;
-      width: 100%;
-      padding: 0;
-      border: 0;
-      appearance: none;
-      background: none;
-      box-sizing: content-box;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      &--icon {
+        height: 1rem;
+        margin-right: 0.25rem;
+        transform: rotate(-90deg);
+      }
+      &--input {
+        width: 75%;
+        padding: 0;
+        border: 0;
+        appearance: none;
+        background: none;
+        box-sizing: content-box;
+      }
     }
     &--width {
       display: flex;
