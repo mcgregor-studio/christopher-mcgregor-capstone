@@ -341,7 +341,9 @@ export default function Main(props) {
           return false;
         }
 
-        
+        if (testColour(lA)) {
+          return false;
+        }
       };
 
       const colourPixel = (pixelPos, newR, newG, newB) => {
